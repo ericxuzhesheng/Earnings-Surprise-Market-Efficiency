@@ -1,0 +1,76 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\usepackage{parskip}
+\usepackage{enumitem}
+\setlist[itemize]{leftmargin=1.5em}
+\onehalfspacing
+
+\title{Speaker Script\\Earnings Surprise, Firm Valuation, and Market Efficiency: Evidence from China}
+\author{FIN803 Corporate Finance Team}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section*{Slide 1: Title}
+Good afternoon everyone. We are presenting our FIN803 Corporate Finance project on earnings-related information, firm valuation adjustment, and market efficiency in China A-share stocks.
+
+\section*{Slide 2: Motivation}
+Our motivation is straightforward: earnings guidance updates expectations of future cash flows, so it should affect valuation. This project is directly aligned with FIN803 topics including stock valuation, capital market pricing of risk, CAPM-based abnormal return measurement, and cost-of-capital intuition.
+
+\section*{Slide 3: Research Question}
+Our core question is whether earnings-related guidance events are followed by positive abnormal returns. We emphasize event occurrence effects, and then test whether cross-sectional ranking by our current earnings surprise proxy is stable.
+
+\section*{Slide 4: Firm Valuation and Earnings}
+In valuation terms, price reflects discounted expected future cash flows. Earnings disclosures matter because they shift expectations, and market reactions should depend on the gap between realized information and prior expectations.
+
+\section*{Slide 5: Market Efficiency}
+Under semi-strong efficiency, public information should be impounded quickly into prices. If we still observe positive post-announcement CAR, that suggests delayed adjustment and potential underreaction.
+
+\section*{Slide 6: Abnormal Returns and CAPM}
+We use abnormal return as stock return minus market return. CAPM provides a benchmark intuition for normal required return, and helps us separate event-driven price effects from broad market movement.
+
+\section*{Slide 7: PEAD Intuition}
+PEAD means returns continue to drift after earnings news. We test for delayed reaction, but we do not impose a strong monotonic PEAD assumption because our earnings-expectation proxy is imperfect.
+
+\section*{Slide 8: Data Description}
+Our sample covers 2020-01-01 to 2026-04-16 in China A-share. The expanded sample includes 800 stocks and 4,980 usable events, with Tushare as the main source and backup/cross-check logic in the pipeline.
+
+\section*{Slide 9: Event Definition}
+We use two event types: guidance\_initial and guidance\_upward\_revision. Event timing is the first trading day after announcement, and we avoid duplicate counting within a report-period event timeline.
+
+\section*{Slide 10: Filtering and Tradability}
+We apply practical filters: exclude ST stocks, newly listed firms with short trading history, and suspended event-day observations, plus a liquidity filter. These controls reduce noise and make the event sample more tradable.
+
+\section*{Slide 11: Return Measurement}
+We compute CAR20 and CAR60 from daily abnormal returns. CAR60 is our main outcome because delayed reaction often appears over a medium post-announcement horizon rather than only immediately.
+
+\section*{Slide 12: Earnings Surprise Proxy}
+Our ES measure is guidance midpoint growth minus a consensus-growth proxy. This is not true analyst consensus, so we explicitly treat it as a pragmatic proxy and keep interpretation conservative.
+
+\section*{Slide 13: ES Grouping}
+We group events into positive ES, moderate ES (50th--80th percentile within event type), and extreme ES (top 20\%). This allows us to compare economically meaningful categories without overfitting.
+
+\section*{Slide 14: Empirical Strategy}
+The design combines event-study averages, group comparisons, and simple regressions. The goal is theory-consistent inference for valuation adjustment, not a trading system.
+
+\section*{Slide 15: Regression Model}
+We estimate CAR60 on key signals plus only two basic controls: log size and beta. This keeps the model transparent and aligned with course-level capital market intuition.
+
+\section*{Slide 16: Main Event-Level Results}
+At the event level, guidance-related announcements are associated with positive CAR60. In the expanded sample, all-events CAR60 is about 3.02\%, and positive-ES events are about 3.77\%.
+
+\section*{Slide 17: ES Group Comparison}
+Moderate ES events have CAR60 around 3.715\%, while extreme ES events are around 5.964\% in this expanded run. The key point is that cross-sectional ranking remains unstable across specifications, so we avoid claiming strict monotonic PEAD.
+
+\section*{Slide 18: Regression Results}
+The moderate-ES dummy is positive but statistically insignificant, and the event-type dummy is also insignificant. Although the chart can show a higher raw mean for revision events, the conditional difference is not robust after controls, so we keep a conservative interpretation.
+
+\section*{Slide 19: Corporate Finance Interpretation}
+The evidence supports that earnings-related events affect valuation and that market adjustment may be delayed. CAPM controls do not fully explain these short-horizon announcement effects, which is consistent with partial underreaction.
+
+\section*{Slide 20: Limitations and Conclusion}
+Our main limitation is measurement of expected earnings without full analyst-consensus coverage. Final takeaway: event-level evidence is more reliable than ES-magnitude ranking, and better expectation measurement is the most important next step.
+
+\end{document}

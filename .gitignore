@@ -1,6 +1,12 @@
 data_processed/event_abnormal_return_paths.csv
 src/__pycache__/
 *.pyc
+*.aux
+*.log
+*.nav
+*.out
+*.snm
+*.toc
 presentation.aux
 presentation.log
 presentation.nav
