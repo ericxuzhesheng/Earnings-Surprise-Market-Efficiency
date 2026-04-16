@@ -1,0 +1,7 @@
+Final Interpretation Expanded
+1) Sample expanded from stock count 120 to 800, and event count 975 to 4980 (stock change 566.7%, event change 410.8%).
+2) Expanded sample partially overturns the prior ordering: extreme ES currently shows higher average CAR60 than moderate ES.
+3) Current expanded averages: moderate ES CAR60=3.715%, extreme ES CAR60=5.964%.
+4) Regression stability check: coefficient moved from 0.010687 (p=0.583) to 0.009184 (p=0.254).
+5) The expanded-sample version is better for final presentation because it reduces small-sample concern and provides a broader robustness check for the same corporate-finance framework.
+Liquidity filter was relaxed from turnover20 >= 0.50 to >= 0.30.

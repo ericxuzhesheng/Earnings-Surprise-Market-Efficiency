@@ -1,0 +1,21 @@
+Figure Notes for PPT
+1) fig1_es_distribution.png: This figure shows the distribution of event-level earnings surprise proxies.
+A right-skewed shape indicates more events with moderate positive surprises than extreme negative ones.
+
+2) fig2_es_vs_car20.png: This scatter plot visualizes the relation between earnings surprise and CAR20.
+An upward trend line suggests firms with stronger positive surprises tend to have higher short-horizon abnormal returns.
+
+3) fig3_es_vs_car60.png: This figure extends the horizon to CAR60.
+If the slope remains positive, the market appears to adjust gradually after earnings announcements.
+
+4) fig4_quantile_group_car_comparison.png: Events are sorted into earnings-surprise quantiles.
+Average CAR20/CAR40/CAR60 by quantile highlight whether high-surprise groups outperform low-surprise groups consistently.
+
+5) fig5_high_vs_low_es_caar.png: This cumulative abnormal return path compares high-surprise and low-surprise portfolios.
+A widening gap after day 1 is consistent with post-earnings-announcement drift in the sample period.
+
+6) fig6_regression_es_coefficient.png: This chart summarizes estimated coefficients of earnings surprise from OLS regressions.
+Positive coefficients across CAR horizons support a positive earnings surprise-return relationship.
+
+Method note: Following the 'earnings surprise' strategy literature, the project prioritizes
+single-quarter YoY surprise and cross-sectional ranking/winsorized variants to improve signal stability.

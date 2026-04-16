@@ -1,0 +1,6 @@
+Refined Interpretation Notes
+Filtering to ES > 0 does not clearly improve CAR60 monotonicity across quantiles.
+The high-intensity ES group does not consistently outperform the all-event benchmark on average CAR60.
+Regression dummy coefficients show 0 positive-and-significant signal(s) out of 2 specifications.
+The refined design reduces noise and is directionally closer to a PEAD test, but statistical strength is still limited.
+The next practical step is replacing the consensus proxy with real analyst consensus and expanding to the full sample.

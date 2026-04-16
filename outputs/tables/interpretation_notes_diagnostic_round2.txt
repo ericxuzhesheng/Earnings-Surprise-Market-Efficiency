@@ -1,0 +1,6 @@
+Diagnostic Round 2 Notes
+By event type, guidance_initial currently shows the clearer average CAR60 signal.
+Winsorizing does not materially improve pooled quantile monotonicity.
+The ES-CAR60 relation appears nonlinear under the quadratic check.
+Extreme ES observations are likely hurting the signal relative to moderate positive ES.
+The most promising next step is moderate-threshold filtering.

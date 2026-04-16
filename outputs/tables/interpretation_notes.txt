@@ -1,0 +1,5 @@
+Interpretation Notes
+- The estimated sign on earnings surprise is mixed in the simple CAR regressions.
+- The direction is not clearly consistent with PEAD.
+- Overall evidence quality is weak under the current proxy-based design.
+- Next improvements: replace consensus proxy with true analyst consensus, refine event timestamp handling (intraday), and run larger full-sample robustness checks.

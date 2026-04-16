@@ -1,0 +1,2 @@
+﻿old_stock_count,new_stock_count,old_event_count,new_event_count,old_avg_CAR60_moderate_ES,new_avg_CAR60_moderate_ES,old_coef_moderate_positive_ES_dummy,new_coef_moderate_positive_ES_dummy,old_p_value,new_p_value,old_liquidity_turnover20_filter,new_liquidity_turnover20_filter
+120.0,800.0,975.0,4980.0,0.0369660175418137,0.0371526895780694,0.0106865006309424,0.0091844306751304,0.5827450932028037,0.2544053820556021,0.5,0.3

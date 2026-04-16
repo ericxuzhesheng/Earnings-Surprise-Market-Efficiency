@@ -1,0 +1,1202 @@
+2026-04-16 15:58:08 | INFO | earnings_surprise_project | Pipeline start | RUN_MODE=test | period=20190101-20231231
+2026-04-16 15:58:08 | WARNING | earnings_surprise_project | Tushare unavailable: [Errno 13] Permission denied: 'C:\\Users\\12510\\tk.csv'
+2026-04-16 15:58:09 | INFO | earnings_surprise_project | Akshare client initialized.
+2026-04-16 15:58:09 | ERROR | earnings_surprise_project | Akshare stock universe failed: HTTPSConnectionPool(host='query.sse.com.cn', port=443): Max retries exceeded with url: /sseQuery/commonQuery.do?STOCK_TYPE=1&REG_PROVINCE=&CSRC_CODE=&STOCK_CODE=&sqlId=COMMON_SSE_CP_GPJCTPZ_GPLB_GP_L&COMPANY_STATUS=2%2C4%2C5%2C7%2C8&type=inParams&isPagination=true&pageHelp.cacheSize=1&pageHelp.beginPage=1&pageHelp.pageSize=10000&pageHelp.pageNo=1&pageHelp.endPage=1 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x0000017847D80D70>: Failed to establish a new connection: [WinError 10013] 以一种访问权限不允许的方式做了一个访问套接字的尝试。'))
+2026-04-16 15:58:09 | ERROR | earnings_surprise_project | No data source available for stock universe.
+2026-04-16 15:58:09 | WARNING | earnings_surprise_project | Akshare market fallback failed: HTTPSConnectionPool(host='push2his.eastmoney.com', port=443): Max retries exceeded with url: /api/qt/stock/kline/get?secid=1.000300&fields1=f1%2Cf2%2Cf3%2Cf4%2Cf5&fields2=f51%2Cf52%2Cf53%2Cf54%2Cf55%2Cf56%2Cf57%2Cf58&klt=101&fqt=0&beg=19900101&end=20500101 (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x000001784779B750>: Failed to establish a new connection: [WinError 10013] 以一种访问权限不允许的方式做了一个访问套接字的尝试。'))
+2026-04-16 15:58:09 | ERROR | earnings_surprise_project | Market index collection failed.
+2026-04-16 15:58:09 | INFO | earnings_surprise_project | stocks rows=0 cols=6
+2026-04-16 15:58:09 | INFO | earnings_surprise_project | earnings_raw rows=0 cols=0
+2026-04-16 15:58:09 | INFO | earnings_surprise_project | prices_raw rows=0 cols=0
+2026-04-16 15:58:09 | INFO | earnings_surprise_project | market_raw rows=0 cols=4
+2026-04-16 15:58:09 | INFO | earnings_surprise_project | daily_basic_raw rows=0 cols=0
+2026-04-16 15:58:09 | INFO | earnings_surprise_project | cross_check rows=0 cols=0
+2026-04-16 15:58:09 | INFO | earnings_surprise_project | events_with_es rows=0 cols=0
+2026-04-16 15:58:09 | INFO | earnings_surprise_project | event_level rows=0 cols=0
+2026-04-16 15:58:09 | INFO | earnings_surprise_project | event_paths rows=0 cols=0
+2026-04-16 15:58:13 | INFO | earnings_surprise_project | descriptive_table rows=0 cols=0
+2026-04-16 15:58:13 | INFO | earnings_surprise_project | regression_table rows=0 cols=0
+2026-04-16 15:58:13 | INFO | earnings_surprise_project | Pipeline complete.
+2026-04-16 15:58:35 | INFO | earnings_surprise_project | Pipeline start | RUN_MODE=test | period=20190101-20231231
+2026-04-16 15:58:35 | INFO | earnings_surprise_project | Tushare client initialized.
+2026-04-16 15:58:36 | INFO | earnings_surprise_project | Akshare client initialized.
+2026-04-16 15:58:36 | INFO | earnings_surprise_project | Stock universe from Tushare: 30 rows
+2026-04-16 15:58:46 | INFO | earnings_surprise_project | Earnings records collected: 922 rows
+2026-04-16 15:59:00 | INFO | earnings_surprise_project | Stock daily prices collected: 35924 rows
+2026-04-16 15:59:00 | INFO | earnings_surprise_project | Market index from Tushare: 1214 rows
+2026-04-16 15:59:11 | INFO | earnings_surprise_project | Daily basic data collected: 35924 rows
+2026-04-16 15:59:15 | WARNING | earnings_surprise_project | Cross-check failed for 000006.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 15:59:16 | WARNING | earnings_surprise_project | Cross-check failed for 000007.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 15:59:16 | INFO | earnings_surprise_project | Cross-check rows: 3629
+2026-04-16 15:59:16 | INFO | earnings_surprise_project | stocks rows=30 cols=6
+2026-04-16 15:59:16 | INFO | earnings_surprise_project | earnings_raw rows=922 cols=7
+2026-04-16 15:59:16 | INFO | earnings_surprise_project | prices_raw rows=35924 cols=9
+2026-04-16 15:59:16 | INFO | earnings_surprise_project | market_raw rows=1214 cols=4
+2026-04-16 15:59:16 | INFO | earnings_surprise_project | daily_basic_raw rows=35924 cols=5
+2026-04-16 15:59:16 | INFO | earnings_surprise_project | cross_check rows=3629 cols=6
+2026-04-16 15:59:16 | INFO | earnings_surprise_project | events_with_es rows=447 cols=11
+2026-04-16 15:59:22 | INFO | earnings_surprise_project | Final event-level rows: 417
+2026-04-16 15:59:22 | INFO | earnings_surprise_project | event_level rows=417 cols=17
+2026-04-16 15:59:22 | INFO | earnings_surprise_project | event_paths rows=25020 cols=5
+2026-04-16 15:59:23 | INFO | earnings_surprise_project | descriptive_table rows=7 cols=9
+2026-04-16 15:59:23 | INFO | earnings_surprise_project | regression_table rows=15 cols=7
+2026-04-16 15:59:25 | INFO | earnings_surprise_project | Pipeline complete.
+2026-04-16 16:06:15 | INFO | earnings_surprise_project | Pipeline start | RUN_MODE=test | period=20190101-20260416
+2026-04-16 16:06:15 | INFO | earnings_surprise_project | Tushare client initialized.
+2026-04-16 16:06:15 | INFO | earnings_surprise_project | Akshare client initialized.
+2026-04-16 16:06:16 | INFO | earnings_surprise_project | Stock universe from Tushare: 120 rows
+2026-04-16 16:07:05 | INFO | earnings_surprise_project | Earnings records collected: 4923 rows
+2026-04-16 16:08:00 | INFO | earnings_surprise_project | Stock daily prices collected: 211013 rows
+2026-04-16 16:08:01 | INFO | earnings_surprise_project | Market index from Tushare: 1766 rows
+2026-04-16 16:08:54 | INFO | earnings_surprise_project | Daily basic data collected: 211013 rows
+2026-04-16 16:08:56 | WARNING | earnings_surprise_project | Cross-check failed for 000001.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 16:08:58 | WARNING | earnings_surprise_project | Cross-check failed for 000002.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 16:08:59 | WARNING | earnings_surprise_project | Cross-check failed for 000004.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 16:09:01 | WARNING | earnings_surprise_project | Cross-check failed for 000006.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 16:09:03 | WARNING | earnings_surprise_project | Cross-check failed for 000007.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 16:09:04 | INFO | earnings_surprise_project | stocks rows=120 cols=6
+2026-04-16 16:09:04 | INFO | earnings_surprise_project | earnings_raw rows=4923 cols=7
+2026-04-16 16:09:04 | INFO | earnings_surprise_project | prices_raw rows=211013 cols=9
+2026-04-16 16:09:04 | INFO | earnings_surprise_project | market_raw rows=1766 cols=4
+2026-04-16 16:09:04 | INFO | earnings_surprise_project | daily_basic_raw rows=211013 cols=5
+2026-04-16 16:09:04 | INFO | earnings_surprise_project | cross_check rows=0 cols=0
+2026-04-16 16:09:04 | INFO | earnings_surprise_project | events_with_es rows=2714 cols=15
+2026-04-16 16:10:05 | INFO | earnings_surprise_project | Final event-level rows: 2660
+2026-04-16 16:10:05 | INFO | earnings_surprise_project | Selected spec=small_mid_esw, signal=earnings_surprise_w, score=0.000, n=1328
+2026-04-16 16:10:06 | INFO | earnings_surprise_project | event_level rows=1328 cols=25
+2026-04-16 16:10:06 | INFO | earnings_surprise_project | event_level_raw rows=2660 cols=17
+2026-04-16 16:10:06 | INFO | earnings_surprise_project | event_paths rows=79680 cols=5
+2026-04-16 16:10:06 | INFO | earnings_surprise_project | spec_table rows=6 cols=5
+2026-04-16 16:10:06 | INFO | earnings_surprise_project | descriptive_table rows=7 cols=9
+2026-04-16 16:10:06 | INFO | earnings_surprise_project | regression_table rows=15 cols=8
+2026-04-16 16:10:07 | INFO | earnings_surprise_project | Pipeline complete.
+2026-04-16 16:11:48 | INFO | earnings_surprise_project | Pipeline start | RUN_MODE=full | period=20140101-20260416
+2026-04-16 16:11:48 | INFO | earnings_surprise_project | Tushare client initialized.
+2026-04-16 16:11:48 | INFO | earnings_surprise_project | Akshare client initialized.
+2026-04-16 16:11:49 | INFO | earnings_surprise_project | Stock universe from Tushare: 800 rows
+2026-04-16 16:16:10 | INFO | earnings_surprise_project | Earnings records collected: 45677 rows
+2026-04-16 16:23:14 | INFO | earnings_surprise_project | Stock daily prices collected: 2065023 rows
+2026-04-16 16:23:15 | INFO | earnings_surprise_project | Market index from Tushare: 2986 rows
+2026-04-16 16:29:19 | INFO | earnings_surprise_project | Daily basic data collected: 2065023 rows
+2026-04-16 16:29:21 | WARNING | earnings_surprise_project | Cross-check failed for 000001.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 16:29:22 | WARNING | earnings_surprise_project | Cross-check failed for 000002.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 16:29:24 | WARNING | earnings_surprise_project | Cross-check failed for 000004.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 16:29:25 | WARNING | earnings_surprise_project | Cross-check failed for 000006.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 16:29:27 | WARNING | earnings_surprise_project | Cross-check failed for 000007.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 16:29:40 | INFO | earnings_surprise_project | stocks rows=800 cols=6
+2026-04-16 16:29:40 | INFO | earnings_surprise_project | earnings_raw rows=45677 cols=7
+2026-04-16 16:29:40 | INFO | earnings_surprise_project | prices_raw rows=2065023 cols=9
+2026-04-16 16:29:40 | INFO | earnings_surprise_project | market_raw rows=2986 cols=4
+2026-04-16 16:29:40 | INFO | earnings_surprise_project | daily_basic_raw rows=2065023 cols=5
+2026-04-16 16:29:40 | INFO | earnings_surprise_project | cross_check rows=0 cols=0
+2026-04-16 16:29:41 | INFO | earnings_surprise_project | events_with_es rows=29478 cols=15
+2026-04-16 16:42:14 | INFO | earnings_surprise_project | Pipeline start | RUN_MODE=full | period=20140101-20260416
+2026-04-16 16:42:14 | INFO | earnings_surprise_project | Tushare client initialized.
+2026-04-16 16:42:14 | INFO | earnings_surprise_project | Akshare client initialized.
+2026-04-16 16:42:15 | INFO | earnings_surprise_project | Stock universe from Tushare: 300 rows
+2026-04-16 16:43:58 | INFO | earnings_surprise_project | Earnings records collected: 18578 rows
+2026-04-16 16:46:47 | INFO | earnings_surprise_project | Stock daily prices collected: 858497 rows
+2026-04-16 16:46:48 | INFO | earnings_surprise_project | Market index from Tushare: 2986 rows
+2026-04-16 16:49:05 | INFO | earnings_surprise_project | Daily basic data collected: 858497 rows
+2026-04-16 16:49:06 | WARNING | earnings_surprise_project | Cross-check failed for 000001.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 16:49:08 | WARNING | earnings_surprise_project | Cross-check failed for 000002.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 16:49:09 | WARNING | earnings_surprise_project | Cross-check failed for 000004.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 16:49:11 | WARNING | earnings_surprise_project | Cross-check failed for 000006.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 16:49:12 | WARNING | earnings_surprise_project | Cross-check failed for 000007.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 16:49:18 | INFO | earnings_surprise_project | stocks rows=300 cols=6
+2026-04-16 16:49:18 | INFO | earnings_surprise_project | earnings_raw rows=18578 cols=7
+2026-04-16 16:49:18 | INFO | earnings_surprise_project | prices_raw rows=858497 cols=9
+2026-04-16 16:49:18 | INFO | earnings_surprise_project | market_raw rows=2986 cols=4
+2026-04-16 16:49:18 | INFO | earnings_surprise_project | daily_basic_raw rows=858497 cols=5
+2026-04-16 16:49:18 | INFO | earnings_surprise_project | cross_check rows=0 cols=0
+2026-04-16 16:49:18 | INFO | earnings_surprise_project | events_with_es rows=12311 cols=15
+2026-04-16 16:56:29 | INFO | earnings_surprise_project | Pipeline start | RUN_MODE=test | period=20190101-20260416
+2026-04-16 16:56:30 | INFO | earnings_surprise_project | Tushare client initialized.
+2026-04-16 16:56:30 | INFO | earnings_surprise_project | Akshare client initialized.
+2026-04-16 16:56:31 | INFO | earnings_surprise_project | Stock universe from Tushare: 120 rows
+2026-04-16 16:56:36 | INFO | earnings_surprise_project | Earnings records collected: 4923 rows
+2026-04-16 16:56:44 | INFO | earnings_surprise_project | Stock daily prices collected: 211013 rows
+2026-04-16 16:56:44 | INFO | earnings_surprise_project | Market index from Tushare: 1766 rows
+2026-04-16 16:56:51 | INFO | earnings_surprise_project | Daily basic data collected: 211013 rows
+2026-04-16 16:56:53 | INFO | earnings_surprise_project | stocks rows=120 cols=6
+2026-04-16 16:56:53 | INFO | earnings_surprise_project | earnings_raw rows=4923 cols=7
+2026-04-16 16:56:53 | INFO | earnings_surprise_project | prices_raw rows=211013 cols=9
+2026-04-16 16:56:53 | INFO | earnings_surprise_project | market_raw rows=1766 cols=4
+2026-04-16 16:56:53 | INFO | earnings_surprise_project | daily_basic_raw rows=211013 cols=5
+2026-04-16 16:56:53 | INFO | earnings_surprise_project | cross_check rows=0 cols=0
+2026-04-16 16:56:53 | INFO | earnings_surprise_project | events_with_es rows=2714 cols=15
+2026-04-16 16:57:59 | INFO | earnings_surprise_project | Final event-level rows: 2660
+2026-04-16 16:58:01 | INFO | earnings_surprise_project | Selected spec=small_mid_esw, signal=earnings_surprise_w, score=0.000, n=1328
+2026-04-16 16:58:01 | INFO | earnings_surprise_project | event_level rows=1328 cols=25
+2026-04-16 16:58:01 | INFO | earnings_surprise_project | event_level_raw rows=2660 cols=17
+2026-04-16 16:58:01 | INFO | earnings_surprise_project | event_paths rows=79680 cols=5
+2026-04-16 16:58:01 | INFO | earnings_surprise_project | spec_table rows=6 cols=5
+2026-04-16 16:58:01 | INFO | earnings_surprise_project | descriptive_table rows=7 cols=9
+2026-04-16 16:58:01 | INFO | earnings_surprise_project | regression_table rows=15 cols=8
+2026-04-16 16:58:02 | INFO | earnings_surprise_project | Pipeline complete.
+2026-04-16 16:58:07 | INFO | earnings_surprise_project | Pipeline start | RUN_MODE=test | period=20190101-20260416
+2026-04-16 16:58:07 | INFO | earnings_surprise_project | Tushare client initialized.
+2026-04-16 16:58:08 | INFO | earnings_surprise_project | Akshare client initialized.
+2026-04-16 16:58:10 | INFO | earnings_surprise_project | Stock universe from Tushare: 120 rows
+2026-04-16 16:58:10 | INFO | earnings_surprise_project | Earnings records collected: 4923 rows
+2026-04-16 16:58:10 | INFO | earnings_surprise_project | Stock daily prices collected: 211013 rows
+2026-04-16 16:58:10 | INFO | earnings_surprise_project | Daily basic data collected: 211013 rows
+2026-04-16 16:58:12 | INFO | earnings_surprise_project | stocks rows=120 cols=6
+2026-04-16 16:58:12 | INFO | earnings_surprise_project | earnings_raw rows=4923 cols=7
+2026-04-16 16:58:12 | INFO | earnings_surprise_project | prices_raw rows=211013 cols=9
+2026-04-16 16:58:12 | INFO | earnings_surprise_project | market_raw rows=1766 cols=4
+2026-04-16 16:58:12 | INFO | earnings_surprise_project | daily_basic_raw rows=211013 cols=5
+2026-04-16 16:58:12 | INFO | earnings_surprise_project | cross_check rows=0 cols=0
+2026-04-16 16:58:12 | INFO | earnings_surprise_project | events_with_es rows=2714 cols=15
+2026-04-16 16:58:33 | WARNING | earnings_surprise_project | Event-level dataset is empty after event-study filtering.
+2026-04-16 16:58:33 | INFO | earnings_surprise_project | event_level rows=0 cols=0
+2026-04-16 16:58:33 | INFO | earnings_surprise_project | event_level_raw rows=0 cols=0
+2026-04-16 16:58:33 | INFO | earnings_surprise_project | event_paths rows=0 cols=0
+2026-04-16 16:58:33 | INFO | earnings_surprise_project | spec_table rows=0 cols=0
+2026-04-16 16:58:33 | INFO | earnings_surprise_project | descriptive_table rows=0 cols=0
+2026-04-16 16:58:33 | INFO | earnings_surprise_project | regression_table rows=0 cols=0
+2026-04-16 16:58:33 | INFO | earnings_surprise_project | Pipeline complete.
+2026-04-16 16:59:03 | INFO | earnings_surprise_project | Pipeline start | RUN_MODE=test | period=20190101-20260416
+2026-04-16 16:59:03 | INFO | earnings_surprise_project | Tushare client initialized.
+2026-04-16 16:59:04 | INFO | earnings_surprise_project | Akshare client initialized.
+2026-04-16 16:59:04 | INFO | earnings_surprise_project | Stock universe from Tushare: 120 rows
+2026-04-16 16:59:04 | INFO | earnings_surprise_project | Earnings records collected: 4923 rows
+2026-04-16 16:59:05 | INFO | earnings_surprise_project | Stock daily prices collected: 211013 rows
+2026-04-16 16:59:05 | INFO | earnings_surprise_project | Daily basic data collected: 211013 rows
+2026-04-16 16:59:06 | INFO | earnings_surprise_project | stocks rows=120 cols=6
+2026-04-16 16:59:06 | INFO | earnings_surprise_project | earnings_raw rows=4923 cols=7
+2026-04-16 16:59:06 | INFO | earnings_surprise_project | prices_raw rows=211013 cols=9
+2026-04-16 16:59:06 | INFO | earnings_surprise_project | market_raw rows=1766 cols=4
+2026-04-16 16:59:06 | INFO | earnings_surprise_project | daily_basic_raw rows=211013 cols=5
+2026-04-16 16:59:06 | INFO | earnings_surprise_project | cross_check rows=0 cols=0
+2026-04-16 16:59:06 | INFO | earnings_surprise_project | events_with_es rows=2714 cols=15
+2026-04-16 16:59:51 | INFO | earnings_surprise_project | Final event-level rows: 2660
+2026-04-16 16:59:52 | INFO | earnings_surprise_project | Selected spec=small_mid_rank, signal=es_rank_q, score=-0.380, n=1332
+2026-04-16 16:59:52 | INFO | earnings_surprise_project | event_level rows=1332 cols=25
+2026-04-16 16:59:52 | INFO | earnings_surprise_project | event_level_raw rows=2660 cols=17
+2026-04-16 16:59:52 | INFO | earnings_surprise_project | event_paths rows=79920 cols=5
+2026-04-16 16:59:52 | INFO | earnings_surprise_project | spec_table rows=6 cols=5
+2026-04-16 16:59:52 | INFO | earnings_surprise_project | descriptive_table rows=7 cols=9
+2026-04-16 16:59:52 | INFO | earnings_surprise_project | regression_table rows=15 cols=8
+2026-04-16 16:59:53 | INFO | earnings_surprise_project | Pipeline complete.
+2026-04-16 17:03:34 | INFO | earnings_surprise_project | Final event-level rows: 12198
+2026-04-16 17:03:36 | INFO | earnings_surprise_project | Selected spec=all_sample_rank, signal=es_rank_q, score=5.449, n=12198
+2026-04-16 17:03:38 | INFO | earnings_surprise_project | event_level rows=12198 cols=25
+2026-04-16 17:03:38 | INFO | earnings_surprise_project | event_level_raw rows=12198 cols=17
+2026-04-16 17:03:38 | INFO | earnings_surprise_project | event_paths rows=731880 cols=5
+2026-04-16 17:03:38 | INFO | earnings_surprise_project | spec_table rows=6 cols=5
+2026-04-16 17:03:39 | INFO | earnings_surprise_project | descriptive_table rows=7 cols=9
+2026-04-16 17:03:39 | INFO | earnings_surprise_project | regression_table rows=15 cols=8
+2026-04-16 17:03:40 | INFO | earnings_surprise_project | Pipeline complete.
+2026-04-16 17:13:07 | INFO | earnings_surprise_project | Guidance-design pipeline start | RUN_MODE=test | period=20200101-20260416
+2026-04-16 17:13:07 | INFO | earnings_surprise_project | Tushare client initialized.
+2026-04-16 17:13:08 | INFO | earnings_surprise_project | Akshare client initialized.
+2026-04-16 17:13:08 | INFO | earnings_surprise_project | Stock universe from Tushare: 120 rows
+2026-04-16 17:13:13 | INFO | earnings_surprise_project | Guidance rows collected: 2015
+2026-04-16 17:13:13 | INFO | earnings_surprise_project | Stock daily prices collected: 211013 rows
+2026-04-16 17:13:14 | INFO | earnings_surprise_project | Market index from Tushare: 1522 rows
+2026-04-16 17:13:14 | INFO | earnings_surprise_project | Daily basic data collected: 211013 rows
+2026-04-16 17:13:16 | INFO | earnings_surprise_project | Guidance events constructed: 1158 rows
+2026-04-16 17:13:31 | INFO | earnings_surprise_project | Core outputs saved.
+2026-04-16 17:13:31 | INFO | earnings_surprise_project | Guidance-design pipeline complete.
+2026-04-16 17:14:12 | INFO | earnings_surprise_project | Guidance-design pipeline start | RUN_MODE=test | period=20200101-20260416
+2026-04-16 17:14:13 | INFO | earnings_surprise_project | Tushare client initialized.
+2026-04-16 17:14:13 | INFO | earnings_surprise_project | Akshare client initialized.
+2026-04-16 17:14:14 | INFO | earnings_surprise_project | Stock universe from Tushare: 120 rows
+2026-04-16 17:14:14 | INFO | earnings_surprise_project | Guidance rows collected: 2015
+2026-04-16 17:14:14 | INFO | earnings_surprise_project | Stock daily prices collected: 211013 rows
+2026-04-16 17:14:15 | INFO | earnings_surprise_project | Daily basic data collected: 211013 rows
+2026-04-16 17:14:17 | INFO | earnings_surprise_project | Guidance events constructed: 1158 rows
+2026-04-16 17:14:32 | INFO | earnings_surprise_project | Core outputs saved.
+2026-04-16 17:14:32 | INFO | earnings_surprise_project | Guidance-design pipeline complete.
+2026-04-16 17:19:57 | INFO | earnings_surprise_project | Guidance-design pipeline start | RUN_MODE=test | period=20200101-20260416
+2026-04-16 17:19:57 | INFO | earnings_surprise_project | Tushare client initialized.
+2026-04-16 17:19:57 | INFO | earnings_surprise_project | Akshare client initialized.
+2026-04-16 17:19:58 | INFO | earnings_surprise_project | Stock universe from Tushare: 120 rows
+2026-04-16 17:19:58 | INFO | earnings_surprise_project | Guidance rows collected: 2015
+2026-04-16 17:19:59 | INFO | earnings_surprise_project | Stock daily prices collected: 211013 rows
+2026-04-16 17:19:59 | INFO | earnings_surprise_project | Daily basic data collected: 211013 rows
+2026-04-16 17:20:01 | INFO | earnings_surprise_project | Guidance events constructed: 1158 rows
+2026-04-16 17:20:18 | INFO | earnings_surprise_project | Core outputs saved.
+2026-04-16 17:20:18 | INFO | earnings_surprise_project | Guidance-design pipeline complete.
+2026-04-16 17:26:48 | INFO | earnings_surprise_project | Guidance-design pipeline start | RUN_MODE=test | period=20200101-20260416
+2026-04-16 17:26:48 | INFO | earnings_surprise_project | Tushare client initialized.
+2026-04-16 17:26:48 | INFO | earnings_surprise_project | Akshare client initialized.
+2026-04-16 17:26:49 | INFO | earnings_surprise_project | Stock universe from Tushare: 120 rows
+2026-04-16 17:26:50 | INFO | earnings_surprise_project | Guidance rows collected: 2015
+2026-04-16 17:26:50 | INFO | earnings_surprise_project | Stock daily prices collected: 211013 rows
+2026-04-16 17:26:50 | INFO | earnings_surprise_project | Daily basic data collected: 211013 rows
+2026-04-16 17:26:53 | INFO | earnings_surprise_project | Guidance events constructed: 1158 rows
+2026-04-16 17:27:10 | INFO | earnings_surprise_project | Core outputs saved.
+2026-04-16 17:27:10 | INFO | earnings_surprise_project | Guidance-design pipeline complete.
+2026-04-16 17:27:47 | INFO | earnings_surprise_project | Guidance-design pipeline start | RUN_MODE=test | period=20200101-20260416
+2026-04-16 17:27:47 | INFO | earnings_surprise_project | Tushare client initialized.
+2026-04-16 17:27:48 | INFO | earnings_surprise_project | Akshare client initialized.
+2026-04-16 17:27:48 | INFO | earnings_surprise_project | Stock universe from Tushare: 120 rows
+2026-04-16 17:27:49 | INFO | earnings_surprise_project | Guidance rows collected: 2015
+2026-04-16 17:27:49 | INFO | earnings_surprise_project | Stock daily prices collected: 211013 rows
+2026-04-16 17:27:50 | INFO | earnings_surprise_project | Daily basic data collected: 211013 rows
+2026-04-16 17:27:52 | INFO | earnings_surprise_project | Guidance events constructed: 1158 rows
+2026-04-16 17:28:09 | INFO | earnings_surprise_project | Core outputs saved.
+2026-04-16 17:28:09 | INFO | earnings_surprise_project | Guidance-design pipeline complete.
+2026-04-16 17:33:20 | INFO | earnings_surprise_project | Guidance-design pipeline start | RUN_MODE=test | period=20200101-20260416
+2026-04-16 17:33:20 | INFO | earnings_surprise_project | Tushare client initialized.
+2026-04-16 17:33:20 | INFO | earnings_surprise_project | Akshare client initialized.
+2026-04-16 17:33:21 | INFO | earnings_surprise_project | Stock universe from Tushare: 120 rows
+2026-04-16 17:33:21 | INFO | earnings_surprise_project | Guidance rows collected: 2015
+2026-04-16 17:33:22 | INFO | earnings_surprise_project | Stock daily prices collected: 211013 rows
+2026-04-16 17:33:22 | INFO | earnings_surprise_project | Daily basic data collected: 211013 rows
+2026-04-16 17:33:24 | INFO | earnings_surprise_project | Guidance events constructed: 1158 rows
+2026-04-16 17:33:39 | INFO | earnings_surprise_project | Core outputs saved.
+2026-04-16 17:33:39 | INFO | earnings_surprise_project | Guidance-design pipeline complete.
+2026-04-16 17:39:13 | INFO | earnings_surprise_project | Guidance-design pipeline start | RUN_MODE=test | period=20200101-20260416
+2026-04-16 17:39:14 | INFO | earnings_surprise_project | Tushare client initialized.
+2026-04-16 17:39:14 | INFO | earnings_surprise_project | Akshare client initialized.
+2026-04-16 17:39:15 | INFO | earnings_surprise_project | Stock universe from Tushare: 800 rows
+2026-04-16 17:39:23 | WARNING | earnings_surprise_project | forecast 000856.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:23 | WARNING | earnings_surprise_project | forecast 000859.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:23 | WARNING | earnings_surprise_project | forecast 000839.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:23 | WARNING | earnings_surprise_project | forecast 000858.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:23 | WARNING | earnings_surprise_project | forecast 000860.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:23 | WARNING | earnings_surprise_project | forecast 000862.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:23 | WARNING | earnings_surprise_project | forecast 000869.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:23 | WARNING | earnings_surprise_project | forecast 000868.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:23 | WARNING | earnings_surprise_project | forecast 000863.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:23 | WARNING | earnings_surprise_project | forecast 000875.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:23 | WARNING | earnings_surprise_project | forecast 000876.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:23 | WARNING | earnings_surprise_project | forecast 000877.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:26 | WARNING | earnings_surprise_project | forecast 000881.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:26 | WARNING | earnings_surprise_project | forecast 000882.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:26 | WARNING | earnings_surprise_project | forecast 000878.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:26 | WARNING | earnings_surprise_project | forecast 000880.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:26 | WARNING | earnings_surprise_project | forecast 000883.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:26 | WARNING | earnings_surprise_project | forecast 000885.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:26 | WARNING | earnings_surprise_project | forecast 000887.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:26 | WARNING | earnings_surprise_project | forecast 000886.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:26 | WARNING | earnings_surprise_project | forecast 000888.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:26 | WARNING | earnings_surprise_project | forecast 000889.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:26 | WARNING | earnings_surprise_project | forecast 000892.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:26 | WARNING | earnings_surprise_project | forecast 000890.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:30 | WARNING | earnings_surprise_project | forecast 000899.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:30 | WARNING | earnings_surprise_project | forecast 000897.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:30 | WARNING | earnings_surprise_project | forecast 000901.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:30 | WARNING | earnings_surprise_project | forecast 000900.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:30 | WARNING | earnings_surprise_project | forecast 000895.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:30 | WARNING | earnings_surprise_project | forecast 000905.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:30 | WARNING | earnings_surprise_project | forecast 000902.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:30 | WARNING | earnings_surprise_project | forecast 000906.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:30 | WARNING | earnings_surprise_project | forecast 000898.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:30 | WARNING | earnings_surprise_project | forecast 000903.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:30 | WARNING | earnings_surprise_project | forecast 000908.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:30 | WARNING | earnings_surprise_project | forecast 000893.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:33 | WARNING | earnings_surprise_project | forecast 000913.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:33 | WARNING | earnings_surprise_project | forecast 000911.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:33 | WARNING | earnings_surprise_project | forecast 000909.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:33 | WARNING | earnings_surprise_project | forecast 000912.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:33 | WARNING | earnings_surprise_project | forecast 000910.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:33 | WARNING | earnings_surprise_project | forecast 000921.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:33 | WARNING | earnings_surprise_project | forecast 000923.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:33 | WARNING | earnings_surprise_project | forecast 000915.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:33 | WARNING | earnings_surprise_project | forecast 000917.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:33 | WARNING | earnings_surprise_project | forecast 000922.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:33 | WARNING | earnings_surprise_project | forecast 000919.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:33 | WARNING | earnings_surprise_project | forecast 000920.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:36 | WARNING | earnings_surprise_project | forecast 000929.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:36 | WARNING | earnings_surprise_project | forecast 000925.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:36 | WARNING | earnings_surprise_project | forecast 000928.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:36 | WARNING | earnings_surprise_project | forecast 000926.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:36 | WARNING | earnings_surprise_project | forecast 000927.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:36 | WARNING | earnings_surprise_project | forecast 000931.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:36 | WARNING | earnings_surprise_project | forecast 000935.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:36 | WARNING | earnings_surprise_project | forecast 000936.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:36 | WARNING | earnings_surprise_project | forecast 000932.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:36 | WARNING | earnings_surprise_project | forecast 000937.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:36 | WARNING | earnings_surprise_project | forecast 000933.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:36 | WARNING | earnings_surprise_project | forecast 000930.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:39 | WARNING | earnings_surprise_project | forecast 000949.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:39 | WARNING | earnings_surprise_project | forecast 000948.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:39 | WARNING | earnings_surprise_project | forecast 000938.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:40 | WARNING | earnings_surprise_project | forecast 000951.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:40 | WARNING | earnings_surprise_project | forecast 000950.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:40 | WARNING | earnings_surprise_project | forecast 000955.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:40 | WARNING | earnings_surprise_project | forecast 000953.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:40 | WARNING | earnings_surprise_project | forecast 000952.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:40 | WARNING | earnings_surprise_project | forecast 000957.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:40 | WARNING | earnings_surprise_project | forecast 000959.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:40 | WARNING | earnings_surprise_project | forecast 000958.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:40 | WARNING | earnings_surprise_project | forecast 000960.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:43 | WARNING | earnings_surprise_project | forecast 000962.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:43 | WARNING | earnings_surprise_project | forecast 000965.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:43 | WARNING | earnings_surprise_project | forecast 000963.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:43 | WARNING | earnings_surprise_project | forecast 000967.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:43 | WARNING | earnings_surprise_project | forecast 000966.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:43 | WARNING | earnings_surprise_project | forecast 000970.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:43 | WARNING | earnings_surprise_project | forecast 000968.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:43 | WARNING | earnings_surprise_project | forecast 000969.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:43 | WARNING | earnings_surprise_project | forecast 000972.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:43 | WARNING | earnings_surprise_project | forecast 000973.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:43 | WARNING | earnings_surprise_project | forecast 000975.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:43 | WARNING | earnings_surprise_project | forecast 000977.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:46 | WARNING | earnings_surprise_project | forecast 000978.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:46 | WARNING | earnings_surprise_project | forecast 000980.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:46 | WARNING | earnings_surprise_project | forecast 000981.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:46 | WARNING | earnings_surprise_project | forecast 000983.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:46 | WARNING | earnings_surprise_project | forecast 000985.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:46 | WARNING | earnings_surprise_project | forecast 000987.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:46 | WARNING | earnings_surprise_project | forecast 000988.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:46 | WARNING | earnings_surprise_project | forecast 000989.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:46 | WARNING | earnings_surprise_project | forecast 000990.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:46 | WARNING | earnings_surprise_project | forecast 000993.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:46 | WARNING | earnings_surprise_project | forecast 000995.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:46 | WARNING | earnings_surprise_project | forecast 000997.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:49 | WARNING | earnings_surprise_project | forecast 000998.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:49 | WARNING | earnings_surprise_project | forecast 000999.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:49 | WARNING | earnings_surprise_project | forecast 001203.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:49 | WARNING | earnings_surprise_project | forecast 001202.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:49 | WARNING | earnings_surprise_project | forecast 001201.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:49 | WARNING | earnings_surprise_project | forecast 001208.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:49 | WARNING | earnings_surprise_project | forecast 001206.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:49 | WARNING | earnings_surprise_project | forecast 001207.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:50 | WARNING | earnings_surprise_project | forecast 001205.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:50 | WARNING | earnings_surprise_project | forecast 001209.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:50 | WARNING | earnings_surprise_project | forecast 001211.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:50 | WARNING | earnings_surprise_project | forecast 001210.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:52 | WARNING | earnings_surprise_project | forecast 001212.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:53 | WARNING | earnings_surprise_project | forecast 001213.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:53 | WARNING | earnings_surprise_project | forecast 001215.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:53 | WARNING | earnings_surprise_project | forecast 001221.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:53 | WARNING | earnings_surprise_project | forecast 001220.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:53 | WARNING | earnings_surprise_project | forecast 001217.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:53 | WARNING | earnings_surprise_project | forecast 001216.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:53 | WARNING | earnings_surprise_project | forecast 001219.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:53 | WARNING | earnings_surprise_project | forecast 001218.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:53 | WARNING | earnings_surprise_project | forecast 001222.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:53 | WARNING | earnings_surprise_project | forecast 001225.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:53 | WARNING | earnings_surprise_project | forecast 001223.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:56 | WARNING | earnings_surprise_project | forecast 001226.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:56 | WARNING | earnings_surprise_project | forecast 001227.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:56 | WARNING | earnings_surprise_project | forecast 001228.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:56 | WARNING | earnings_surprise_project | forecast 001236.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:56 | WARNING | earnings_surprise_project | forecast 001231.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:56 | WARNING | earnings_surprise_project | forecast 001233.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:56 | WARNING | earnings_surprise_project | forecast 001229.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:56 | WARNING | earnings_surprise_project | forecast 001230.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:56 | WARNING | earnings_surprise_project | forecast 001234.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:56 | WARNING | earnings_surprise_project | forecast 001239.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:56 | WARNING | earnings_surprise_project | forecast 001238.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:56 | WARNING | earnings_surprise_project | forecast 001255.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:59 | WARNING | earnings_surprise_project | forecast 001256.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:59 | WARNING | earnings_surprise_project | forecast 001257.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:59 | WARNING | earnings_surprise_project | forecast 001259.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:59 | WARNING | earnings_surprise_project | forecast 001267.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:59 | WARNING | earnings_surprise_project | forecast 001268.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:59 | WARNING | earnings_surprise_project | forecast 001260.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:59 | WARNING | earnings_surprise_project | forecast 001266.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:59 | WARNING | earnings_surprise_project | forecast 001269.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:39:59 | WARNING | earnings_surprise_project | forecast 001258.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:00 | WARNING | earnings_surprise_project | forecast 001270.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:00 | WARNING | earnings_surprise_project | forecast 001278.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:00 | WARNING | earnings_surprise_project | forecast 001277.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:03 | WARNING | earnings_surprise_project | forecast 001279.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:03 | WARNING | earnings_surprise_project | forecast 001280.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:03 | WARNING | earnings_surprise_project | forecast 001286.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:03 | WARNING | earnings_surprise_project | forecast 001282.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:03 | WARNING | earnings_surprise_project | forecast 001283.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:03 | WARNING | earnings_surprise_project | forecast 001285.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:03 | WARNING | earnings_surprise_project | forecast 001287.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:03 | WARNING | earnings_surprise_project | forecast 001289.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:03 | WARNING | earnings_surprise_project | forecast 001288.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:03 | WARNING | earnings_surprise_project | forecast 001298.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:03 | WARNING | earnings_surprise_project | forecast 001296.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:03 | WARNING | earnings_surprise_project | forecast 001299.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:06 | WARNING | earnings_surprise_project | forecast 001301.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:06 | WARNING | earnings_surprise_project | forecast 001300.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:06 | WARNING | earnings_surprise_project | forecast 001306.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:06 | WARNING | earnings_surprise_project | forecast 001311.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:06 | WARNING | earnings_surprise_project | forecast 001308.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:06 | WARNING | earnings_surprise_project | forecast 001309.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:06 | WARNING | earnings_surprise_project | forecast 001316.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:06 | WARNING | earnings_surprise_project | forecast 001313.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:06 | WARNING | earnings_surprise_project | forecast 001314.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:07 | WARNING | earnings_surprise_project | forecast 001319.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:07 | WARNING | earnings_surprise_project | forecast 001317.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:07 | WARNING | earnings_surprise_project | forecast 001318.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:09 | WARNING | earnings_surprise_project | forecast 001323.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:09 | WARNING | earnings_surprise_project | forecast 001322.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:09 | WARNING | earnings_surprise_project | forecast 001324.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:10 | WARNING | earnings_surprise_project | forecast 001330.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:10 | WARNING | earnings_surprise_project | forecast 001326.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:10 | WARNING | earnings_surprise_project | forecast 001328.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:10 | WARNING | earnings_surprise_project | forecast 001331.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:10 | WARNING | earnings_surprise_project | forecast 001325.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:10 | WARNING | earnings_surprise_project | forecast 001332.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:10 | WARNING | earnings_surprise_project | forecast 001333.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:10 | WARNING | earnings_surprise_project | forecast 001336.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:10 | WARNING | earnings_surprise_project | forecast 001335.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:13 | WARNING | earnings_surprise_project | forecast 001337.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:13 | WARNING | earnings_surprise_project | forecast 001338.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:13 | WARNING | earnings_surprise_project | forecast 001339.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:13 | WARNING | earnings_surprise_project | forecast 001356.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:13 | WARNING | earnings_surprise_project | forecast 001367.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:13 | WARNING | earnings_surprise_project | forecast 001358.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:13 | WARNING | earnings_surprise_project | forecast 001359.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:13 | WARNING | earnings_surprise_project | forecast 001366.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:13 | WARNING | earnings_surprise_project | forecast 001360.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:13 | WARNING | earnings_surprise_project | forecast 001368.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:13 | WARNING | earnings_surprise_project | forecast 001369.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:13 | WARNING | earnings_surprise_project | forecast 001373.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:24 | WARNING | earnings_surprise_project | forecast 002196.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:24 | WARNING | earnings_surprise_project | forecast 002193.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:24 | WARNING | earnings_surprise_project | forecast 002195.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:24 | WARNING | earnings_surprise_project | forecast 002192.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:25 | WARNING | earnings_surprise_project | forecast 002194.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:25 | WARNING | earnings_surprise_project | forecast 002197.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:25 | WARNING | earnings_surprise_project | forecast 002199.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:25 | WARNING | earnings_surprise_project | forecast 002201.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:25 | WARNING | earnings_surprise_project | forecast 002198.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:25 | WARNING | earnings_surprise_project | forecast 002202.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:25 | WARNING | earnings_surprise_project | forecast 002203.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:25 | WARNING | earnings_surprise_project | forecast 002200.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:28 | WARNING | earnings_surprise_project | forecast 002205.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:28 | WARNING | earnings_surprise_project | forecast 002209.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:28 | WARNING | earnings_surprise_project | forecast 002207.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:28 | WARNING | earnings_surprise_project | forecast 002208.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:28 | WARNING | earnings_surprise_project | forecast 002204.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:28 | WARNING | earnings_surprise_project | forecast 002210.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:28 | WARNING | earnings_surprise_project | forecast 002206.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:28 | WARNING | earnings_surprise_project | forecast 002213.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:28 | WARNING | earnings_surprise_project | forecast 002214.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:28 | WARNING | earnings_surprise_project | forecast 002212.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:28 | WARNING | earnings_surprise_project | forecast 002215.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:28 | WARNING | earnings_surprise_project | forecast 002211.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:31 | WARNING | earnings_surprise_project | forecast 002218.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:31 | WARNING | earnings_surprise_project | forecast 002221.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:31 | WARNING | earnings_surprise_project | forecast 002216.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:31 | WARNING | earnings_surprise_project | forecast 002222.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:31 | WARNING | earnings_surprise_project | forecast 002223.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:31 | WARNING | earnings_surprise_project | forecast 002219.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:31 | WARNING | earnings_surprise_project | forecast 002217.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:31 | WARNING | earnings_surprise_project | forecast 002226.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:31 | WARNING | earnings_surprise_project | forecast 002225.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:31 | WARNING | earnings_surprise_project | forecast 002224.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:31 | WARNING | earnings_surprise_project | forecast 002227.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:31 | WARNING | earnings_surprise_project | forecast 002228.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:34 | WARNING | earnings_surprise_project | forecast 002229.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:34 | WARNING | earnings_surprise_project | forecast 002233.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:34 | WARNING | earnings_surprise_project | forecast 002235.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:34 | WARNING | earnings_surprise_project | forecast 002232.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:34 | WARNING | earnings_surprise_project | forecast 002230.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:34 | WARNING | earnings_surprise_project | forecast 002234.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:34 | WARNING | earnings_surprise_project | forecast 002236.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:35 | WARNING | earnings_surprise_project | forecast 002237.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:35 | WARNING | earnings_surprise_project | forecast 002240.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:35 | WARNING | earnings_surprise_project | forecast 002241.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:35 | WARNING | earnings_surprise_project | forecast 002238.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:35 | WARNING | earnings_surprise_project | forecast 002239.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:38 | WARNING | earnings_surprise_project | forecast 002242.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:38 | WARNING | earnings_surprise_project | forecast 002246.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:38 | WARNING | earnings_surprise_project | forecast 002245.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:38 | WARNING | earnings_surprise_project | forecast 002244.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:38 | WARNING | earnings_surprise_project | forecast 002243.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:38 | WARNING | earnings_surprise_project | forecast 002247.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:38 | WARNING | earnings_surprise_project | forecast 002248.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:38 | WARNING | earnings_surprise_project | forecast 002250.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:38 | WARNING | earnings_surprise_project | forecast 002249.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:38 | WARNING | earnings_surprise_project | forecast 002253.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:38 | WARNING | earnings_surprise_project | forecast 002252.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:38 | WARNING | earnings_surprise_project | forecast 002251.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:41 | WARNING | earnings_surprise_project | forecast 002254.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:41 | WARNING | earnings_surprise_project | forecast 002255.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:41 | WARNING | earnings_surprise_project | forecast 002261.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:41 | WARNING | earnings_surprise_project | forecast 002259.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:41 | WARNING | earnings_surprise_project | forecast 002256.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:41 | WARNING | earnings_surprise_project | forecast 002258.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:41 | WARNING | earnings_surprise_project | forecast 002262.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:41 | WARNING | earnings_surprise_project | forecast 002263.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:41 | WARNING | earnings_surprise_project | forecast 002267.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:41 | WARNING | earnings_surprise_project | forecast 002264.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:41 | WARNING | earnings_surprise_project | forecast 002265.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:41 | WARNING | earnings_surprise_project | forecast 002266.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:45 | WARNING | earnings_surprise_project | forecast 002273.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:45 | WARNING | earnings_surprise_project | forecast 002272.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:45 | WARNING | earnings_surprise_project | forecast 002277.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:45 | WARNING | earnings_surprise_project | forecast 002269.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:45 | WARNING | earnings_surprise_project | forecast 002275.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:45 | WARNING | earnings_surprise_project | forecast 002274.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:45 | WARNING | earnings_surprise_project | forecast 002276.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:45 | WARNING | earnings_surprise_project | forecast 002268.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:45 | WARNING | earnings_surprise_project | forecast 002270.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:45 | WARNING | earnings_surprise_project | forecast 002279.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:45 | WARNING | earnings_surprise_project | forecast 002271.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:45 | WARNING | earnings_surprise_project | forecast 002278.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:49 | WARNING | earnings_surprise_project | forecast 002282.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:49 | WARNING | earnings_surprise_project | forecast 002285.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:49 | WARNING | earnings_surprise_project | forecast 002283.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:49 | WARNING | earnings_surprise_project | forecast 002287.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:49 | WARNING | earnings_surprise_project | forecast 002284.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:49 | WARNING | earnings_surprise_project | forecast 002281.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:49 | WARNING | earnings_surprise_project | forecast 002286.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:49 | WARNING | earnings_surprise_project | forecast 002289.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:40:49 | INFO | earnings_surprise_project | Guidance rows collected: 8611
+2026-04-16 17:41:12 | WARNING | earnings_surprise_project | daily 002100.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:12 | WARNING | earnings_surprise_project | daily 002101.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:12 | WARNING | earnings_surprise_project | daily 002102.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:12 | WARNING | earnings_surprise_project | daily 002103.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:12 | WARNING | earnings_surprise_project | daily 002104.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:12 | WARNING | earnings_surprise_project | daily 002108.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:12 | WARNING | earnings_surprise_project | daily 002109.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:12 | WARNING | earnings_surprise_project | daily 002110.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:12 | WARNING | earnings_surprise_project | daily 002107.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:12 | WARNING | earnings_surprise_project | daily 002111.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:12 | WARNING | earnings_surprise_project | daily 002105.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:12 | WARNING | earnings_surprise_project | daily 002106.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:17 | WARNING | earnings_surprise_project | daily 002112.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:17 | WARNING | earnings_surprise_project | daily 002117.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:17 | WARNING | earnings_surprise_project | daily 002116.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:17 | WARNING | earnings_surprise_project | daily 002119.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:17 | WARNING | earnings_surprise_project | daily 002114.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:17 | WARNING | earnings_surprise_project | daily 002115.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:17 | WARNING | earnings_surprise_project | daily 002121.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:17 | WARNING | earnings_surprise_project | daily 002125.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:17 | WARNING | earnings_surprise_project | daily 002123.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:17 | WARNING | earnings_surprise_project | daily 002122.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:17 | WARNING | earnings_surprise_project | daily 002124.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:17 | WARNING | earnings_surprise_project | daily 002120.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:18 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002112.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:19 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002119.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:19 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002124.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:19 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002115.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:19 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002114.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:19 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002116.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:19 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002125.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:22 | WARNING | earnings_surprise_project | daily 002126.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:22 | WARNING | earnings_surprise_project | daily 002131.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:22 | WARNING | earnings_surprise_project | daily 002129.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:22 | WARNING | earnings_surprise_project | daily 002127.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:22 | WARNING | earnings_surprise_project | daily 002128.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:22 | WARNING | earnings_surprise_project | daily 002130.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:22 | WARNING | earnings_surprise_project | daily 002132.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:23 | WARNING | earnings_surprise_project | daily 002136.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:23 | WARNING | earnings_surprise_project | daily 002135.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:23 | WARNING | earnings_surprise_project | daily 002133.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:23 | WARNING | earnings_surprise_project | daily 002137.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:23 | WARNING | earnings_surprise_project | daily 002134.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:24 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002127.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:24 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002126.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:24 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002129.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:24 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002130.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:24 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002128.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:24 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002131.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:24 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002132.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:24 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002136.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:25 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002135.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:25 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002133.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:25 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002134.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:25 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002137.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:27 | WARNING | earnings_surprise_project | daily 002138.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:27 | WARNING | earnings_surprise_project | daily 002141.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:27 | WARNING | earnings_surprise_project | daily 002140.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:27 | WARNING | earnings_surprise_project | daily 002139.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:27 | WARNING | earnings_surprise_project | daily 002142.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:27 | WARNING | earnings_surprise_project | daily 002144.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:27 | WARNING | earnings_surprise_project | daily 002145.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:28 | WARNING | earnings_surprise_project | daily 002148.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:28 | WARNING | earnings_surprise_project | daily 002146.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:28 | WARNING | earnings_surprise_project | daily 002149.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:28 | WARNING | earnings_surprise_project | daily 002150.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:28 | WARNING | earnings_surprise_project | daily 002151.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:28 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002138.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:29 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002141.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:29 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002140.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:29 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002144.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:29 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002145.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:29 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002139.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:29 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002142.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:30 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002148.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:30 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002149.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:30 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002151.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:30 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002146.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:30 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002150.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:32 | WARNING | earnings_surprise_project | daily 002152.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:32 | WARNING | earnings_surprise_project | daily 002153.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:32 | WARNING | earnings_surprise_project | daily 002156.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:32 | WARNING | earnings_surprise_project | daily 002154.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:32 | WARNING | earnings_surprise_project | daily 002157.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:32 | WARNING | earnings_surprise_project | daily 002155.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:32 | WARNING | earnings_surprise_project | daily 002158.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:33 | WARNING | earnings_surprise_project | daily 002159.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:33 | WARNING | earnings_surprise_project | daily 002160.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:33 | WARNING | earnings_surprise_project | daily 002162.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:33 | WARNING | earnings_surprise_project | daily 002163.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:33 | WARNING | earnings_surprise_project | daily 002161.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:33 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002152.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:34 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002156.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:34 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002154.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:34 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002158.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:34 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002157.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:34 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002155.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:34 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002153.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:35 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002159.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:35 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002160.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:35 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002161.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:35 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002163.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:35 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002162.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:37 | WARNING | earnings_surprise_project | daily 002164.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:37 | WARNING | earnings_surprise_project | daily 002166.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:37 | WARNING | earnings_surprise_project | daily 002165.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:37 | WARNING | earnings_surprise_project | daily 002167.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:37 | WARNING | earnings_surprise_project | daily 002169.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:37 | WARNING | earnings_surprise_project | daily 002168.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:37 | WARNING | earnings_surprise_project | daily 002170.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:38 | WARNING | earnings_surprise_project | daily 002173.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:38 | WARNING | earnings_surprise_project | daily 002171.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:38 | WARNING | earnings_surprise_project | daily 002172.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:38 | WARNING | earnings_surprise_project | daily 002174.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:38 | WARNING | earnings_surprise_project | daily 002175.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:38 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002164.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:39 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002165.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:39 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002167.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:39 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002166.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:39 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002169.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:39 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002168.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:40 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002170.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:40 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002171.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:40 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002172.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:40 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002175.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:40 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002173.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:40 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002174.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:41 | WARNING | earnings_surprise_project | daily 002176.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:42 | WARNING | earnings_surprise_project | daily 002178.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:42 | WARNING | earnings_surprise_project | daily 002179.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:42 | WARNING | earnings_surprise_project | daily 002177.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:42 | WARNING | earnings_surprise_project | daily 002180.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:42 | WARNING | earnings_surprise_project | daily 002181.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:43 | WARNING | earnings_surprise_project | daily 002183.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:43 | WARNING | earnings_surprise_project | daily 002182.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:43 | WARNING | earnings_surprise_project | daily 002184.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:43 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002176.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:43 | WARNING | earnings_surprise_project | daily 002185.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:43 | WARNING | earnings_surprise_project | daily 002186.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:43 | WARNING | earnings_surprise_project | daily 002187.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:44 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002178.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:44 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002177.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:44 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002181.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:44 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002180.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:44 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002179.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:45 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002184.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:45 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002185.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:45 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002183.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:45 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002182.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:45 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002186.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:45 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002187.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:46 | WARNING | earnings_surprise_project | daily 002188.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:47 | WARNING | earnings_surprise_project | daily 002189.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:47 | WARNING | earnings_surprise_project | daily 002190.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:47 | WARNING | earnings_surprise_project | daily 002192.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:47 | WARNING | earnings_surprise_project | daily 002191.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:47 | WARNING | earnings_surprise_project | daily 002193.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:48 | WARNING | earnings_surprise_project | daily 002195.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:48 | WARNING | earnings_surprise_project | daily 002194.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:48 | WARNING | earnings_surprise_project | daily 002196.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:48 | WARNING | earnings_surprise_project | daily 002197.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:48 | WARNING | earnings_surprise_project | daily 002198.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:48 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002188.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:48 | WARNING | earnings_surprise_project | daily 002199.SZ failed after retries: 抱歉，您每分钟最多访问该接口500次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:41:48 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002189.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:49 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002190.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:49 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002192.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:49 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002193.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:49 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002191.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:50 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002195.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:50 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002197.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:50 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002194.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:50 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002196.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:50 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002198.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:50 | WARNING | earnings_surprise_project | Akshare daily fallback failed for 002199.SZ: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2026-04-16 17:41:54 | INFO | earnings_surprise_project | Stock daily prices collected: 1040358 rows
+2026-04-16 17:42:04 | WARNING | earnings_surprise_project | daily_basic 000862.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:04 | WARNING | earnings_surprise_project | daily_basic 000859.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:04 | WARNING | earnings_surprise_project | daily_basic 000863.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:04 | WARNING | earnings_surprise_project | daily_basic 000868.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:04 | WARNING | earnings_surprise_project | daily_basic 000875.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:04 | WARNING | earnings_surprise_project | daily_basic 000869.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:04 | WARNING | earnings_surprise_project | daily_basic 000876.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:04 | WARNING | earnings_surprise_project | daily_basic 000877.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:04 | WARNING | earnings_surprise_project | daily_basic 000878.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:04 | WARNING | earnings_surprise_project | daily_basic 000882.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:04 | WARNING | earnings_surprise_project | daily_basic 000880.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:04 | WARNING | earnings_surprise_project | daily_basic 000881.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:07 | WARNING | earnings_surprise_project | daily_basic 000883.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:07 | WARNING | earnings_surprise_project | daily_basic 000886.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:07 | WARNING | earnings_surprise_project | daily_basic 000885.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:07 | WARNING | earnings_surprise_project | daily_basic 000887.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:07 | WARNING | earnings_surprise_project | daily_basic 000889.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:07 | WARNING | earnings_surprise_project | daily_basic 000888.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:07 | WARNING | earnings_surprise_project | daily_basic 000892.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:07 | WARNING | earnings_surprise_project | daily_basic 000890.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:08 | WARNING | earnings_surprise_project | daily_basic 000893.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:08 | WARNING | earnings_surprise_project | daily_basic 000895.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:08 | WARNING | earnings_surprise_project | daily_basic 000898.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:08 | WARNING | earnings_surprise_project | daily_basic 000897.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:10 | WARNING | earnings_surprise_project | daily_basic 000899.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:11 | WARNING | earnings_surprise_project | daily_basic 000900.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:11 | WARNING | earnings_surprise_project | daily_basic 000901.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:11 | WARNING | earnings_surprise_project | daily_basic 000902.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:11 | WARNING | earnings_surprise_project | daily_basic 000905.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:11 | WARNING | earnings_surprise_project | daily_basic 000906.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:11 | WARNING | earnings_surprise_project | daily_basic 000903.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:11 | WARNING | earnings_surprise_project | daily_basic 000908.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:11 | WARNING | earnings_surprise_project | daily_basic 000911.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:11 | WARNING | earnings_surprise_project | daily_basic 000909.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:11 | WARNING | earnings_surprise_project | daily_basic 000912.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:11 | WARNING | earnings_surprise_project | daily_basic 000910.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:14 | WARNING | earnings_surprise_project | daily_basic 000913.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:14 | WARNING | earnings_surprise_project | daily_basic 000915.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:14 | WARNING | earnings_surprise_project | daily_basic 000917.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:14 | WARNING | earnings_surprise_project | daily_basic 000919.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:14 | WARNING | earnings_surprise_project | daily_basic 000922.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:14 | WARNING | earnings_surprise_project | daily_basic 000920.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:14 | WARNING | earnings_surprise_project | daily_basic 000921.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:14 | WARNING | earnings_surprise_project | daily_basic 000923.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:14 | WARNING | earnings_surprise_project | daily_basic 000926.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:14 | WARNING | earnings_surprise_project | daily_basic 000927.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:14 | WARNING | earnings_surprise_project | daily_basic 000925.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:14 | WARNING | earnings_surprise_project | daily_basic 000928.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:17 | WARNING | earnings_surprise_project | daily_basic 000932.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:17 | WARNING | earnings_surprise_project | daily_basic 000929.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:17 | WARNING | earnings_surprise_project | daily_basic 000931.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:17 | WARNING | earnings_surprise_project | daily_basic 000930.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:17 | WARNING | earnings_surprise_project | daily_basic 000933.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:17 | WARNING | earnings_surprise_project | daily_basic 000936.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:17 | WARNING | earnings_surprise_project | daily_basic 000935.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:17 | WARNING | earnings_surprise_project | daily_basic 000937.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:17 | WARNING | earnings_surprise_project | daily_basic 000938.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:17 | WARNING | earnings_surprise_project | daily_basic 000948.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:17 | WARNING | earnings_surprise_project | daily_basic 000949.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:17 | WARNING | earnings_surprise_project | daily_basic 000950.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:20 | WARNING | earnings_surprise_project | daily_basic 000952.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:20 | WARNING | earnings_surprise_project | daily_basic 000951.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:20 | WARNING | earnings_surprise_project | daily_basic 000953.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:20 | WARNING | earnings_surprise_project | daily_basic 000957.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:20 | WARNING | earnings_surprise_project | daily_basic 000955.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:20 | WARNING | earnings_surprise_project | daily_basic 000958.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:20 | WARNING | earnings_surprise_project | daily_basic 000959.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:20 | WARNING | earnings_surprise_project | daily_basic 000960.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:21 | WARNING | earnings_surprise_project | daily_basic 000962.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:21 | WARNING | earnings_surprise_project | daily_basic 000966.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:21 | WARNING | earnings_surprise_project | daily_basic 000963.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:21 | WARNING | earnings_surprise_project | daily_basic 000965.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:24 | WARNING | earnings_surprise_project | daily_basic 000968.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:24 | WARNING | earnings_surprise_project | daily_basic 000969.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:24 | WARNING | earnings_surprise_project | daily_basic 000972.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:24 | WARNING | earnings_surprise_project | daily_basic 000970.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:24 | WARNING | earnings_surprise_project | daily_basic 000967.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:24 | WARNING | earnings_surprise_project | daily_basic 000973.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:24 | WARNING | earnings_surprise_project | daily_basic 000977.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:24 | WARNING | earnings_surprise_project | daily_basic 000975.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:24 | WARNING | earnings_surprise_project | daily_basic 000978.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:24 | WARNING | earnings_surprise_project | daily_basic 000980.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:24 | WARNING | earnings_surprise_project | daily_basic 000983.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:24 | WARNING | earnings_surprise_project | daily_basic 000981.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:27 | WARNING | earnings_surprise_project | daily_basic 000988.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:27 | WARNING | earnings_surprise_project | daily_basic 000990.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:27 | WARNING | earnings_surprise_project | daily_basic 000985.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:27 | WARNING | earnings_surprise_project | daily_basic 000989.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:27 | WARNING | earnings_surprise_project | daily_basic 000995.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:27 | WARNING | earnings_surprise_project | daily_basic 000987.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:27 | WARNING | earnings_surprise_project | daily_basic 000993.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:27 | WARNING | earnings_surprise_project | daily_basic 000997.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:27 | WARNING | earnings_surprise_project | daily_basic 000998.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:27 | WARNING | earnings_surprise_project | daily_basic 000999.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:27 | WARNING | earnings_surprise_project | daily_basic 001202.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:27 | WARNING | earnings_surprise_project | daily_basic 001201.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:30 | WARNING | earnings_surprise_project | daily_basic 001206.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:30 | WARNING | earnings_surprise_project | daily_basic 001205.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:30 | WARNING | earnings_surprise_project | daily_basic 001203.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:30 | WARNING | earnings_surprise_project | daily_basic 001207.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:30 | WARNING | earnings_surprise_project | daily_basic 001211.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:30 | WARNING | earnings_surprise_project | daily_basic 001212.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:30 | WARNING | earnings_surprise_project | daily_basic 001208.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:30 | WARNING | earnings_surprise_project | daily_basic 001213.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:30 | WARNING | earnings_surprise_project | daily_basic 001209.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:30 | WARNING | earnings_surprise_project | daily_basic 001210.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:31 | WARNING | earnings_surprise_project | daily_basic 001215.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:31 | WARNING | earnings_surprise_project | daily_basic 001216.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:34 | WARNING | earnings_surprise_project | daily_basic 001217.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:34 | WARNING | earnings_surprise_project | daily_basic 001219.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:34 | WARNING | earnings_surprise_project | daily_basic 001218.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:34 | WARNING | earnings_surprise_project | daily_basic 001221.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:34 | WARNING | earnings_surprise_project | daily_basic 001223.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:34 | WARNING | earnings_surprise_project | daily_basic 001222.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:34 | WARNING | earnings_surprise_project | daily_basic 001226.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:34 | WARNING | earnings_surprise_project | daily_basic 001225.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:34 | WARNING | earnings_surprise_project | daily_basic 001227.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:34 | WARNING | earnings_surprise_project | daily_basic 001220.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:34 | WARNING | earnings_surprise_project | daily_basic 001228.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:34 | WARNING | earnings_surprise_project | daily_basic 001229.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:37 | WARNING | earnings_surprise_project | daily_basic 001230.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:37 | WARNING | earnings_surprise_project | daily_basic 001231.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:37 | WARNING | earnings_surprise_project | daily_basic 001233.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:37 | WARNING | earnings_surprise_project | daily_basic 001236.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:37 | WARNING | earnings_surprise_project | daily_basic 001234.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:37 | WARNING | earnings_surprise_project | daily_basic 001238.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:37 | WARNING | earnings_surprise_project | daily_basic 001239.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:37 | WARNING | earnings_surprise_project | daily_basic 001256.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:37 | WARNING | earnings_surprise_project | daily_basic 001258.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:37 | WARNING | earnings_surprise_project | daily_basic 001255.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:37 | WARNING | earnings_surprise_project | daily_basic 001257.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:37 | WARNING | earnings_surprise_project | daily_basic 001259.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:40 | WARNING | earnings_surprise_project | daily_basic 001267.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:40 | WARNING | earnings_surprise_project | daily_basic 001266.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:40 | WARNING | earnings_surprise_project | daily_basic 001260.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:40 | WARNING | earnings_surprise_project | daily_basic 001268.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:41 | WARNING | earnings_surprise_project | daily_basic 001282.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:41 | WARNING | earnings_surprise_project | daily_basic 001269.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:41 | WARNING | earnings_surprise_project | daily_basic 001270.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:41 | WARNING | earnings_surprise_project | daily_basic 001280.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:41 | WARNING | earnings_surprise_project | daily_basic 001277.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:41 | WARNING | earnings_surprise_project | daily_basic 001278.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:41 | WARNING | earnings_surprise_project | daily_basic 001279.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:41 | WARNING | earnings_surprise_project | daily_basic 001283.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:44 | WARNING | earnings_surprise_project | daily_basic 001285.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:44 | WARNING | earnings_surprise_project | daily_basic 001288.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:44 | WARNING | earnings_surprise_project | daily_basic 001286.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:44 | WARNING | earnings_surprise_project | daily_basic 001287.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:44 | WARNING | earnings_surprise_project | daily_basic 001298.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:44 | WARNING | earnings_surprise_project | daily_basic 001306.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:44 | WARNING | earnings_surprise_project | daily_basic 001289.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:44 | WARNING | earnings_surprise_project | daily_basic 001299.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:44 | WARNING | earnings_surprise_project | daily_basic 001296.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:44 | WARNING | earnings_surprise_project | daily_basic 001301.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:44 | WARNING | earnings_surprise_project | daily_basic 001300.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:44 | WARNING | earnings_surprise_project | daily_basic 001308.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:47 | WARNING | earnings_surprise_project | daily_basic 001309.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:47 | WARNING | earnings_surprise_project | daily_basic 001314.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:47 | WARNING | earnings_surprise_project | daily_basic 001311.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:47 | WARNING | earnings_surprise_project | daily_basic 001313.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:47 | WARNING | earnings_surprise_project | daily_basic 001322.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:47 | WARNING | earnings_surprise_project | daily_basic 001317.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:47 | WARNING | earnings_surprise_project | daily_basic 001324.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:47 | WARNING | earnings_surprise_project | daily_basic 001316.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:47 | WARNING | earnings_surprise_project | daily_basic 001323.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:47 | WARNING | earnings_surprise_project | daily_basic 001318.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:47 | WARNING | earnings_surprise_project | daily_basic 001325.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:47 | WARNING | earnings_surprise_project | daily_basic 001319.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:50 | WARNING | earnings_surprise_project | daily_basic 001326.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:50 | WARNING | earnings_surprise_project | daily_basic 001331.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:50 | WARNING | earnings_surprise_project | daily_basic 001330.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:50 | WARNING | earnings_surprise_project | daily_basic 001328.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:50 | WARNING | earnings_surprise_project | daily_basic 001332.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:50 | WARNING | earnings_surprise_project | daily_basic 001333.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:50 | WARNING | earnings_surprise_project | daily_basic 001338.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:50 | WARNING | earnings_surprise_project | daily_basic 001336.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:50 | WARNING | earnings_surprise_project | daily_basic 001337.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:50 | WARNING | earnings_surprise_project | daily_basic 001356.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:50 | WARNING | earnings_surprise_project | daily_basic 001335.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:51 | WARNING | earnings_surprise_project | daily_basic 001339.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:53 | WARNING | earnings_surprise_project | daily_basic 001359.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:53 | WARNING | earnings_surprise_project | daily_basic 001358.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:53 | WARNING | earnings_surprise_project | daily_basic 001366.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:53 | WARNING | earnings_surprise_project | daily_basic 001360.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:54 | WARNING | earnings_surprise_project | daily_basic 001376.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:54 | WARNING | earnings_surprise_project | daily_basic 001367.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:54 | WARNING | earnings_surprise_project | daily_basic 001380.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:54 | WARNING | earnings_surprise_project | daily_basic 001378.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:54 | WARNING | earnings_surprise_project | daily_basic 001373.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:54 | WARNING | earnings_surprise_project | daily_basic 001369.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:54 | WARNING | earnings_surprise_project | daily_basic 001379.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:42:54 | WARNING | earnings_surprise_project | daily_basic 001368.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:05 | WARNING | earnings_surprise_project | daily_basic 002199.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:05 | WARNING | earnings_surprise_project | daily_basic 002195.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:05 | WARNING | earnings_surprise_project | daily_basic 002193.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:05 | WARNING | earnings_surprise_project | daily_basic 002200.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:05 | WARNING | earnings_surprise_project | daily_basic 002198.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:05 | WARNING | earnings_surprise_project | daily_basic 002201.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:05 | WARNING | earnings_surprise_project | daily_basic 002204.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:05 | WARNING | earnings_surprise_project | daily_basic 002202.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:05 | WARNING | earnings_surprise_project | daily_basic 002203.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:05 | WARNING | earnings_surprise_project | daily_basic 002207.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:05 | WARNING | earnings_surprise_project | daily_basic 002205.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:05 | WARNING | earnings_surprise_project | daily_basic 002206.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:08 | WARNING | earnings_surprise_project | daily_basic 002210.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:08 | WARNING | earnings_surprise_project | daily_basic 002209.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:08 | WARNING | earnings_surprise_project | daily_basic 002212.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:08 | WARNING | earnings_surprise_project | daily_basic 002208.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:08 | WARNING | earnings_surprise_project | daily_basic 002211.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:08 | WARNING | earnings_surprise_project | daily_basic 002213.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:08 | WARNING | earnings_surprise_project | daily_basic 002216.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:08 | WARNING | earnings_surprise_project | daily_basic 002215.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:08 | WARNING | earnings_surprise_project | daily_basic 002214.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:08 | WARNING | earnings_surprise_project | daily_basic 002217.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:08 | WARNING | earnings_surprise_project | daily_basic 002218.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:08 | WARNING | earnings_surprise_project | daily_basic 002219.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:11 | WARNING | earnings_surprise_project | daily_basic 002222.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:11 | WARNING | earnings_surprise_project | daily_basic 002221.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:11 | WARNING | earnings_surprise_project | daily_basic 002224.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:11 | WARNING | earnings_surprise_project | daily_basic 002223.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:11 | WARNING | earnings_surprise_project | daily_basic 002226.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:11 | WARNING | earnings_surprise_project | daily_basic 002225.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:11 | WARNING | earnings_surprise_project | daily_basic 002228.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:11 | WARNING | earnings_surprise_project | daily_basic 002227.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:12 | WARNING | earnings_surprise_project | daily_basic 002229.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:12 | WARNING | earnings_surprise_project | daily_basic 002230.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:12 | WARNING | earnings_surprise_project | daily_basic 002232.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:12 | WARNING | earnings_surprise_project | daily_basic 002233.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:14 | WARNING | earnings_surprise_project | daily_basic 002234.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:14 | WARNING | earnings_surprise_project | daily_basic 002235.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:14 | WARNING | earnings_surprise_project | daily_basic 002237.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:15 | WARNING | earnings_surprise_project | daily_basic 002236.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:15 | WARNING | earnings_surprise_project | daily_basic 002238.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:15 | WARNING | earnings_surprise_project | daily_basic 002239.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:15 | WARNING | earnings_surprise_project | daily_basic 002241.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:15 | WARNING | earnings_surprise_project | daily_basic 002242.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:15 | WARNING | earnings_surprise_project | daily_basic 002240.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:15 | WARNING | earnings_surprise_project | daily_basic 002243.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:15 | WARNING | earnings_surprise_project | daily_basic 002244.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:15 | WARNING | earnings_surprise_project | daily_basic 002245.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:18 | WARNING | earnings_surprise_project | daily_basic 002246.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:18 | WARNING | earnings_surprise_project | daily_basic 002248.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:18 | WARNING | earnings_surprise_project | daily_basic 002247.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:18 | WARNING | earnings_surprise_project | daily_basic 002249.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:18 | WARNING | earnings_surprise_project | daily_basic 002250.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:18 | WARNING | earnings_surprise_project | daily_basic 002251.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:18 | WARNING | earnings_surprise_project | daily_basic 002252.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:18 | WARNING | earnings_surprise_project | daily_basic 002253.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:18 | WARNING | earnings_surprise_project | daily_basic 002255.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:18 | WARNING | earnings_surprise_project | daily_basic 002254.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:18 | WARNING | earnings_surprise_project | daily_basic 002256.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:18 | WARNING | earnings_surprise_project | daily_basic 002258.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:21 | WARNING | earnings_surprise_project | daily_basic 002259.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:21 | WARNING | earnings_surprise_project | daily_basic 002261.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:21 | WARNING | earnings_surprise_project | daily_basic 002262.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:21 | WARNING | earnings_surprise_project | daily_basic 002263.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:21 | WARNING | earnings_surprise_project | daily_basic 002264.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:21 | WARNING | earnings_surprise_project | daily_basic 002265.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:21 | WARNING | earnings_surprise_project | daily_basic 002268.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:21 | WARNING | earnings_surprise_project | daily_basic 002269.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:21 | WARNING | earnings_surprise_project | daily_basic 002266.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:21 | WARNING | earnings_surprise_project | daily_basic 002267.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:22 | WARNING | earnings_surprise_project | daily_basic 002270.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:22 | WARNING | earnings_surprise_project | daily_basic 002271.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:24 | WARNING | earnings_surprise_project | daily_basic 002275.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:24 | WARNING | earnings_surprise_project | daily_basic 002273.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:24 | WARNING | earnings_surprise_project | daily_basic 002272.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:24 | WARNING | earnings_surprise_project | daily_basic 002274.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:24 | WARNING | earnings_surprise_project | daily_basic 002276.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:24 | WARNING | earnings_surprise_project | daily_basic 002277.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:25 | WARNING | earnings_surprise_project | daily_basic 002278.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:25 | WARNING | earnings_surprise_project | daily_basic 002279.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:25 | WARNING | earnings_surprise_project | daily_basic 002282.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:25 | WARNING | earnings_surprise_project | daily_basic 002281.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:25 | WARNING | earnings_surprise_project | daily_basic 002283.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:25 | WARNING | earnings_surprise_project | daily_basic 002284.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:28 | WARNING | earnings_surprise_project | daily_basic 002286.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:28 | WARNING | earnings_surprise_project | daily_basic 002287.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:28 | WARNING | earnings_surprise_project | daily_basic 002285.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:28 | WARNING | earnings_surprise_project | daily_basic 002289.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:43:28 | INFO | earnings_surprise_project | Daily basic data collected: 805417 rows
+2026-04-16 17:43:40 | INFO | earnings_surprise_project | Guidance events constructed: 4832 rows
+2026-04-16 17:46:53 | INFO | earnings_surprise_project | Final event-level rows: 29185
+2026-04-16 17:46:56 | INFO | earnings_surprise_project | Selected spec=all_sample_rank, signal=es_rank_q, score=7.985, n=29185
+2026-04-16 17:47:01 | INFO | earnings_surprise_project | event_level rows=29185 cols=25
+2026-04-16 17:47:01 | INFO | earnings_surprise_project | event_level_raw rows=29185 cols=17
+2026-04-16 17:47:01 | INFO | earnings_surprise_project | event_paths rows=1751100 cols=5
+2026-04-16 17:47:01 | INFO | earnings_surprise_project | spec_table rows=6 cols=5
+2026-04-16 17:47:02 | INFO | earnings_surprise_project | descriptive_table rows=7 cols=9
+2026-04-16 17:47:02 | INFO | earnings_surprise_project | regression_table rows=15 cols=8
+2026-04-16 17:47:04 | INFO | earnings_surprise_project | Pipeline complete.
+2026-04-16 17:48:00 | INFO | earnings_surprise_project | Core outputs saved.
+2026-04-16 17:48:01 | INFO | earnings_surprise_project | Guidance-design pipeline complete.
+2026-04-16 17:49:26 | INFO | earnings_surprise_project | Guidance-design pipeline start | RUN_MODE=test | period=20200101-20260416
+2026-04-16 17:49:27 | INFO | earnings_surprise_project | Tushare client initialized.
+2026-04-16 17:49:27 | INFO | earnings_surprise_project | Akshare client initialized.
+2026-04-16 17:49:28 | INFO | earnings_surprise_project | Stock universe from Tushare: 800 rows
+2026-04-16 17:49:39 | WARNING | earnings_surprise_project | forecast 001366.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:39 | WARNING | earnings_surprise_project | forecast 001368.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:39 | WARNING | earnings_surprise_project | forecast 001373.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:39 | WARNING | earnings_surprise_project | forecast 002014.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:39 | WARNING | earnings_surprise_project | forecast 002040.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:39 | WARNING | earnings_surprise_project | forecast 002060.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:39 | WARNING | earnings_surprise_project | forecast 002062.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:39 | WARNING | earnings_surprise_project | forecast 002063.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:42 | WARNING | earnings_surprise_project | forecast 002117.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:42 | WARNING | earnings_surprise_project | forecast 002140.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:42 | WARNING | earnings_surprise_project | forecast 002142.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:43 | WARNING | earnings_surprise_project | forecast 002195.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:43 | WARNING | earnings_surprise_project | forecast 002193.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:43 | WARNING | earnings_surprise_project | forecast 002196.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:43 | WARNING | earnings_surprise_project | forecast 002194.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:43 | WARNING | earnings_surprise_project | forecast 002192.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:46 | WARNING | earnings_surprise_project | forecast 002197.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:46 | WARNING | earnings_surprise_project | forecast 002198.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:46 | WARNING | earnings_surprise_project | forecast 002199.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:46 | WARNING | earnings_surprise_project | forecast 002202.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:46 | WARNING | earnings_surprise_project | forecast 002204.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:46 | WARNING | earnings_surprise_project | forecast 002200.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:46 | WARNING | earnings_surprise_project | forecast 002203.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:46 | WARNING | earnings_surprise_project | forecast 002201.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:49 | WARNING | earnings_surprise_project | forecast 002205.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:49 | WARNING | earnings_surprise_project | forecast 002206.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:49 | WARNING | earnings_surprise_project | forecast 002207.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:49 | WARNING | earnings_surprise_project | forecast 002211.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:49 | WARNING | earnings_surprise_project | forecast 002208.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:49 | WARNING | earnings_surprise_project | forecast 002209.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:49 | WARNING | earnings_surprise_project | forecast 002212.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:49 | WARNING | earnings_surprise_project | forecast 002210.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:52 | WARNING | earnings_surprise_project | forecast 002213.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:52 | WARNING | earnings_surprise_project | forecast 002214.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:52 | WARNING | earnings_surprise_project | forecast 002215.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:53 | WARNING | earnings_surprise_project | forecast 002219.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:53 | WARNING | earnings_surprise_project | forecast 002218.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:53 | WARNING | earnings_surprise_project | forecast 002216.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:53 | WARNING | earnings_surprise_project | forecast 002221.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:53 | WARNING | earnings_surprise_project | forecast 002217.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:55 | WARNING | earnings_surprise_project | forecast 002222.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:56 | WARNING | earnings_surprise_project | forecast 002223.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:56 | WARNING | earnings_surprise_project | forecast 002225.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:56 | WARNING | earnings_surprise_project | forecast 002224.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:56 | WARNING | earnings_surprise_project | forecast 002229.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:56 | WARNING | earnings_surprise_project | forecast 002226.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:56 | WARNING | earnings_surprise_project | forecast 002228.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:56 | WARNING | earnings_surprise_project | forecast 002227.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:59 | WARNING | earnings_surprise_project | forecast 002230.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:59 | WARNING | earnings_surprise_project | forecast 002232.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:59 | WARNING | earnings_surprise_project | forecast 002233.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:59 | WARNING | earnings_surprise_project | forecast 002234.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:59 | WARNING | earnings_surprise_project | forecast 002237.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:59 | WARNING | earnings_surprise_project | forecast 002236.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:59 | WARNING | earnings_surprise_project | forecast 002235.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:49:59 | WARNING | earnings_surprise_project | forecast 002238.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:02 | WARNING | earnings_surprise_project | forecast 002239.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:02 | WARNING | earnings_surprise_project | forecast 002240.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:02 | WARNING | earnings_surprise_project | forecast 002243.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:02 | WARNING | earnings_surprise_project | forecast 002241.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:02 | WARNING | earnings_surprise_project | forecast 002244.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:02 | WARNING | earnings_surprise_project | forecast 002245.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:02 | WARNING | earnings_surprise_project | forecast 002242.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:02 | WARNING | earnings_surprise_project | forecast 002246.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:05 | WARNING | earnings_surprise_project | forecast 002247.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:05 | WARNING | earnings_surprise_project | forecast 002248.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:06 | WARNING | earnings_surprise_project | forecast 002249.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:06 | WARNING | earnings_surprise_project | forecast 002252.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:06 | WARNING | earnings_surprise_project | forecast 002251.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:06 | WARNING | earnings_surprise_project | forecast 002253.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:06 | WARNING | earnings_surprise_project | forecast 002250.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:06 | WARNING | earnings_surprise_project | forecast 002254.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:09 | WARNING | earnings_surprise_project | forecast 002255.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:09 | WARNING | earnings_surprise_project | forecast 002256.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:09 | WARNING | earnings_surprise_project | forecast 002258.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:09 | WARNING | earnings_surprise_project | forecast 002261.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:09 | WARNING | earnings_surprise_project | forecast 002259.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:09 | WARNING | earnings_surprise_project | forecast 002263.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:09 | WARNING | earnings_surprise_project | forecast 002262.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:09 | WARNING | earnings_surprise_project | forecast 002264.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:12 | WARNING | earnings_surprise_project | forecast 002265.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:12 | WARNING | earnings_surprise_project | forecast 002266.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:12 | WARNING | earnings_surprise_project | forecast 002269.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:12 | WARNING | earnings_surprise_project | forecast 002270.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:12 | WARNING | earnings_surprise_project | forecast 002267.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:12 | WARNING | earnings_surprise_project | forecast 002268.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:12 | WARNING | earnings_surprise_project | forecast 002271.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:12 | WARNING | earnings_surprise_project | forecast 002272.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:15 | WARNING | earnings_surprise_project | forecast 002273.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:15 | WARNING | earnings_surprise_project | forecast 002274.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:15 | WARNING | earnings_surprise_project | forecast 002277.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:15 | WARNING | earnings_surprise_project | forecast 002275.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:15 | WARNING | earnings_surprise_project | forecast 002276.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:15 | WARNING | earnings_surprise_project | forecast 002278.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:15 | WARNING | earnings_surprise_project | forecast 002279.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:15 | WARNING | earnings_surprise_project | forecast 002281.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:18 | WARNING | earnings_surprise_project | forecast 002282.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:18 | WARNING | earnings_surprise_project | forecast 002283.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:19 | WARNING | earnings_surprise_project | forecast 002285.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:19 | WARNING | earnings_surprise_project | forecast 002284.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:19 | WARNING | earnings_surprise_project | forecast 002287.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:19 | WARNING | earnings_surprise_project | forecast 002289.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:19 | WARNING | earnings_surprise_project | forecast 002286.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:19 | INFO | earnings_surprise_project | Guidance rows collected: 10920
+2026-04-16 17:50:25 | INFO | earnings_surprise_project | Stock daily prices collected: 1160398 rows
+2026-04-16 17:50:38 | WARNING | earnings_surprise_project | daily_basic 002208.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:38 | WARNING | earnings_surprise_project | daily_basic 002206.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:38 | WARNING | earnings_surprise_project | daily_basic 002211.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:38 | WARNING | earnings_surprise_project | daily_basic 002210.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:38 | WARNING | earnings_surprise_project | daily_basic 002207.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:38 | WARNING | earnings_surprise_project | daily_basic 002209.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:38 | WARNING | earnings_surprise_project | daily_basic 002205.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:38 | WARNING | earnings_surprise_project | daily_basic 002204.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:41 | WARNING | earnings_surprise_project | daily_basic 002216.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:41 | WARNING | earnings_surprise_project | daily_basic 002213.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:41 | WARNING | earnings_surprise_project | daily_basic 002215.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:41 | WARNING | earnings_surprise_project | daily_basic 002214.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:41 | WARNING | earnings_surprise_project | daily_basic 002219.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:41 | WARNING | earnings_surprise_project | daily_basic 002212.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:41 | WARNING | earnings_surprise_project | daily_basic 002217.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:41 | WARNING | earnings_surprise_project | daily_basic 002218.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:45 | WARNING | earnings_surprise_project | daily_basic 002228.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:45 | WARNING | earnings_surprise_project | daily_basic 002221.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:45 | WARNING | earnings_surprise_project | daily_basic 002222.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:45 | WARNING | earnings_surprise_project | daily_basic 002224.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:45 | WARNING | earnings_surprise_project | daily_basic 002227.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:45 | WARNING | earnings_surprise_project | daily_basic 002225.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:45 | WARNING | earnings_surprise_project | daily_basic 002223.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:45 | WARNING | earnings_surprise_project | daily_basic 002226.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:48 | WARNING | earnings_surprise_project | daily_basic 002230.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:48 | WARNING | earnings_surprise_project | daily_basic 002236.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:48 | WARNING | earnings_surprise_project | daily_basic 002233.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:48 | WARNING | earnings_surprise_project | daily_basic 002229.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:48 | WARNING | earnings_surprise_project | daily_basic 002235.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:48 | WARNING | earnings_surprise_project | daily_basic 002237.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:48 | WARNING | earnings_surprise_project | daily_basic 002232.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:48 | WARNING | earnings_surprise_project | daily_basic 002234.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:51 | WARNING | earnings_surprise_project | daily_basic 002241.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:51 | WARNING | earnings_surprise_project | daily_basic 002238.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:51 | WARNING | earnings_surprise_project | daily_basic 002244.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:51 | WARNING | earnings_surprise_project | daily_basic 002242.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:51 | WARNING | earnings_surprise_project | daily_basic 002243.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:51 | WARNING | earnings_surprise_project | daily_basic 002240.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:51 | WARNING | earnings_surprise_project | daily_basic 002239.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:51 | WARNING | earnings_surprise_project | daily_basic 002245.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:55 | WARNING | earnings_surprise_project | daily_basic 002246.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:55 | WARNING | earnings_surprise_project | daily_basic 002247.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:55 | WARNING | earnings_surprise_project | daily_basic 002248.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:55 | WARNING | earnings_surprise_project | daily_basic 002250.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:55 | WARNING | earnings_surprise_project | daily_basic 002249.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:55 | WARNING | earnings_surprise_project | daily_basic 002252.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:55 | WARNING | earnings_surprise_project | daily_basic 002253.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:55 | WARNING | earnings_surprise_project | daily_basic 002251.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:58 | WARNING | earnings_surprise_project | daily_basic 002254.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:58 | WARNING | earnings_surprise_project | daily_basic 002258.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:58 | WARNING | earnings_surprise_project | daily_basic 002256.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:58 | WARNING | earnings_surprise_project | daily_basic 002255.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:58 | WARNING | earnings_surprise_project | daily_basic 002259.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:58 | WARNING | earnings_surprise_project | daily_basic 002261.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:58 | WARNING | earnings_surprise_project | daily_basic 002262.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:50:58 | WARNING | earnings_surprise_project | daily_basic 002263.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:51:01 | WARNING | earnings_surprise_project | daily_basic 002264.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:51:01 | WARNING | earnings_surprise_project | daily_basic 002265.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:51:01 | WARNING | earnings_surprise_project | daily_basic 002266.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:51:01 | WARNING | earnings_surprise_project | daily_basic 002268.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:51:01 | WARNING | earnings_surprise_project | daily_basic 002267.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:51:01 | WARNING | earnings_surprise_project | daily_basic 002269.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:51:01 | WARNING | earnings_surprise_project | daily_basic 002271.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:51:01 | WARNING | earnings_surprise_project | daily_basic 002270.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:51:04 | WARNING | earnings_surprise_project | daily_basic 002272.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:51:04 | WARNING | earnings_surprise_project | daily_basic 002273.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:51:04 | WARNING | earnings_surprise_project | daily_basic 002274.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:51:04 | WARNING | earnings_surprise_project | daily_basic 002275.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:51:04 | WARNING | earnings_surprise_project | daily_basic 002276.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:51:05 | WARNING | earnings_surprise_project | daily_basic 002277.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:51:05 | WARNING | earnings_surprise_project | daily_basic 002278.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:51:05 | WARNING | earnings_surprise_project | daily_basic 002279.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:51:07 | WARNING | earnings_surprise_project | daily_basic 002281.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:51:08 | WARNING | earnings_surprise_project | daily_basic 002282.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:51:08 | WARNING | earnings_surprise_project | daily_basic 002284.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:51:08 | WARNING | earnings_surprise_project | daily_basic 002285.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:51:08 | WARNING | earnings_surprise_project | daily_basic 002283.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:51:08 | WARNING | earnings_surprise_project | daily_basic 002286.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:51:08 | WARNING | earnings_surprise_project | daily_basic 002287.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:51:08 | WARNING | earnings_surprise_project | daily_basic 002289.SZ failed after retries: 抱歉，您每分钟最多访问该接口200次，权限的具体详情访问：https://tushare.pro/document/1?doc_id=108。
+2026-04-16 17:51:08 | INFO | earnings_surprise_project | Daily basic data collected: 1038799 rows
+2026-04-16 17:51:20 | INFO | earnings_surprise_project | Guidance events constructed: 6159 rows
+2026-04-16 17:56:00 | INFO | earnings_surprise_project | Core outputs saved.
+2026-04-16 17:56:00 | INFO | earnings_surprise_project | Guidance-design pipeline complete.

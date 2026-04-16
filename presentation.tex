@@ -1,0 +1,321 @@
+\documentclass[aspectratio=169,11pt]{beamer}
+
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{ragged2e}
+
+% ---------- Theme and Style ----------
+\usetheme{Madrid}
+\usecolortheme{default}
+\setbeamertemplate{navigation symbols}{}
+
+% Color palette
+\definecolor{NavyPrimary}{RGB}{16,42,67}
+\definecolor{TealAccent}{RGB}{34,115,122}
+\definecolor{LightGrayBg}{RGB}{245,247,250}
+\definecolor{TextDark}{RGB}{35,35,35}
+
+\setbeamercolor{normal text}{fg=TextDark,bg=white}
+\setbeamercolor{title}{fg=white,bg=NavyPrimary}
+\setbeamercolor{frametitle}{fg=white,bg=NavyPrimary}
+\setbeamercolor{structure}{fg=NavyPrimary}
+\setbeamercolor{section in toc}{fg=NavyPrimary}
+\setbeamercolor{block title}{fg=white,bg=TealAccent}
+\setbeamercolor{block body}{fg=TextDark,bg=LightGrayBg}
+\setbeamercolor{item projected}{fg=white,bg=TealAccent}
+
+\setbeamertemplate{blocks}[rounded][shadow=false]
+\setbeamertemplate{footline}[frame number]
+\setbeamertemplate{itemize item}{\color{TealAccent}$\blacktriangleright$}
+\setbeamertemplate{itemize subitem}{\color{TealAccent}$\bullet$}
+
+\addtobeamertemplate{frametitle}{}{%
+  \vspace{-0.2em}\hspace{0em}\color{TealAccent}\rule{\paperwidth}{0.8pt}
+}
+
+\setlength{\parskip}{0.25em}
+
+% ---------- Title ----------
+\title{Earnings Surprise, Firm Valuation, and Market Efficiency:\\Evidence from China}
+\author{Corporate Finance Team Project\\[0.4em]\small Team Members: Yingqi Tan, Zhesheng Xu, Hao Yang}
+\institute{FIN803 Corporate Finance}
+\date{}
+
+\begin{document}
+
+% Slide 1
+\begin{frame}[plain]
+  \titlepage
+\end{frame}
+
+% -------------------------
+% SECTION 1 — INTRODUCTION
+% -------------------------
+\section{Introduction}
+
+% Slide 2
+\begin{frame}{Motivation}
+\begin{itemize}
+  \item Earnings news should update firm value through expected future cash flows.
+  \item In semi-strong efficiency, public guidance information should be priced quickly.
+  \item China A-share offers a rich setting for testing post-announcement price adjustment.
+  \item Corporate Finance relevance: valuation, information processing, and cost of capital.
+\end{itemize}
+\end{frame}
+
+% Slide 3
+\begin{frame}{Research Question}
+\begin{block}{Core Question}
+Do earnings-related guidance events predict positive post-announcement abnormal returns in China A-share stocks?
+\end{block}
+\begin{itemize}
+  \item Main focus: event occurrence effect vs surprise magnitude ranking.
+  \item Secondary focus: whether moderate positive surprise is more reliable than extreme surprise.
+  \item Final framing prioritizes economic interpretation over trading optimization.
+\end{itemize}
+\end{frame}
+
+% -------------------------
+% SECTION 2 — THEORY
+% -------------------------
+\section{Theory (Syllabus Core)}
+
+% Slide 4
+\begin{frame}{Firm Valuation and Earnings}
+\begin{itemize}
+  \item Firm value reflects discounted expected future cash flows.
+  \item Earnings guidance updates beliefs about future profitability.
+  \item Valuation impact depends on both \textbf{earnings level} and \textbf{expectation gap}.
+  \item Surprise component matters because prices react to \emph{new information}, not raw earnings alone.
+\end{itemize}
+\end{frame}
+
+% Slide 5
+\begin{frame}{Market Efficiency}
+\begin{itemize}
+  \item Semi-strong EMH: prices should rapidly incorporate public information.
+  \item Under full efficiency, post-announcement abnormal return should be near zero.
+  \item Persistent positive CAR after guidance implies delayed adjustment.
+  \item This is a direct empirical test of financial theory, not a strategy claim.
+\end{itemize}
+\end{frame}
+
+% Slide 6
+\begin{frame}{Abnormal Returns and CAPM}
+\begin{itemize}
+  \item Expected return benchmark is linked to systematic risk (beta).
+  \item CAPM gives cost-of-equity intuition for normal required return.
+  \item Abnormal return isolates pricing response beyond market-wide movement.
+\end{itemize}
+\[
+AR_{i,t} = R_{i,t} - R_{m,t}
+\]
+\begin{itemize}
+  \item If earnings news has information value, event-window CAR can deviate from zero.
+\end{itemize}
+\end{frame}
+
+% Slide 7
+\begin{frame}{PEAD Intuition}
+\begin{itemize}
+  \item PEAD: prices may continue drifting after earnings-related announcements.
+  \item Possible drivers: investor attention limits, processing frictions, uncertainty.
+  \item We test delayed reaction, but do \textbf{not} assume strong monotonic PEAD ex ante.
+  \item Our evidence is interpreted as event-level underreaction with proxy limitations.
+\end{itemize}
+\end{frame}
+
+% -------------------------
+% SECTION 3 — DATA & DESIGN
+% -------------------------
+\section{Data and Design}
+
+% Slide 8
+\begin{frame}{Data Description}
+\begin{itemize}
+  \item Market: China A-share listed firms.
+  \item Sample period: 2020-01-01 to 2026-04-16.
+  \item Expanded sample: 800 stocks, 4,980 usable events.
+  \item Data sources: Tushare (primary) with backup/cross-check pipeline.
+\end{itemize}
+\end{frame}
+
+% Slide 9
+\begin{frame}{Event Definition}
+\begin{itemize}
+  \item \textbf{guidance\_initial}: first valid guidance for a report period.
+  \item \textbf{guidance\_upward\_revision}: later guidance with both bounds revised upward.
+  \item Event trading date: first trading day after announcement.
+  \item One event timeline per report-period logic to avoid duplicate counting.
+\end{itemize}
+\end{frame}
+
+% Slide 10
+\begin{frame}{Filtering and Tradability}
+\begin{itemize}
+  \item Exclude ST stocks.
+  \item Exclude firms with fewer than 120 trading days since listing.
+  \item Exclude suspended/non-tradable event-day observations.
+  \item Apply liquidity screen (20-day turnover threshold) to keep practical tradability.
+  \item Purpose: reduce microstructure noise and improve inference quality.
+\end{itemize}
+\end{frame}
+
+% -------------------------
+% SECTION 4 — VARIABLES
+% -------------------------
+\section{Variables}
+
+% Slide 11
+\begin{frame}{Return Measurement}
+\begin{itemize}
+  \item Compute abnormal return daily: \(AR_{i,t}=R_{i,t}-R_{m,t}\).
+  \item Event-window outcomes:
+  \begin{itemize}
+    \item \(CAR20 = \sum_{t=1}^{20} AR_{i,t}\)
+    \item \(CAR60 = \sum_{t=1}^{60} AR_{i,t}\)
+  \end{itemize}
+  \item CAR60 is the main metric for delayed adjustment (underreaction horizon).
+\end{itemize}
+\end{frame}
+
+% Slide 12
+\begin{frame}{Earnings Surprise Proxy}
+\begin{itemize}
+  \item Proxy-based surprise:
+\[
+ES_{\text{main}}=\text{guidance\_yoy\_midpoint}-\text{analyst\_consensus\_yoy\_proxy}
+\]
+  \item Consensus term is an approximation, not true analyst consensus.
+  \item This measurement limitation is central to interpretation.
+\end{itemize}
+\begin{block}{Interpretation Caution}
+Unstable ES ranking power can arise from expectation-measurement noise.
+\end{block}
+\end{frame}
+
+% Slide 13
+\begin{frame}{ES Grouping}
+\begin{itemize}
+  \item \textbf{positive ES}: \(ES_{\text{main}}>0\)
+  \item \textbf{moderate ES}: 50th--80th percentile within event type
+  \item \textbf{extreme ES}: top 20\% within event type
+  \item Goal: compare economically meaningful groups instead of forcing strict monotonic ranking.
+\end{itemize}
+\end{frame}
+
+% -------------------------
+% SECTION 5 — METHODOLOGY
+% -------------------------
+\section{Methodology}
+
+% Slide 14
+\begin{frame}{Empirical Strategy}
+\begin{itemize}
+  \item Event-study framework around guidance announcements.
+  \item Compare average CAR across event categories and ES signal groups.
+  \item Emphasis on \textbf{event occurrence effect} over fine ES ranking.
+  \item Robustness: expanded sample and tradability filters.
+\end{itemize}
+\end{frame}
+
+% Slide 15
+\begin{frame}{Regression Model}
+\begin{itemize}
+  \item Baseline linear specification with robust standard errors:
+\[
+CAR60_i=\alpha+\beta_1 \cdot signal_i+\beta_2 \cdot \log(size_i)+\beta_3 \cdot beta_i+\varepsilon_i
+\]
+  \item Two final signals:
+  \begin{itemize}
+    \item \(signal=\) moderate\_positive\_ES\_dummy
+    \item \(signal=\) event\_type\_dummy (upward revision = 1)
+  \end{itemize}
+  \item Purpose: test incremental explanatory power of event-related information.
+\end{itemize}
+\end{frame}
+
+% -------------------------
+% SECTION 6 — RESULTS
+% -------------------------
+\section{Results}
+
+% Slide 16
+\begin{frame}{Main Event-Level Results}
+\begin{columns}[T,totalwidth=\textwidth]
+\begin{column}{0.47\textwidth}
+\begin{itemize}
+  \item All-events average \(CAR60 \approx 3.02\%\).
+  \item Positive-ES events: \(CAR60 \approx 3.77\%\).
+  \item Guidance events are linked to positive post-announcement abnormal returns.
+\end{itemize}
+\end{column}
+\begin{column}{0.51\textwidth}
+\includegraphics[width=\linewidth]{outputs/figures/fig1_es_group_comparison_expanded.png}
+\end{column}
+\end{columns}
+\end{frame}
+
+% Slide 17
+\begin{frame}{ES Group Comparison}
+\begin{columns}[T,totalwidth=\textwidth]
+\begin{column}{0.47\textwidth}
+\begin{itemize}
+  \item Moderate ES (50--80\%): \(CAR60=3.715\%\)
+  \item Extreme ES (Top 20\%): \(CAR60=5.964\%\)
+  \item ES ranking is not stable across specifications.
+  \item Magnitude ordering alone is not robust.
+\end{itemize}
+\end{column}
+\begin{column}{0.51\textwidth}
+\includegraphics[width=\linewidth]{outputs/figures/fig2_cum_return_moderate_vs_extreme_expanded.png}
+\end{column}
+\end{columns}
+\end{frame}
+
+% Slide 18
+\begin{frame}{Regression Results}
+\begin{columns}[T,totalwidth=\textwidth]
+\begin{column}{0.47\textwidth}
+\begin{itemize}
+  \item Moderate ES dummy: \(0.0092\), \(p=0.254\) (positive, insignificant).
+  \item Event-type dummy: \(0.0009\), \(p=0.980\) (insignificant).
+  \item Beta remains significant for CAR60.
+  \item Event signal exists, linear cross-section is weak.
+\end{itemize}
+\end{column}
+\begin{column}{0.51\textwidth}
+\includegraphics[width=\linewidth]{outputs/figures/fig3_event_type_comparison_expanded.png}
+\end{column}
+\end{columns}
+\end{frame}
+
+% -------------------------
+% SECTION 7 — INTERPRETATION
+% -------------------------
+\section{Interpretation and Conclusion}
+
+% Slide 19
+\begin{frame}{Corporate Finance Interpretation}
+\begin{itemize}
+  \item Earnings-related disclosures affect valuation through expectation updates.
+  \item Positive post-announcement CAR suggests delayed information incorporation.
+  \item Underreaction is present, but not in a clean linear ES-magnitude pattern.
+  \item CAPM controls do not fully absorb short-horizon earnings-announcement effects.
+  \item Measurement of expected earnings is critical for theory-consistent testing.
+\end{itemize}
+\end{frame}
+
+% Slide 20
+\begin{frame}{Limitations and Conclusion}
+\begin{itemize}
+  \item Main limitation: proxy-based expected earnings (no full analyst consensus feed).
+  \item Result strength: robust event-level evidence \(>\) unstable ranking evidence.
+  \item Practical takeaway: event occurrence is more reliable than surprise magnitude ordering.
+  \item Final conclusion: earnings information matters for firm value, but market adjustment is imperfect.
+  \item Next step: improve expectation measurement to sharpen cross-sectional tests.
+\end{itemize}
+\end{frame}
+
+\end{document}
