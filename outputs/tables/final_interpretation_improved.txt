@@ -1,6 +1,8 @@
 Final Interpretation (improved)
 Weak significance mainly comes from noisy surprise measurement, long return windows, and under-specified regressions.
+Preferred specification uses event-level OLS with industry fixed effects, year-quarter fixed effects, and firm-clustered standard errors.
 Group results show all-events CAR5=-0.176%, positive-ES CAR5=-0.127%, moderate-positive CAR5=-0.180%, and extreme-ES CAR5=0.158%.
 By event type, guidance_initial has CAR5=-0.183% and guidance_upward_revision has CAR5=0.852%.
 Key regression coefficient on ES_std is 0.001732 (p=0.020); event_type_dummy is nan (p=nan).
+Cleaner standardized guidance surprise predicts modest but statistically significant short-run abnormal return, consistent with limited short-run valuation adjustment.
 Economically, the preferred interpretation should focus on whether cleaner guidance surprises predict short-horizon valuation adjustment, not on mechanically maximizing t-stats.

@@ -141,7 +141,8 @@ def build_event_level_dataset(
         logger.warning("Event-level dataset is empty after event-study filtering.")
         return event_df, pd.DataFrame()
 
-    event_df = event_df.dropna(subset=["earnings_surprise", "CAR20", "CAR40", "CAR60"])
+    required_cols = [c for c in ["earnings_surprise", "CAR5", "CAR20", "CAR60"] if c in event_df.columns]
+    event_df = event_df.dropna(subset=required_cols)
     event_df["year"] = pd.to_datetime(event_df["announcement_date"]).dt.year
     event_df["quarter"] = pd.to_datetime(event_df["announcement_date"]).dt.quarter
     event_df = event_df.sort_values(["announcement_date", "ts_code"]).reset_index(drop=True)

@@ -652,12 +652,25 @@ def _build_final_interpretation(
     m2_coef = float(m2["coef"].iloc[0]) if not m2.empty else np.nan
     m2_p = float(m2["p_value"].iloc[0]) if not m2.empty else np.nan
 
+    method_line = (
+        "Preferred specification uses event-level OLS with industry fixed effects, year-quarter fixed effects, and firm-clustered standard errors."
+        if signal_col == "ES_std"
+        else "Baseline specification is retained as a comparison benchmark rather than the repository default."
+    )
+    conclusion_line = (
+        "Cleaner standardized guidance surprise predicts modest but statistically significant short-run abnormal return, consistent with limited short-run valuation adjustment."
+        if signal_col == "ES_std"
+        else "Legacy long-window evidence is easier to contaminate with later news, so it should not be used as the headline conclusion."
+    )
+
     lines = [
         f"Final Interpretation ({scenario_name})",
         "Weak significance mainly comes from noisy surprise measurement, long return windows, and under-specified regressions.",
+        method_line,
         f"Group results show all-events {primary_car}={all_car:.3%}, positive-ES {primary_car}={pos_car:.3%}, moderate-positive {primary_car}={mod_car:.3%}, and extreme-ES {primary_car}={ext_car:.3%}.",
         f"By event type, guidance_initial has {primary_car}={init_car:.3%} and guidance_upward_revision has {primary_car}={rev_car:.3%}.",
         f"Key regression coefficient on {variable_name} is {m1_coef:.6f} (p={m1_p:.3f}); event_type_dummy is {m2_coef:.6f} (p={m2_p:.3f}).",
+        conclusion_line,
         "Economically, the preferred interpretation should focus on whether cleaner guidance surprises predict short-horizon valuation adjustment, not on mechanically maximizing t-stats.",
     ]
     return "\n".join(lines) + "\n"

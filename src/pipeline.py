@@ -73,7 +73,7 @@ def _build_before_after_comparison(
         [
             "Before vs After Comparison",
             "Baseline uses legacy ES_main, longer CAR window, and clustered OLS on the moderate-positive dummy.",
-            "Improved uses standardized ES_std, short-window CAR, and panel regression with firm/time fixed effects.",
+            "Improved uses standardized ES_std, CAR5 as the headline short-window outcome, and event-level OLS with industry FE, year-quarter FE, and firm-clustered standard errors.",
             _coef_line(baseline_metrics, "Baseline"),
             _coef_line(improved_metrics, "Improved"),
             f"Baseline primary window: {baseline_metrics.get('primary_car')}; Improved primary window: {improved_metrics.get('primary_car')}.",

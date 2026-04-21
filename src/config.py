@@ -21,7 +21,7 @@ class ProjectConfig:
     min_events_per_stock: int = 2
     beta_estimation_window: int = 120
     beta_buffer_days: int = 20
-    event_windows: tuple = (20, 40, 60)
+    event_windows: tuple = (3, 5, 20)
     quantile_groups: int = 5
     min_obs_regression: int = 30
     winsor_lower: float = 0.01

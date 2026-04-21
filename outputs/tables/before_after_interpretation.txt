@@ -1,6 +1,6 @@
 Before vs After Comparison
 Baseline uses legacy ES_main, longer CAR window, and clustered OLS on the moderate-positive dummy.
-Improved uses standardized ES_std, short-window CAR, and panel regression with firm/time fixed effects.
+Improved uses standardized ES_std, CAR5 as the headline short-window outcome, and event-level OLS with industry FE, year-quarter FE, and firm-clustered standard errors.
 Baseline: coef=0.022523, p=0.048, N=2375
 Improved: coef=0.001732, p=0.020, N=2529
 Baseline primary window: CAR60; Improved primary window: CAR5.

@@ -48,20 +48,24 @@ def plot_scatter(event_df: pd.DataFrame, y_col: str, filename: str) -> None:
 
 def plot_quantile_group_bars(event_df: pd.DataFrame, fig_dir: Path, n_groups: int = 5) -> None:
     df = event_df.copy()
-    df = df.dropna(subset=["earnings_surprise", "CAR20", "CAR40", "CAR60"])
-    df["es_group"] = pd.qcut(df["earnings_surprise"], q=n_groups, labels=False, duplicates="drop") + 1
-    g = df.groupby("es_group")[["CAR20", "CAR40", "CAR60"]].mean().reset_index()
+    signal_col = "ES_std" if "ES_std" in df.columns else "earnings_surprise"
+    car_cols = [c for c in ["CAR5", "CAR20", "CAR60"] if c in df.columns]
+    if not car_cols:
+        return
+    df = df.dropna(subset=[signal_col] + car_cols)
+    df["es_group"] = pd.qcut(df[signal_col], q=n_groups, labels=False, duplicates="drop") + 1
+    g = df.groupby("es_group")[car_cols].mean().reset_index()
 
     fig, ax = plt.subplots(figsize=(8.5, 5.2))
     x = np.arange(len(g))
     width = 0.25
-    ax.bar(x - width, g["CAR20"], width, label="CAR20")
-    ax.bar(x, g["CAR40"], width, label="CAR40")
-    ax.bar(x + width, g["CAR60"], width, label="CAR60")
+    offsets = np.linspace(-width, width, len(car_cols)) if len(car_cols) > 1 else np.array([0.0])
+    for offset, col in zip(offsets, car_cols):
+        ax.bar(x + offset, g[col], width, label=col)
     ax.set_xticks(x)
     ax.set_xticklabels([f"Q{int(i)}" for i in g["es_group"]])
-    ax.set_title("Average CAR by Earnings Surprise Quantiles")
-    ax.set_xlabel("Earnings Surprise Quantile Group")
+    ax.set_title("Average CAR by Surprise Quantiles")
+    ax.set_xlabel("Surprise Quantile Group")
     ax.set_ylabel("Average CAR")
     ax.legend(frameon=False)
     _save_fig(fig, fig_dir / "fig4_quantile_group_car_comparison.png")

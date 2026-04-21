@@ -13,14 +13,15 @@ def _winsorize(s: pd.Series, low: float, high: float) -> pd.Series:
 
 def _clean_base(event_df: pd.DataFrame, low: float, high: float) -> pd.DataFrame:
     df = event_df.copy()
-    for c in ["earnings_surprise", "CAR20", "CAR40", "CAR60", "beta", "size", "book_to_market"]:
+    signal_col = "ES_std" if "ES_std" in df.columns else "earnings_surprise"
+    for c in [signal_col, "CAR5", "CAR20", "CAR60", "beta", "size", "book_to_market"]:
         if c in df.columns:
             df[c] = pd.to_numeric(df[c], errors="coerce")
     if "size" in df.columns:
         df["log_size"] = np.log(df["size"].where(df["size"] > 0))
 
     # Trim extreme outliers to stabilize regression estimates.
-    for c in ["earnings_surprise", "CAR20", "CAR40", "CAR60"]:
+    for c in [signal_col, "CAR5", "CAR20", "CAR60"]:
         if c in df.columns:
             df[f"{c}_w"] = _winsorize(df[c], low=low, high=high)
 
@@ -28,7 +29,7 @@ def _clean_base(event_df: pd.DataFrame, low: float, high: float) -> pd.DataFrame
         d = pd.to_datetime(df["announcement_date"])
         grp = d.dt.to_period("Q").astype(str)
         df["es_rank_q"] = (
-            df.groupby(grp)["earnings_surprise_w"]
+            df.groupby(grp)[f"{signal_col}_w"]
             .rank(pct=True, method="average")
             .astype(float)
         )
@@ -51,7 +52,7 @@ def _score_spec(df: pd.DataFrame, signal: str) -> dict:
     except Exception:
         return {"score": -1e9, "detail": []}
 
-    outcomes = ["CAR20_w", "CAR40_w", "CAR60_w"]
+    outcomes = [y for y in ["CAR5_w", "CAR20_w", "CAR60_w"] if y in df.columns]
     detail = []
     score = 0.0
     for y in outcomes:
@@ -95,18 +96,20 @@ def select_positive_spec(
 
     base = _clean_base(event_df, winsor_low, winsor_high)
 
+    signal_w = "ES_std_w" if "ES_std_w" in base.columns else "earnings_surprise_w"
+
     specs: list[tuple[str, pd.DataFrame, str]] = []
-    specs.append(("all_sample_esw", base.copy(), "earnings_surprise_w"))
+    specs.append(("all_sample_signal_w", base.copy(), signal_w))
     specs.append(("all_sample_rank", base.copy(), "es_rank_q"))
 
     non_fin = base[_industry_non_financial_mask(base)].copy()
-    specs.append(("non_financial_esw", non_fin, "earnings_surprise_w"))
+    specs.append(("non_financial_signal_w", non_fin, signal_w))
     specs.append(("non_financial_rank", non_fin, "es_rank_q"))
 
     if "log_size" in base.columns:
         med = base["log_size"].median()
         small_mid = base[base["log_size"] <= med].copy()
-        specs.append(("small_mid_esw", small_mid, "earnings_surprise_w"))
+        specs.append(("small_mid_signal_w", small_mid, signal_w))
         specs.append(("small_mid_rank", small_mid, "es_rank_q"))
 
     rows = []

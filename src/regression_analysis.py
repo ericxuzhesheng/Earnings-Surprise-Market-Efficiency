@@ -21,12 +21,13 @@ def run_regressions(
         return pd.DataFrame()
 
     output_tables_dir.mkdir(parents=True, exist_ok=True)
-    outcomes = ["CAR20", "CAR40", "CAR60"]
+    outcomes = [y for y in ["CAR5", "CAR20", "CAR60"] if y in event_df.columns]
     results_rows = []
     summary_texts = []
 
     for y in outcomes:
-        controls = ["earnings_surprise", "beta", "size"]
+        signal = "ES_std" if "ES_std" in event_df.columns else "earnings_surprise"
+        controls = [signal, "beta", "size"]
         if "book_to_market" in event_df.columns and event_df["book_to_market"].notna().sum() > min_obs:
             controls.append("book_to_market")
 
@@ -43,22 +44,22 @@ def run_regressions(
 
         # Optional FE model to reduce omitted-variable bias in event studies.
         if "year" in event_df.columns and "industry" in event_df.columns:
-            fe_cols = [y, "earnings_surprise", "beta", "size", "year", "industry"]
+            fe_cols = [y, signal, "beta", "size", "year", "industry"]
             if "book_to_market" in controls:
                 fe_cols.append("book_to_market")
             fe_df = event_df[fe_cols].dropna().copy()
             if len(fe_df) >= min_obs:
-                rhs = "earnings_surprise + beta + size"
+                rhs = f"{signal} + beta + size"
                 if "book_to_market" in fe_df.columns:
                     rhs += " + book_to_market"
                 rhs += " + C(year) + C(industry)"
                 formula = f"{y} ~ {rhs}"
                 try:
                     model_fe = sm.OLS.from_formula(formula, data=fe_df).fit(cov_type="HC3")
-                    p_b = float(model_baseline.pvalues.get("earnings_surprise", 1.0))
-                    c_b = float(model_baseline.params.get("earnings_surprise", 0.0))
-                    p_f = float(model_fe.pvalues.get("earnings_surprise", 1.0))
-                    c_f = float(model_fe.params.get("earnings_surprise", 0.0))
+                    p_b = float(model_baseline.pvalues.get(signal, 1.0))
+                    c_b = float(model_baseline.params.get(signal, 0.0))
+                    p_f = float(model_fe.pvalues.get(signal, 1.0))
+                    c_f = float(model_fe.params.get(signal, 0.0))
                     if c_f > 0 and (p_f <= p_b or c_b <= 0):
                         chosen = model_fe
                         chosen_name = "fixed_effects"
@@ -101,10 +102,11 @@ def run_regressions(
 def build_descriptive_table(event_df: pd.DataFrame, output_tables_dir: Path) -> pd.DataFrame:
     if event_df.empty:
         return pd.DataFrame()
+    signal_col = "ES_std" if "ES_std" in event_df.columns else "earnings_surprise"
     cols = [
-        "earnings_surprise",
+        signal_col,
+        "CAR5",
         "CAR20",
-        "CAR40",
         "CAR60",
         "beta",
         "size",
@@ -112,6 +114,7 @@ def build_descriptive_table(event_df: pd.DataFrame, output_tables_dir: Path) -> 
     ]
     cols = [c for c in cols if c in event_df.columns]
     desc = event_df[cols].describe().T
+    desc = desc.rename(index={signal_col: "signal"})
     desc = desc.rename_axis("variable").reset_index()
     desc.to_csv(output_tables_dir / "table1_descriptive_stats.csv", index=False, encoding="utf-8-sig")
     return desc
