@@ -1,0 +1,65 @@
+﻿spec_id,benchmark_method,event_universe,signal_scale,analyst_min,filter_profile,signal_col,event_count,usable_signal_count,event_type_composition
+spec_001,latest_snapshot,all_event_types,raw,1,restrictive,main_surprise_raw,582,582,express:48; formal_release:281; preannouncement:155; revision:98
+spec_002,latest_snapshot,all_event_types,raw,1,relaxed,main_surprise_raw,599,599,express:49; formal_release:289; preannouncement:160; revision:101
+spec_003,latest_snapshot,all_event_types,raw,2,restrictive,main_surprise_raw,39,39,express:4; formal_release:17; preannouncement:14; revision:4
+spec_004,latest_snapshot,all_event_types,raw,2,relaxed,main_surprise_raw,39,39,express:4; formal_release:17; preannouncement:14; revision:4
+spec_005,latest_snapshot,all_event_types,raw,3,restrictive,main_surprise_raw,5,5,formal_release:2; preannouncement:3
+spec_006,latest_snapshot,all_event_types,raw,3,relaxed,main_surprise_raw,5,5,formal_release:2; preannouncement:3
+spec_007,latest_snapshot,all_event_types,raw,5,restrictive,main_surprise_raw,2,2,preannouncement:2
+spec_008,latest_snapshot,all_event_types,raw,5,relaxed,main_surprise_raw,2,2,preannouncement:2
+spec_009,latest_snapshot,all_event_types,standardized,1,restrictive,main_surprise_std,582,582,express:48; formal_release:281; preannouncement:155; revision:98
+spec_010,latest_snapshot,all_event_types,standardized,1,relaxed,main_surprise_std,599,599,express:49; formal_release:289; preannouncement:160; revision:101
+spec_011,latest_snapshot,all_event_types,standardized,2,restrictive,main_surprise_std,39,39,express:4; formal_release:17; preannouncement:14; revision:4
+spec_012,latest_snapshot,all_event_types,standardized,2,relaxed,main_surprise_std,39,39,express:4; formal_release:17; preannouncement:14; revision:4
+spec_013,latest_snapshot,all_event_types,standardized,3,restrictive,main_surprise_std,5,5,formal_release:2; preannouncement:3
+spec_014,latest_snapshot,all_event_types,standardized,3,relaxed,main_surprise_std,5,5,formal_release:2; preannouncement:3
+spec_015,latest_snapshot,all_event_types,standardized,5,restrictive,main_surprise_std,2,2,preannouncement:2
+spec_016,latest_snapshot,all_event_types,standardized,5,relaxed,main_surprise_std,2,2,preannouncement:2
+spec_017,latest_snapshot,preannouncement_only,raw,1,restrictive,main_surprise_raw,155,155,preannouncement:155
+spec_018,latest_snapshot,preannouncement_only,raw,1,relaxed,main_surprise_raw,160,160,preannouncement:160
+spec_019,latest_snapshot,preannouncement_only,raw,2,restrictive,main_surprise_raw,14,14,preannouncement:14
+spec_020,latest_snapshot,preannouncement_only,raw,2,relaxed,main_surprise_raw,14,14,preannouncement:14
+spec_021,latest_snapshot,preannouncement_only,raw,3,restrictive,main_surprise_raw,3,3,preannouncement:3
+spec_022,latest_snapshot,preannouncement_only,raw,3,relaxed,main_surprise_raw,3,3,preannouncement:3
+spec_023,latest_snapshot,preannouncement_only,raw,5,restrictive,main_surprise_raw,2,2,preannouncement:2
+spec_024,latest_snapshot,preannouncement_only,raw,5,relaxed,main_surprise_raw,2,2,preannouncement:2
+spec_025,latest_snapshot,preannouncement_only,standardized,1,restrictive,main_surprise_std,155,155,preannouncement:155
+spec_026,latest_snapshot,preannouncement_only,standardized,1,relaxed,main_surprise_std,160,160,preannouncement:160
+spec_027,latest_snapshot,preannouncement_only,standardized,2,restrictive,main_surprise_std,14,14,preannouncement:14
+spec_028,latest_snapshot,preannouncement_only,standardized,2,relaxed,main_surprise_std,14,14,preannouncement:14
+spec_029,latest_snapshot,preannouncement_only,standardized,3,restrictive,main_surprise_std,3,3,preannouncement:3
+spec_030,latest_snapshot,preannouncement_only,standardized,3,relaxed,main_surprise_std,3,3,preannouncement:3
+spec_031,latest_snapshot,preannouncement_only,standardized,5,restrictive,main_surprise_std,2,2,preannouncement:2
+spec_032,latest_snapshot,preannouncement_only,standardized,5,relaxed,main_surprise_std,2,2,preannouncement:2
+spec_033,latest_per_analyst,all_event_types,raw,1,restrictive,main_surprise_raw,583,583,express:48; formal_release:282; preannouncement:155; revision:98
+spec_034,latest_per_analyst,all_event_types,raw,1,relaxed,main_surprise_raw,600,600,express:49; formal_release:290; preannouncement:160; revision:101
+spec_035,latest_per_analyst,all_event_types,raw,2,restrictive,main_surprise_raw,449,449,express:40; formal_release:219; preannouncement:117; revision:73
+spec_036,latest_per_analyst,all_event_types,raw,2,relaxed,main_surprise_raw,460,460,express:41; formal_release:223; preannouncement:121; revision:75
+spec_037,latest_per_analyst,all_event_types,raw,3,restrictive,main_surprise_raw,359,359,express:29; formal_release:180; preannouncement:92; revision:58
+spec_038,latest_per_analyst,all_event_types,raw,3,relaxed,main_surprise_raw,367,367,express:30; formal_release:183; preannouncement:95; revision:59
+spec_039,latest_per_analyst,all_event_types,raw,5,restrictive,main_surprise_raw,212,212,express:15; formal_release:115; preannouncement:54; revision:28
+spec_040,latest_per_analyst,all_event_types,raw,5,relaxed,main_surprise_raw,219,219,express:16; formal_release:117; preannouncement:57; revision:29
+spec_041,latest_per_analyst,all_event_types,standardized,1,restrictive,main_surprise_std,583,583,express:48; formal_release:282; preannouncement:155; revision:98
+spec_042,latest_per_analyst,all_event_types,standardized,1,relaxed,main_surprise_std,600,600,express:49; formal_release:290; preannouncement:160; revision:101
+spec_043,latest_per_analyst,all_event_types,standardized,2,restrictive,main_surprise_std,449,449,express:40; formal_release:219; preannouncement:117; revision:73
+spec_044,latest_per_analyst,all_event_types,standardized,2,relaxed,main_surprise_std,460,460,express:41; formal_release:223; preannouncement:121; revision:75
+spec_045,latest_per_analyst,all_event_types,standardized,3,restrictive,main_surprise_std,359,359,express:29; formal_release:180; preannouncement:92; revision:58
+spec_046,latest_per_analyst,all_event_types,standardized,3,relaxed,main_surprise_std,367,367,express:30; formal_release:183; preannouncement:95; revision:59
+spec_047,latest_per_analyst,all_event_types,standardized,5,restrictive,main_surprise_std,212,212,express:15; formal_release:115; preannouncement:54; revision:28
+spec_048,latest_per_analyst,all_event_types,standardized,5,relaxed,main_surprise_std,219,219,express:16; formal_release:117; preannouncement:57; revision:29
+spec_049,latest_per_analyst,preannouncement_only,raw,1,restrictive,main_surprise_raw,155,155,preannouncement:155
+spec_050,latest_per_analyst,preannouncement_only,raw,1,relaxed,main_surprise_raw,160,160,preannouncement:160
+spec_051,latest_per_analyst,preannouncement_only,raw,2,restrictive,main_surprise_raw,117,117,preannouncement:117
+spec_052,latest_per_analyst,preannouncement_only,raw,2,relaxed,main_surprise_raw,121,121,preannouncement:121
+spec_053,latest_per_analyst,preannouncement_only,raw,3,restrictive,main_surprise_raw,92,92,preannouncement:92
+spec_054,latest_per_analyst,preannouncement_only,raw,3,relaxed,main_surprise_raw,95,95,preannouncement:95
+spec_055,latest_per_analyst,preannouncement_only,raw,5,restrictive,main_surprise_raw,54,54,preannouncement:54
+spec_056,latest_per_analyst,preannouncement_only,raw,5,relaxed,main_surprise_raw,57,57,preannouncement:57
+spec_057,latest_per_analyst,preannouncement_only,standardized,1,restrictive,main_surprise_std,155,155,preannouncement:155
+spec_058,latest_per_analyst,preannouncement_only,standardized,1,relaxed,main_surprise_std,160,160,preannouncement:160
+spec_059,latest_per_analyst,preannouncement_only,standardized,2,restrictive,main_surprise_std,117,117,preannouncement:117
+spec_060,latest_per_analyst,preannouncement_only,standardized,2,relaxed,main_surprise_std,121,121,preannouncement:121
+spec_061,latest_per_analyst,preannouncement_only,standardized,3,restrictive,main_surprise_std,92,92,preannouncement:92
+spec_062,latest_per_analyst,preannouncement_only,standardized,3,relaxed,main_surprise_std,95,95,preannouncement:95
+spec_063,latest_per_analyst,preannouncement_only,standardized,5,restrictive,main_surprise_std,54,54,preannouncement:54
+spec_064,latest_per_analyst,preannouncement_only,standardized,5,relaxed,main_surprise_std,57,57,preannouncement:57

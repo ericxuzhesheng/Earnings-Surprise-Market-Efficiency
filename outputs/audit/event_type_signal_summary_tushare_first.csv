@@ -1,0 +1,5 @@
+﻿event_type,event_count,usable_raw_signal_count,usable_std_signal_count,median_abs_raw_surprise,median_abs_pct_surprise,median_broker_count
+express,140,50,50,894968806.066,9590.55790016711,0.0
+formal_release,2710,292,292,781084358.44125,8361.756733343078,0.0
+preannouncement,1102,160,160,26479.5,0.46935645338735726,0.0
+revision,725,101,101,37654.0,0.5123490927693757,0.0

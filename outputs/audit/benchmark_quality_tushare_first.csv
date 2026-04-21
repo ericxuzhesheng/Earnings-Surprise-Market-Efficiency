@@ -1,0 +1,5 @@
+﻿benchmark_method,event_type,event_count,strict_count,usable_signal_count,median_report_count,median_broker_count,median_lag_days,strict_share,usable_signal_share
+pooled_median,express,140,50,50,0.0,0.0,79.0,0.35714285714285715,0.35714285714285715
+pooled_median,formal_release,2710,292,292,0.0,0.0,96.0,0.1077490774907749,0.1077490774907749
+pooled_median,preannouncement,1102,161,160,0.0,0.0,61.0,0.14609800362976408,0.14519056261343014
+pooled_median,revision,725,101,101,0.0,0.0,67.0,0.1393103448275862,0.1393103448275862

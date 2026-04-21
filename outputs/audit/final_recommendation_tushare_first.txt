@@ -1,0 +1,11 @@
+Tushare-first diagnostic recommendation
+Recommendation: B
+Keep Tushare as the baseline but add stronger external analyst-expectation data for a credible main headline.
+Strongest surviving specification: spec_049
+Benchmark method: latest_per_analyst
+Event universe: preannouncement_only
+Signal scale: raw
+Window: CAR10
+Regression nobs: 101
+Coefficient: -1.652922510901637e-07
+p-value: 0.1812503139720767

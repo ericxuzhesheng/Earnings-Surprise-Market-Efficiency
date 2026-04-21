@@ -57,123 +57,76 @@
 
 \begin{frame}{Research Question}
 \begin{block}{Core Question}
-Do China A-share earnings-related events generate short-run abnormal return once surprise is measured relative to stricter sell-side expectations?
+Do China A-share earnings-related events generate short-run abnormal return once surprise is measured relative to stricter sell-side expectations, and is Tushare-only expectation data strong enough for a credible main headline?
 \end{block}
 \begin{itemize}
   \item Old version: guidance-only proxy design.
   \item New version: Tushare-first framework with explicit event types and pre-event expectation matching.
-  \item Final framing emphasizes limited short-run valuation adjustment, not aggressive long-run inefficiency claims.
+  \item Final framing now emphasizes diagnosis of the weak headline result, not a forced positive finding.
 \end{itemize}
 \end{frame}
 
-\section{Data and Design}
-
-\begin{frame}{Tushare-first Research Framework}
+\begin{frame}{Diagnostic Result in One Slide}
 \begin{itemize}
-  \item Sell-side expectation module: \texttt{report\_rc}
-  \item Event modules: \texttt{forecast}/\texttt{forecast\_vip}, \texttt{express}/\texttt{express\_vip}, \texttt{fina\_indicator}
-  \item Market/control module: \texttt{daily\_basic}, stock prices, market index
-  \item Legacy guidance-only path is retained only as fallback / comparison
+  \item Headline Tushare-first specification: \texttt{CAR5} on \texttt{main\_surprise\_std}
+  \item Current test-run coefficient: \(-0.0030\), p-value: \(0.4967\)
+  \item Filtered Tushare-first panel: 4314 rows; usable strict standardized-signal rows: 583
+  \item Strongest surviving subset: \texttt{latest\_per\_analyst + preannouncement\_only + raw + CAR10}
+  \item That subset has only 101 regression observations and p-value \(0.181\), so it is suggestive, not decisive
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Why the Old Proxy Was Weak}
+\begin{frame}{Ranked Failure Diagnosis}
 \begin{itemize}
-  \item The older \texttt{ES\_main}/\texttt{ES\_std} path inferred expectations from prior guidance and historical heuristics.
-  \item That is weaker than a true pre-event sell-side benchmark.
-  \item It also mixes event types and makes look-ahead control harder to audit.
-  \item So the old path now serves as legacy robustness rather than headline evidence.
+  \item Coverage collapse: usable strict signal rows are a small share of the full event universe
+  \item Thin analyst coverage: many matched events rely on very few broker inputs
+  \item Event heterogeneity: pooling preannouncements, revisions, express, and formal releases weakens identification
+  \item Benchmark mismatch: \texttt{report\_rc} does not always map cleanly into realized event values
+  \item Filtering and standardization choices matter, but they do not rescue the main headline
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Standardized Event Types}
-\begin{itemize}
-  \item \texttt{preannouncement}: management forecast / guidance event
-  \item \texttt{revision}: updated forecast for the same period
-  \item \texttt{express}: earnings express release
-  \item \texttt{formal\_release}: formal realized financial release
-  \item Event trading date: first trading day after the disclosure date
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Signal Construction}
-\begin{itemize}
-  \item Main expectation source: pre-event \texttt{report\_rc}
-  \item Forecast surprise: management forecast vs sell-side expectation
-  \item Express surprise: express result vs sell-side expectation
-  \item Final surprise: realized result vs sell-side expectation
-  \item Main standardized signal: \texttt{main\_surprise\_std}
-\end{itemize}
-\begin{block}{Key Principle}
-Do not silently collapse missing sell-side matches into the old proxy path; weak matches must be labeled and audited.
+\begin{frame}{Recommendation}
+\begin{block}{Recommendation B}
+Keep Tushare as the baseline framework, but add stronger external analyst-expectation data later if the goal is a credible main empirical headline.
 \end{block}
-\end{frame}
-
-\begin{frame}{Controls and Filters}
 \begin{itemize}
-  \item Controls from \texttt{daily\_basic}: total market value, float market value, turnover, PE, PB, PS
-  \item Tradability filters: ST exclusion, minimum listing history, valid event-day return, positive event-day volume
-  \item Event windows: \texttt{CAR3}, \texttt{CAR5}, \texttt{CAR10}, \texttt{CAR20}, \texttt{CAR60}
+  \item Tushare-first still provides a cleaner and more auditable architecture than the old proxy design.
+  \item But the current Tushare-only evidence is too weak for a strong headline claim.
+  \item The best surviving subset is narrow and still not conventionally significant.
 \end{itemize}
 \end{frame}
 
-\section{Methodology}
-
-\begin{frame}{Preferred Regression}
-\[
-CAR_w = \alpha + \beta_1 main\_surprise\_std + \beta_2 \log(total\_mv) + \beta_3 beta + \beta_4 book\_to\_market + \beta_5 turnover20 + \text{Industry FE} + \text{YearQuarter FE} + \text{EventType FE} + \varepsilon
-\]
+\begin{frame}{What Still Survives}
 \begin{itemize}
-  \item Standard errors clustered by firm.
-  \item Headline window: \texttt{CAR5}.
-  \item Additional windows are used for robustness and horizon comparison.
+  \item The cleanest subset is \texttt{preannouncement\_only}, not the pooled all-event sample.
+  \item The cleaner benchmark is \texttt{latest\_per\_analyst}, not the thinner latest-snapshot construction.
+  \item Raw surprise performs better than the current pooled standardized headline in the surviving subset.
+  \item The project therefore shifts from "claiming a result" to "showing what a credible next design should look like".
 \end{itemize}
 \end{frame}
 
-\section{Current Implementation Status}
-
-\begin{frame}{Current Test-Run Audit}
-\begin{itemize}
-  \item Current test mode uses 120 stocks.
-  \item Raw pull succeeded for \texttt{forecast}, \texttt{express}, \texttt{fina\_indicator}, and \texttt{report\_rc}.
-  \item Legacy guidance fallback produced a usable event panel.
-  \item The strict Tushare-first sample is currently the bottleneck because coverage and filter alignment remain tight.
-\end{itemize}
-\end{frame}
-
-\begin{frame}{What Improved in the Codebase}
-\begin{itemize}
-  \item Added explicit Tushare-first config and directory structure.
-  \item Added endpoint normalization, expectation alignment, event construction, and audit-output modules.
-  \item Fixed the incomplete \texttt{daily\_basic} field request so turnover and valuation controls are available.
-  \item Added endpoint capability checks and run-level audit notes.
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Why Coverage Is the Main Limitation}
-\begin{itemize}
-  \item The strict design requires pre-event \texttt{report\_rc} matches for the same fiscal period.
-  \item That improves identification but sharply reduces usable sample coverage.
-  \item So the main research tradeoff is now sample purity versus sample size.
-  \item This is preferable to overstating evidence from a weak expectation proxy.
-\end{itemize}
-\end{frame}
-
-\section{Conclusion}
-
-\begin{frame}{Main Conclusion}
-\begin{itemize}
-  \item The repository is now organized around a stronger Tushare-first research design.
-  \item The old weak-proxy path is preserved only as fallback / comparison.
-  \item The most defensible headline remains: cleaner earnings-surprise measurement should be evaluated through short-run valuation adjustment, not strong long-run drift claims.
-  \item The main empirical next step is improving matched-sample coverage while preserving strict pre-event alignment.
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Final Takeaway}
+\begin{frame}{Updated Final Takeaway}
 \begin{block}{Recommended headline}
-A Tushare-first earnings-surprise design is more credible than the old guidance-only proxy, but the final inference should remain cautious until strict matched-sample coverage is stronger.
+A Tushare-first framework is the right baseline architecture for this project, but the current Tushare-only matched sample is too thin for a strong main conclusion; the credible next step is to keep Tushare as the event framework and add better external analyst-expectation data.
 \end{block}
+\end{frame}
+
+\begin{frame}{Conclusion}
+\begin{itemize}
+  \item We successfully replaced the weak guidance-only proxy with a cleaner Tushare-first architecture.
+  \item The headline pooled specification does not survive the diagnostic run.
+  \item The strongest surviving subset is narrow, preannouncement-focused, and only suggestive.
+  \item The final project recommendation is B, not a forced positive headline.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Next Step}
+\begin{itemize}
+  \item Keep the Tushare-first event architecture and audit outputs.
+  \item Treat the current results as a diagnostic baseline rather than a final claim.
+  \item Add stronger external analyst-expectation data if the project aims to support a main valuation-adjustment headline.
+\end{itemize}
 \end{frame}
 
 \end{document}

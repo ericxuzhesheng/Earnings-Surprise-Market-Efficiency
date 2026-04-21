@@ -1,0 +1,5 @@
+﻿event_type,event_count,matched_count,median_lag_days,p90_lag_days,same_day_or_later_violations,basis_mismatch_count
+express,140,56,79.0,253.5,0,0
+formal_release,2710,375,96.0,220.0000000000001,0,0
+preannouncement,1102,181,61.0,209.0,0,0
+revision,725,111,67.0,160.0,0,0
