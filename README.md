@@ -11,206 +11,271 @@
 
 当前语言：中文 | [Switch to English](#en)
 
-## 项目目标
+## 项目概述
 
-本项目研究中国A股（2020年至今）中，盈利相关业绩预告事件是否对应公告后异常收益，并从公司金融视角解释其估值调整与市场有效性含义。
+本仓库已从“弱代理业绩意外 + 单一 guidance 事件”的旧设计，重构为一个以 **Tushare Pro 为主数据源** 的中国 A 股盈利意外研究框架。新版本把卖方预期、管理层业绩预告、业绩快报、正式财务披露和市场控制变量放进同一条可审计的研究流程中。
 
-## 最新主结论
+## 当前推荐主规格
 
-本项目最新推荐的主规格不再以长窗口 CAR60 或“强PEAD”作为核心叙事，而是聚焦更干净、学术上更可辩护的短窗口估值调整检验：
+推荐主规格不再以旧的 guidance 代理 surprise 或长窗口 `CAR60` 为核心，而是采用更干净、可审计的 Tushare-first 设计：
 
-- 主信号：`ES_std`
-- 主结果窗口：`CAR5`
-- 主回归：行业固定效应 + 年-季度固定效应 + 公司聚类稳健标准误
-- 主解释：更干净的标准化业绩预告意外，能够预测幅度 modest 但统计显著的短期异常收益
-- 最终叙事：**cleaner standardized guidance surprise predicts limited short-run valuation adjustment**
+- 预期来源：`report_rc`
+- 事件来源：`forecast` / `forecast_vip`、`express` / `express_vip`、`fina_indicator`
+- 控制变量来源：`daily_basic`
+- 主事件窗口：`CAR5`
+- 全部输出窗口：`CAR3`、`CAR5`、`CAR10`、`CAR20`、`CAR60`
+- 主回归：行业固定效应 + 年季度固定效应 + 事件类型固定效应 + 公司聚类稳健标准误
+- 主解释：更严格的预期匹配和事件分类支持对“短期估值调整”的更可信检验，但当前测试样本下的经济幅度与显著性都应谨慎解读
 
-这意味着：
-- 我们仍然观察到信息进入价格的延迟调整；
-- 但证据更支持“有限的短期估值调整”，而不是“强烈的长期漂移”或“显著的市场无效”。
+## 为什么旧设计偏弱
 
-## 方法更新说明
+旧版本的主信号主要依赖内部代理预期：
+- 同公司上一条 guidance
+- 公司历史同季度 guidance 均值
+- 行业历史中位数
+- 零值兜底
 
-### 旧基准结果（baseline）
+这类代理适合做探索，但很难作为主研究设计，因为：
+- 与真实卖方一致预期不完全等价；
+- 容易引入测量误差；
+- 更难严格排除前视偏差；
+- 把不同类型事件混在一起解释时更容易过度推断。
 
-旧版本的主规格为：
-- 信号：`ES_main = guidance_yoy_midpoint - analyst_consensus_yoy_proxy`
-- 结果窗口：`CAR60`
-- 回归：基于虚拟变量的 pooled OLS / clustered OLS
+因此，新版本把旧 guidance-only 路径保留为 `legacy_guidance` fallback，而把 Tushare-enhanced 路径设为默认主规格。
 
-该版本的问题是：
-- `ES_main` 对预期的代理噪声较大；
-- `CAR60` 容易混入大量与公告无关的后续新闻；
-- 长窗口结果更容易被误解为强PEAD或强市场低效。
+## Tushare-first 模块映射
 
-### 新推荐规格（preferred）
+### 1. 卖方预期模块
+来源：`report_rc`
 
-新版本将主规格更新为：
-- 信号：`ES_std`
-- 事件窗口：`CAR5`
-- 回归：`CAR5 ~ ES_std + log_size + beta + Industry FE + YearQuarter FE`，并按公司聚类标准误
+核心字段：
+- `ts_code`
+- `report_date`
+- `report_title`
+- `report_type`
+- `classify`
+- `org_name`
+- `author_name`
+- `quarter`
+- `np`
+- `eps`
+- `pe`
+- `rating`
+- `max_price`
+- `min_price`
 
-这样做的原因：
-- `ES_std` 相比 `ES_main` 更能控制 surprise 尺度差异；
-- `CAR5` 比 `CAR60` 更接近公告信息的直接价格反应；
-- 固定效应和聚类标准误能更好地控制行业/时间共同冲击与公司层面的相关性。
+功能：
+- 构建按股票-报告期-发布日期组织的卖方预期面板
+- 支持 `latest` / `mean` / `median` 聚合
+- 支持最小有效报告数过滤
+- 支持从 `report_title` 提取“超预期”辅助标签
 
-## 当前研究设计摘要
+### 2. 盈利事件模块
+来源：
+- `forecast` / `forecast_vip`
+- `express` / `express_vip`
+- `fina_indicator`
 
-- 样本区间：2020-01-01 至 2026-04-21
-- 事件类型：
-  - `guidance_initial`
-  - `guidance_upward_revision`
-- 样本过滤：
-  - 剔除 ST / *ST
-  - 上市交易日少于 120 天剔除
-  - 事件日无交易或无成交量剔除
-  - 使用 20 日换手率流动性筛选
-- 异常收益定义：
-  - `AR = stock_return - market_return`
-- 当前输出窗口：
-  - baseline: `CAR20`, `CAR60`
-  - improved: `CAR3`, `CAR5`, `CAR20`
+标准化事件类型：
+- `preannouncement`
+- `revision`
+- `express`
+- `formal_release`
 
-## 核心结果：旧基准 vs 新主规格
+保留字段：
+- `ann_date`
+- `end_date`
+- `type`
+- `p_change_min`
+- `p_change_max`
+- `net_profit_min`
+- `net_profit_max`
+- `first_ann_date`
+- `summary`
+- `change_reason`
+- 可用的 YoY 指标
 
-### 本次成功运行样本（test mode）
+### 3. 市场与控制变量模块
+来源：`daily_basic`
 
-- 股票数：300
-- 原始 guidance 行数：5,162
-- 事件数（全部候选）：2,858
-- baseline 事件数据：2,375
-- improved 事件数据：2,529
+核心字段：
+- `total_mv`
+- `circ_mv`
+- `turnover_rate`
+- `turnover_rate_f`
+- `pe_ttm`
+- `pb`
+- `ps_ttm`
 
-见：`outputs/tables/run_summary.csv`
+功能：
+- 控制变量
+- 流动性筛选
+- 微盘/噪声过滤
+- 估值控制
 
-### 旧基准结果（baseline）
+## 当前信号体系
 
-主结果：`CAR60` 上 moderate positive dummy 为正且边际显著，但该设计不再作为主叙事。
+新版本按事件类型分别构造 surprise，不再强行把所有事件压成同一种信号：
 
-- baseline sample size: 2,375
-- `moderate_positive_ES_dummy` on `CAR60`
-  - coef = `0.022523`
-  - p-value = `0.0481`
-- `outputs/tables/final_regression_results_baseline.csv`
+- `forecast_surprise_raw/pct/std`
+- `express_surprise_raw/pct/std`
+- `final_surprise_raw/pct/std`
+- `revision_magnitude_np`
+- `revision_magnitude_eps`
+- `upward_revision_count`
+- `fraction_upgraded`
+- `target_price_change`
 
-组别均值：
-- all events `CAR60`: 3.288%
-- positive ES `CAR60`: 4.581%
-- moderate positive `CAR60`: 4.895%
-- extreme ES `CAR60`: 6.981%
+主信号为：
+- `main_surprise_std`
 
-见：`outputs/tables/final_group_summary_baseline.csv`
+它优先使用严格 pre-event `report_rc` 匹配得到的 surprise，并在事件家族内部标准化。
 
-### 新推荐规格结果（improved）
+## 预期匹配原则
 
-主结果：`ES_std` 对 `CAR5` 的系数为正且统计显著，但经济幅度 modest。
+新版本在主样本中执行严格匹配：
+- 卖方报告发布日期必须早于事件交易日
+- 预期必须匹配同一报告期
+- 支持 freshness window
+- 支持 `min_valid_report_count`
+- 匹配质量会在输出中显式记录，而不是静默回退
 
-- improved sample size: 2,529
-- regression: industry FE + year-quarter FE + firm-clustered SE
-- `ES_std` on `CAR5`
-  - coef = `0.001732`
-  - p-value = `0.0195`
-  - `R^2 = 0.272`
-- `outputs/tables/final_regression_results_improved.csv`
+## 事件研究与回归设计
 
-组别均值：
-- all events `CAR5`: -0.176%
-- positive ES `CAR5`: -0.127%
-- moderate positive `CAR5`: -0.180%
-- extreme ES `CAR5`: 0.158%
+### 事件研究
+- 异常收益定义：`AR = stock_return - market_return`
+- 输出窗口：`CAR3`、`CAR5`、`CAR10`、`CAR20`、`CAR60`
 
-见：`outputs/tables/final_group_summary_improved.csv`
+### 推荐回归
+对每个 CAR 窗口运行：
 
-## 如何解释最新结果
+`CAR_w ~ main_surprise_std + log_total_mv + beta + book_to_market + turnover20 + pe_ttm + ps_ttm + Industry FE + YearQuarter FE + EventType FE`
 
-当前最合理的解释不是：
-- “强长期漂移已经被清楚识别”，也不是
-- “中等正向 surprise 一定优于极端 surprise”，更不是
-- “市场明显无效”。
+标准误：
+- 按公司 `ts_code` 聚类
 
-更合理的解释是：
-- 在更干净的信号定义和更短的事件窗口下，标准化后的 guidance surprise 对短期异常收益具有统计意义；
-- 但该效应经济上并不大；
-- 因此最终结论应聚焦于**有限的短期估值调整**，而不是 dramatic market inefficiency。
+### 审计输出
+- 按年份事件数
+- 按事件类型事件数
+- 按年份信号覆盖率
+- 缺失值汇总
+- endpoint 能力检测
+- Tushare-first update note
 
-## 推荐展示口径
+## 目录结构
 
-### PPT / 口头汇报主结论
+### 原始数据
+- `data_raw/`
+- `data_raw/tushare/stock_basic/`
+- `data_raw/tushare/report_rc/`
+- `data_raw/tushare/forecast/`
+- `data_raw/tushare/express/`
+- `data_raw/tushare/fina_indicator/`
+- `data_raw/tushare/daily_basic/`
 
-> Cleaner standardized guidance surprise predicts modest but statistically significant short-run abnormal return in China A-shares.
+### 中间结果
+- `data_processed/normalized/`
+- `data_processed/expectations/`
+- `data_processed/events/`
+- `data_processed/panels/`
 
-中文可表述为：
+### 最终输出
+- `outputs/tables/`
+- `outputs/figures/`
+- `outputs/audit/`
 
-> 在更可辩护的研究设计下，标准化后的业绩预告意外能够预测幅度有限但统计显著的短期异常收益，说明市场对该类信息存在有限的短期延迟调整。
+## 关键代码文件
 
-### 不建议继续作为 headline 的表述
-
-- 强 PEAD
-- 长期漂移是主证据
-- CAR60 是核心结果
-- moderate positive 一定优于 extreme
-- 强市场无效
-
-这些说法现在只适合放在 baseline / supplementary / cautionary comparison 中。
-
-## 主要输出文件
-
-### 推荐主结果文件
-
-- `outputs/tables/final_dataset_improved.csv`
-- `outputs/tables/final_group_summary_improved.csv`
-- `outputs/tables/final_regression_results_improved.csv`
-- `outputs/tables/final_interpretation_improved.txt`
-
-### 对比与审计文件
-
-- `outputs/tables/final_dataset_baseline.csv`
-- `outputs/tables/final_group_summary_baseline.csv`
-- `outputs/tables/final_regression_results_baseline.csv`
-- `outputs/tables/final_interpretation_baseline.txt`
-- `outputs/tables/before_after_method_comparison.csv`
-- `outputs/tables/before_after_interpretation.txt`
-- `outputs/tables/project_narrative_update_note.txt`
-
-### 图形文件
-
-- `outputs/figures/fig1_es_group_comparison_improved.png`
-- `outputs/figures/fig2_cum_return_moderate_vs_extreme_improved.png`
-- `outputs/figures/fig3_event_type_comparison_improved.png`
-- `outputs/figures/fig1_es_group_comparison_baseline.png`
-- `outputs/figures/fig2_cum_return_moderate_vs_extreme_baseline.png`
-- `outputs/figures/fig3_event_type_comparison_baseline.png`
+- `main.py`
+- `src/pipeline.py`
+- `src/config.py`
+- `src/data_collection.py`
+- `src/tushare_normalization.py`
+- `src/expectation_alignment.py`
+- `src/tushare_event_design.py`
+- `src/panel_outputs.py`
+- `src/guidance_design.py`（legacy fallback）
 
 ## 运行方式
 
-1. 安装依赖：
+### 1. 安装依赖
 
 ```bash
 pip install -r requirements.txt
 ```
 
-2. 运行当前推荐测试规格：
+### 2. 设置 Tushare Token
 
 ```bash
-RUN_MODE=test
-SAMPLE_STOCK_COUNT_TEST=300
-LIQUIDITY_TURNOVER20_NEW=0.3
-USE_CACHE=1
+export TUSHARE_TOKEN="your_token_here"
+```
+
+Windows Git Bash 同样可使用上述写法。不要把 token 写入仓库文件。
+
+### 3. 运行推荐测试规格
+
+```bash
+RUN_MODE=test \
+FRAMEWORK_MODE=both \
+SAMPLE_STOCK_COUNT_TEST=120 \
+USE_CACHE=1 \
+REQUEST_PAUSE_SEC=0.12 \
 python main.py
 ```
 
+### 4. 只运行新主规格
+
+```bash
+RUN_MODE=test \
+FRAMEWORK_MODE=tushare_first \
+python main.py
+```
+
+### 5. 只运行旧 fallback 路径
+
+```bash
+RUN_MODE=test \
+FRAMEWORK_MODE=legacy_guidance \
+python main.py
+```
+
+## 主要输出文件
+
+### 新主规格输出
+- `outputs/tables/event_dataset_tushare_first.csv`
+- `outputs/tables/regression_results_tushare_first.csv`
+- `outputs/tables/event_counts_by_type_tushare_first.csv`
+- `outputs/tables/event_counts_by_year_tushare_first.csv`
+- `outputs/audit/signal_coverage_by_year_tushare_first.csv`
+- `outputs/audit/missingness_summary_tushare_first.csv`
+- `outputs/audit/audit_note_tushare_first.txt`
+- `outputs/audit/tushare_endpoint_capabilities.csv`
+
+### legacy fallback 输出
+- `outputs/tables/final_dataset_legacy_guidance.csv`
+- `outputs/tables/final_regression_results_legacy_guidance.csv`
+- `outputs/tables/final_interpretation_legacy_guidance.txt`
+
+### 汇总输出
+- `outputs/tables/run_summary.csv`
+- `outputs/audit/tushare_first_update_note.txt`
+
+## 当前结论口径
+
+当前更合适的 headline 不是：
+- 强 PEAD
+- 长期漂移是主证据
+- 所有事件类型都应该合并解释
+
+更合适的表述是：
+
+> 在更严格的 Tushare-first 研究设计下，盈利相关事件相对于卖方预期的 surprise 提供了更干净的短期估值调整检验框架，但当前测试样本下的经济幅度、显著性与覆盖率都应谨慎解读。
+
 ## 备注
 
-- 当前 test mode 默认样本为 300 只股票，以减少 Tushare forecast 接口限频问题。
-- 若后续获得更高质量分析师一致预期，可进一步替换或增强 `ES_std` 的 expectation benchmark。
-- baseline 结果仍保留，用于方法对比，不建议继续作为主结果展示。
-
-## 来源说明
-
-- 数据来源：项目本地构建的中国A股业绩预告事件样本与对应行情数据（2020-01-01 至 2026-04-21）。
-- 图表来源：由本项目代码运行后在 `outputs/figures` 与 `outputs/tables` 中自动生成。
-- 参考文献：20200930-国信证券-金融工程专题研究：超预期投资全攻略。
+- `forecast_vip`、`express_vip` 和 `report_rc` 的可用性取决于当前 Tushare 账户权限，仓库会把 endpoint 可用性写入审计输出。
+- 新版本优先使用严格的 `report_rc` 匹配样本；弱匹配或 fallback 样本应作为 supplementary 结果解读。
+- 旧 guidance-only 设计保留是为了可重复旧结果，不应继续作为默认 headline。
 
 ---
 
@@ -220,198 +285,217 @@ python main.py
 
 Current language: English | [切换到中文](#zh)
 
-## Project Objective
+## Project Overview
 
-This project studies whether earnings-guidance-related events in China A-shares (2020 onward) are associated with post-announcement abnormal returns, and interprets the evidence from a Corporate Finance perspective centered on valuation adjustment and market efficiency.
+This repository has been upgraded from a weak-proxy guidance-only event study into a **Tushare Pro-first earnings-surprise research framework** for China A-shares. The revised design integrates sell-side expectations, management preannouncements, earnings express releases, formal financial releases, and market controls into one auditable pipeline.
 
-## Updated Headline Finding
+## Current Preferred Specification
 
-The project no longer treats long-window `CAR60` or strong PEAD language as the default narrative. The preferred specification now focuses on a cleaner and more defensible short-window design:
+The headline specification no longer relies on the old guidance-only proxy or long-window `CAR60`. The preferred design is now:
 
-- Main signal: `ES_std`
-- Main outcome window: `CAR5`
-- Main regression: industry fixed effects + year-quarter fixed effects + firm-clustered standard errors
-- Main interpretation: cleaner standardized guidance surprise predicts modest but statistically significant short-run abnormal return
-- Final framing: **limited short-run valuation adjustment after cleaner guidance surprise**
+- expectation source: `report_rc`
+- event sources: `forecast` / `forecast_vip`, `express` / `express_vip`, `fina_indicator`
+- market/control source: `daily_basic`
+- headline event window: `CAR5`
+- full event-window grid: `CAR3`, `CAR5`, `CAR10`, `CAR20`, `CAR60`
+- main regression: industry FE + year-quarter FE + event-type FE + firm-clustered SE
+- interpretation: cleaner expectation alignment and event classification support a more credible short-run valuation-adjustment test, but the current test-run evidence remains cautious rather than strong
 
-This means the evidence supports delayed adjustment in prices, but not a strong claim of long-run drift or dramatic market inefficiency.
+## Why the older design was weak
 
-## Method Update
+The older design built expected earnings from internal proxies such as:
+- prior guidance for the same firm-period,
+- firm historical guidance,
+- industry medians,
+- or zero fallback.
 
-### Old baseline result
+That can be useful for exploration, but it is not a strong main design because it does not map cleanly into true pre-event sell-side expectations, introduces measurement error, and makes look-ahead control harder. The old guidance-only path is therefore retained as a `legacy_guidance` fallback rather than the headline result.
 
-The old baseline used:
-- signal: `ES_main = guidance_yoy_midpoint - analyst_consensus_yoy_proxy`
-- outcome: `CAR60`
-- regression: pooled / clustered OLS using dummy-style signals
+## Tushare-first module mapping
 
-Why it is no longer preferred:
-- `ES_main` is noisy because expected earnings are measured with a weak proxy;
-- `CAR60` absorbs a great deal of non-event news;
-- long-window results are easier to over-interpret as strong PEAD.
+### 1. Sell-side expectation module
+Source: `report_rc`
 
-### New preferred specification
+Core fields include:
+- `ts_code`
+- `report_date`
+- `report_title`
+- `report_type`
+- `classify`
+- `org_name`
+- `author_name`
+- `quarter`
+- `np`
+- `eps`
+- `pe`
+- `rating`
+- `max_price`
+- `min_price`
 
-The current recommended specification is:
-- signal: `ES_std`
-- outcome: `CAR5`
-- regression: `CAR5 ~ ES_std + log_size + beta + Industry FE + YearQuarter FE`, with firm-clustered SE
+Functions:
+- build a stock-period-date sell-side expectation panel
+- support `latest` / `mean` / `median` aggregation
+- enforce a minimum report count filter
+- extract supplementary over-expectation labels from report titles
 
-Why it is more defensible:
-- `ES_std` better standardizes surprise intensity;
-- `CAR5` is closer to the direct valuation response to the guidance event;
-- fixed effects and clustered inference better control for common shocks and within-firm dependence.
+### 2. Earnings-event module
+Sources:
+- `forecast` / `forecast_vip`
+- `express` / `express_vip`
+- `fina_indicator`
 
-## Current Research Design Summary
+Standardized event types:
+- `preannouncement`
+- `revision`
+- `express`
+- `formal_release`
 
-- Sample period: 2020-01-01 to 2026-04-21
-- Event types:
-  - `guidance_initial`
-  - `guidance_upward_revision`
-- Filters:
-  - exclude ST / *ST firms
-  - exclude firms with fewer than 120 trading days since listing
-  - exclude non-tradable event-day observations
-  - apply liquidity screen based on 20-day turnover
-- Abnormal return:
-  - `AR = stock_return - market_return`
-- Event windows currently produced:
-  - baseline: `CAR20`, `CAR60`
-  - improved: `CAR3`, `CAR5`, `CAR20`
+### 3. Market/control module
+Source: `daily_basic`
 
-## Main Results: Baseline vs Preferred Specification
+Core fields:
+- `total_mv`
+- `circ_mv`
+- `turnover_rate`
+- `turnover_rate_f`
+- `pe_ttm`
+- `pb`
+- `ps_ttm`
 
-### Successful current run (test mode)
+## Current signal system
 
-- sample stocks: 300
-- raw guidance rows: 5,162
-- total candidate events: 2,858
-- baseline event dataset: 2,375
-- improved event dataset: 2,529
+The revised framework builds surprise measures by event family rather than forcing all events into one noisy pool:
 
-See: `outputs/tables/run_summary.csv`
+- `forecast_surprise_raw/pct/std`
+- `express_surprise_raw/pct/std`
+- `final_surprise_raw/pct/std`
+- `revision_magnitude_np`
+- `revision_magnitude_eps`
+- `upward_revision_count`
+- `fraction_upgraded`
+- `target_price_change`
 
-### Old baseline result
+The main signal is:
+- `main_surprise_std`
 
-The baseline still shows a positive borderline-significant coefficient on `CAR60`, but this is no longer the headline result.
+It prioritizes strictly pre-event `report_rc` matches and standardizes within comparable event families.
 
-- baseline sample size: 2,375
-- `moderate_positive_ES_dummy` on `CAR60`
-  - coef = `0.022523`
-  - p-value = `0.0481`
-- file: `outputs/tables/final_regression_results_baseline.csv`
+## Matching rules
 
-Group means:
-- all events `CAR60`: 3.288%
-- positive ES `CAR60`: 4.581%
-- moderate positive `CAR60`: 4.895%
-- extreme ES `CAR60`: 6.981%
+The preferred sample enforces:
+- sell-side reports must be published before the event trading date,
+- matched expectations must refer to the same fiscal period,
+- freshness windows are configurable,
+- minimum report-count filters are configurable,
+- match quality is recorded explicitly rather than hidden in silent fallback logic.
 
-See: `outputs/tables/final_group_summary_baseline.csv`
+## Event-study and regression design
 
-### New preferred result
+### Event study
+- abnormal return: `AR = stock_return - market_return`
+- windows: `CAR3`, `CAR5`, `CAR10`, `CAR20`, `CAR60`
 
-The preferred result is the short-window FE regression using standardized surprise.
+### Preferred regression
+For each CAR window, the preferred model is:
 
-- improved sample size: 2,529
-- regression: industry FE + year-quarter FE + firm-clustered SE
-- `ES_std` on `CAR5`
-  - coef = `0.001732`
-  - p-value = `0.0195`
-  - `R^2 = 0.272`
-- file: `outputs/tables/final_regression_results_improved.csv`
+`CAR_w ~ main_surprise_std + log_total_mv + beta + book_to_market + turnover20 + pe_ttm + ps_ttm + Industry FE + YearQuarter FE + EventType FE`
 
-Group means:
-- all events `CAR5`: -0.176%
-- positive ES `CAR5`: -0.127%
-- moderate positive `CAR5`: -0.180%
-- extreme ES `CAR5`: 0.158%
+Standard errors:
+- clustered at the firm (`ts_code`) level
 
-See: `outputs/tables/final_group_summary_improved.csv`
+### Audit outputs
+The revised pipeline produces:
+- event counts by year
+- event counts by type
+- signal coverage by year
+- missingness summaries
+- endpoint capability checks
+- a Tushare-first update note
 
-## Interpretation
+## Key code files
 
-The most defensible conclusion is not:
-- “strong PEAD is clearly established,”
-- or “long-run drift is the main evidence,”
-- or “moderate positive surprise clearly dominates extreme surprise,”
-- or “the market is strongly inefficient.”
+- `main.py`
+- `src/pipeline.py`
+- `src/config.py`
+- `src/data_collection.py`
+- `src/tushare_normalization.py`
+- `src/expectation_alignment.py`
+- `src/tushare_event_design.py`
+- `src/panel_outputs.py`
+- `src/guidance_design.py` (legacy fallback)
 
-Instead, the evidence supports a narrower conclusion:
-- with cleaner signal construction and a shorter event window, standardized guidance surprise helps explain short-run abnormal return;
-- the effect is statistically meaningful but economically modest;
-- therefore the project should be framed as evidence of **limited short-run valuation adjustment**, not dramatic inefficiency.
+## How to run
 
-## Recommended Presentation Language
-
-### Headline conclusion
-
-> Cleaner standardized guidance surprise predicts modest but statistically significant short-run abnormal return in China A-shares.
-
-### Phrases that should no longer be used as the main takeaway
-
-- strong PEAD
-- long-run drift as the main evidence
-- CAR60 as the headline result
-- moderate positive beats extreme
-- strong market inefficiency
-
-These can remain only in baseline or supplementary discussion.
-
-## Main Output Files
-
-### Preferred result files
-
-- `outputs/tables/final_dataset_improved.csv`
-- `outputs/tables/final_group_summary_improved.csv`
-- `outputs/tables/final_regression_results_improved.csv`
-- `outputs/tables/final_interpretation_improved.txt`
-
-### Comparison and audit files
-
-- `outputs/tables/final_dataset_baseline.csv`
-- `outputs/tables/final_group_summary_baseline.csv`
-- `outputs/tables/final_regression_results_baseline.csv`
-- `outputs/tables/final_interpretation_baseline.txt`
-- `outputs/tables/before_after_method_comparison.csv`
-- `outputs/tables/before_after_interpretation.txt`
-- `outputs/tables/project_narrative_update_note.txt`
-
-### Figures
-
-- `outputs/figures/fig1_es_group_comparison_improved.png`
-- `outputs/figures/fig2_cum_return_moderate_vs_extreme_improved.png`
-- `outputs/figures/fig3_event_type_comparison_improved.png`
-- `outputs/figures/fig1_es_group_comparison_baseline.png`
-- `outputs/figures/fig2_cum_return_moderate_vs_extreme_baseline.png`
-- `outputs/figures/fig3_event_type_comparison_baseline.png`
-
-## How to Run
-
-1. Install dependencies:
+### 1. Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-2. Run the current preferred test configuration:
+### 2. Set the Tushare token
 
 ```bash
-RUN_MODE=test
-SAMPLE_STOCK_COUNT_TEST=300
-LIQUIDITY_TURNOVER20_NEW=0.3
-USE_CACHE=1
+export TUSHARE_TOKEN="your_token_here"
+```
+
+Do not store the token in repo files.
+
+### 3. Run the recommended test specification
+
+```bash
+RUN_MODE=test \
+FRAMEWORK_MODE=both \
+SAMPLE_STOCK_COUNT_TEST=120 \
+USE_CACHE=1 \
+REQUEST_PAUSE_SEC=0.12 \
 python main.py
 ```
 
+### 4. Run only the new preferred framework
+
+```bash
+RUN_MODE=test \
+FRAMEWORK_MODE=tushare_first \
+python main.py
+```
+
+### 5. Run only the legacy fallback path
+
+```bash
+RUN_MODE=test \
+FRAMEWORK_MODE=legacy_guidance \
+python main.py
+```
+
+## Main outputs
+
+### Preferred Tushare-first outputs
+- `outputs/tables/event_dataset_tushare_first.csv`
+- `outputs/tables/regression_results_tushare_first.csv`
+- `outputs/tables/event_counts_by_type_tushare_first.csv`
+- `outputs/tables/event_counts_by_year_tushare_first.csv`
+- `outputs/audit/signal_coverage_by_year_tushare_first.csv`
+- `outputs/audit/missingness_summary_tushare_first.csv`
+- `outputs/audit/audit_note_tushare_first.txt`
+- `outputs/audit/tushare_endpoint_capabilities.csv`
+
+### Legacy fallback outputs
+- `outputs/tables/final_dataset_legacy_guidance.csv`
+- `outputs/tables/final_regression_results_legacy_guidance.csv`
+- `outputs/tables/final_interpretation_legacy_guidance.txt`
+
+### Run summary outputs
+- `outputs/tables/run_summary.csv`
+- `outputs/audit/tushare_first_update_note.txt`
+
+## Recommended final framing
+
+A better headline is:
+
+> Under a cleaner Tushare-first design, earnings-related surprises relative to sell-side expectations can be studied with a more credible short-run valuation-adjustment framework in China A-shares, but the current test-run magnitude, significance, and coverage should still be interpreted cautiously.
+
 ## Notes
 
-- Test mode now defaults to 300 stocks to reduce Tushare forecast rate-limit failures.
-- If better analyst-consensus data becomes available, the expectation benchmark behind `ES_std` should be upgraded further.
-- Baseline results are preserved for methodological comparison, but should not remain the main storyline.
-
-## Source Note
-
-- Data source: locally constructed China A-share guidance-event sample and matched market data (2020-01-01 to 2026-04-21).
-- Figures/tables: generated automatically by this project in `outputs/figures` and `outputs/tables`.
-- Reference: Guosen Securities (2020-09-30), Financial Engineering Special Research: A Complete Guide to Surprise Investing.
+- Availability of `forecast_vip`, `express_vip`, and `report_rc` depends on the current Tushare account entitlements; the pipeline records endpoint availability in the audit outputs.
+- The strict `report_rc`-matched sample should be treated as the main result; weaker matches or fallback samples should be supplementary.
+- The old guidance-only design remains only for reproducibility and comparison, not as the default headline result.

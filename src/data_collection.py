@@ -15,15 +15,18 @@ from src.io_utils import save_csv
 @dataclass
 class DataBundle:
     stocks: pd.DataFrame
-    earnings: pd.DataFrame
     prices: pd.DataFrame
     market: pd.DataFrame
     daily_basic: pd.DataFrame
-    cross_check: pd.DataFrame
+    forecast: pd.DataFrame
+    express: pd.DataFrame
+    fina_indicator: pd.DataFrame
+    report_rc: pd.DataFrame
+    capabilities: pd.DataFrame
 
 
 class DataCollector:
-    """Collect A-share data with Tushare primary and Akshare fallback."""
+    """Collect A-share data with Tushare as the preferred source."""
 
     def __init__(self, config: ProjectConfig, logger: logging.Logger) -> None:
         self.config = config
@@ -32,17 +35,31 @@ class DataCollector:
         self.ak = None
         self._load_clients()
         self.cache_root = self.config.data_raw_dir / "cache"
-        for folder in ["earnings", "guidance", "prices", "daily_basic", "market", "cross_check"]:
+        for folder in [
+            "forecast",
+            "forecast_vip",
+            "express",
+            "express_vip",
+            "fina_indicator",
+            "report_rc",
+            "prices",
+            "daily_basic",
+            "market",
+            "stock_basic",
+        ]:
             (self.cache_root / folder).mkdir(parents=True, exist_ok=True)
 
     def _load_clients(self) -> None:
-        try:
-            import tushare as ts  # type: ignore
+        if self.config.tushare_token:
+            try:
+                import tushare as ts  # type: ignore
 
-            self.ts = ts.pro_api(self.config.tushare_token)
-            self.logger.info("Tushare client initialized.")
-        except Exception as exc:
-            self.logger.warning("Tushare unavailable: %s", exc)
+                self.ts = ts.pro_api(self.config.tushare_token)
+                self.logger.info("Tushare client initialized.")
+            except Exception as exc:
+                self.logger.warning("Tushare unavailable: %s", exc)
+        else:
+            self.logger.warning("TUSHARE_TOKEN is not set; Tushare client not initialized.")
 
         try:
             import akshare as ak  # type: ignore
@@ -54,26 +71,44 @@ class DataCollector:
 
     def collect_all(self) -> DataBundle:
         stocks = self.get_stock_universe()
-        earnings = self.get_earnings_data(stocks)
         prices = self.get_stock_prices(stocks)
         market = self.get_market_index()
         daily_basic = self.get_daily_basic(stocks)
-        cross_check = self.build_cross_check(stocks) if self.config.enable_cross_check else pd.DataFrame()
+        forecast = self.get_forecast_data(stocks)
+        express = self.get_express_data(stocks)
+        fina_indicator = self.get_fina_indicator_data(stocks)
+        report_rc = self.get_report_rc_data()
+        capabilities = self.get_endpoint_capabilities()
 
         save_csv(stocks, self.config.data_raw_dir / "stock_universe.csv")
-        save_csv(earnings, self.config.data_raw_dir / "earnings_raw.csv")
         save_csv(prices, self.config.data_raw_dir / "stock_prices_raw.csv")
         save_csv(market, self.config.data_raw_dir / "market_index_raw.csv")
         save_csv(daily_basic, self.config.data_raw_dir / "daily_basic_raw.csv")
-        save_csv(cross_check, self.config.data_raw_dir / "cross_check_price_sources.csv")
+        save_csv(forecast, self.config.data_raw_dir / "guidance_forecast_raw.csv")
+        save_csv(express, self.config.data_raw_dir / "express_raw.csv")
+        save_csv(fina_indicator, self.config.data_raw_dir / "fina_indicator_raw.csv")
+        save_csv(report_rc, self.config.data_raw_dir / "report_rc_raw.csv")
+        save_csv(capabilities, self.config.outputs_audit_dir / "tushare_endpoint_capabilities.csv")
+
+        save_csv(stocks, self.config.data_raw_tushare_dir / "stock_basic" / "stock_universe.csv")
+        save_csv(prices, self.config.data_raw_tushare_dir / "prices" / "stock_prices_raw.csv")
+        save_csv(market, self.config.data_raw_tushare_dir / "market" / "market_index_raw.csv")
+        save_csv(daily_basic, self.config.data_raw_tushare_dir / "daily_basic" / "daily_basic_raw.csv")
+        save_csv(forecast, self.config.data_raw_tushare_dir / "forecast" / "forecast_raw.csv")
+        save_csv(express, self.config.data_raw_tushare_dir / "express" / "express_raw.csv")
+        save_csv(fina_indicator, self.config.data_raw_tushare_dir / "fina_indicator" / "fina_indicator_raw.csv")
+        save_csv(report_rc, self.config.data_raw_tushare_dir / "report_rc" / "report_rc_raw.csv")
 
         return DataBundle(
             stocks=stocks,
-            earnings=earnings,
             prices=prices,
             market=market,
             daily_basic=daily_basic,
-            cross_check=cross_check,
+            forecast=forecast,
+            express=express,
+            fina_indicator=fina_indicator,
+            report_rc=report_rc,
+            capabilities=capabilities,
         )
 
     def _cache_path(self, folder: str, key: str) -> Path:
@@ -120,25 +155,63 @@ class DataCollector:
             out.loc[need_fallback] = pd.to_datetime(s.loc[need_fallback], errors="coerce")
         return out
 
-    def get_stock_universe(self) -> pd.DataFrame:
-        # Prefer Tushare's stock_basic for structured fields (industry, list date).
+    def get_endpoint_capabilities(self) -> pd.DataFrame:
+        checks: list[tuple[str, callable]] = []
         if self.ts is not None:
+            checks = [
+                ("report_rc", lambda: self.ts.report_rc(start_date="20240101", end_date="20240131")),
+                ("forecast", lambda: self.ts.forecast(ts_code="000001.SZ", start_date="20240101", end_date="20241231")),
+                ("forecast_vip", lambda: self.ts.forecast_vip(period="20240331")),
+                ("express", lambda: self.ts.express(ts_code="000001.SZ", start_date="20240101", end_date="20241231")),
+                ("express_vip", lambda: self.ts.express_vip(period="20240331")),
+                ("fina_indicator", lambda: self.ts.fina_indicator(ts_code="000001.SZ", start_date="20240101", end_date="20241231")),
+                ("daily_basic", lambda: self.ts.daily_basic(ts_code="000001.SZ", start_date="20240101", end_date="20240131")),
+            ]
+        rows: list[dict[str, object]] = []
+        for name, fn in checks:
             try:
-                df = self.ts.stock_basic(
-                    exchange="",
-                    list_status="L",
-                    fields="ts_code,symbol,name,area,industry,list_date",
-                )
-                if not df.empty:
-                    df = df.sort_values("ts_code").reset_index(drop=True)
-                    if self.config.sample_stock_count:
-                        df = df.head(self.config.sample_stock_count).copy()
-                    self.logger.info("Stock universe from Tushare: %s rows", len(df))
-                    return df
+                df = fn()
+                rows.append({
+                    "endpoint": name,
+                    "available": True,
+                    "row_count": int(len(df)),
+                    "columns": ",".join(df.columns),
+                    "error": "",
+                })
             except Exception as exc:
-                self.logger.warning("Tushare stock_basic failed: %s", exc)
+                rows.append({
+                    "endpoint": name,
+                    "available": False,
+                    "row_count": 0,
+                    "columns": "",
+                    "error": str(exc),
+                })
+        return pd.DataFrame(rows)
 
-        # Fallback to Akshare if Tushare is unavailable.
+    def get_stock_universe(self) -> pd.DataFrame:
+        if self.ts is not None:
+            cached = self._load_cache("stock_basic", "listed")
+            if cached is not None and not cached.empty:
+                df = cached.copy()
+            else:
+                try:
+                    df = self.ts.stock_basic(
+                        exchange="",
+                        list_status="L",
+                        fields="ts_code,symbol,name,area,industry,list_date",
+                    )
+                    if not df.empty:
+                        self._save_cache(df, "stock_basic", "listed")
+                except Exception as exc:
+                    self.logger.warning("Tushare stock_basic failed: %s", exc)
+                    df = pd.DataFrame()
+            if not df.empty:
+                df = df.sort_values("ts_code").reset_index(drop=True)
+                if self.config.sample_stock_count:
+                    df = df.head(self.config.sample_stock_count).copy()
+                self.logger.info("Stock universe from Tushare: %s rows", len(df))
+                return df
+
         if self.ak is not None:
             try:
                 ak_df = self.ak.stock_info_a_code_name()
@@ -163,175 +236,206 @@ class DataCollector:
         self.logger.error("No data source available for stock universe.")
         return pd.DataFrame(columns=["ts_code", "symbol", "name", "area", "industry", "list_date"])
 
-    def get_earnings_data(self, stocks: pd.DataFrame) -> pd.DataFrame:
-        all_rows: list[pd.DataFrame] = []
-        if stocks.empty:
+    def get_forecast_data(self, stocks: pd.DataFrame) -> pd.DataFrame:
+        if stocks.empty or self.ts is None:
             return pd.DataFrame()
-
+        use_vip = self.config.use_forecast_vip
+        folder = "forecast_vip" if use_vip else "forecast"
+        rows: list[pd.DataFrame] = []
         codes = list(stocks["ts_code"].dropna().unique())
-        with ThreadPoolExecutor(max_workers=self.config.max_workers) as ex:
-            future_map = {ex.submit(self._get_earnings_single_stock, code): code for code in codes}
+        if use_vip:
+            periods = pd.period_range(
+                start=pd.to_datetime(self.config.start_date, format="%Y%m%d"),
+                end=pd.to_datetime(self.config.end_date, format="%Y%m%d"),
+                freq="Q",
+            )
+            for period in periods:
+                period_key = period.end_time.strftime("%Y%m%d")
+                cached = self._load_cache(folder, period_key)
+                if cached is not None:
+                    if not cached.empty:
+                        rows.append(cached)
+                    continue
+                fn = lambda pk=period_key: self.ts.forecast_vip(period=pk)
+                df = self._retry(fn, f"forecast_vip {period_key}")
+                if df is not None:
+                    self._save_cache(df, folder, period_key)
+                    if not df.empty:
+                        rows.append(df)
+                time.sleep(max(self.config.request_pause_sec, 0.12))
+        else:
+            iterator = codes if self.config.run_mode == "test" else codes
+            for code in iterator:
+                cached = self._load_cache(folder, code)
+                if cached is not None:
+                    if not cached.empty:
+                        rows.append(cached)
+                    continue
+                fn = lambda c=code: self.ts.forecast(
+                    ts_code=c,
+                    start_date=self.config.start_date,
+                    end_date=self.config.end_date,
+                )
+                df = self._retry(fn, f"forecast {code}")
+                if df is not None:
+                    self._save_cache(df, folder, code)
+                    if not df.empty:
+                        rows.append(df)
+                time.sleep(max(self.config.request_pause_sec, 0.15))
+        out = pd.concat(rows, ignore_index=True) if rows else pd.DataFrame()
+        if out.empty:
+            return out
+        out = out[out["ts_code"].isin(codes)].copy()
+        for col in ["ann_date", "end_date", "first_ann_date"]:
+            if col in out.columns:
+                out[col] = self._parse_trade_date(out[col])
+        out["source_endpoint"] = folder
+        out = out.sort_values([c for c in ["ts_code", "end_date", "ann_date"] if c in out.columns]).reset_index(drop=True)
+        self.logger.info("Forecast rows collected: %s", len(out))
+        return out
+
+    def get_express_data(self, stocks: pd.DataFrame) -> pd.DataFrame:
+        if stocks.empty or self.ts is None:
+            return pd.DataFrame()
+        use_vip = self.config.use_express_vip
+        folder = "express_vip" if use_vip else "express"
+        rows: list[pd.DataFrame] = []
+        codes = list(stocks["ts_code"].dropna().unique())
+        if use_vip:
+            periods = pd.period_range(
+                start=pd.to_datetime(self.config.start_date, format="%Y%m%d"),
+                end=pd.to_datetime(self.config.end_date, format="%Y%m%d"),
+                freq="Q",
+            )
+            for period in periods:
+                period_key = period.end_time.strftime("%Y%m%d")
+                cached = self._load_cache(folder, period_key)
+                if cached is not None:
+                    if not cached.empty:
+                        rows.append(cached)
+                    continue
+                fn = lambda pk=period_key: self.ts.express_vip(period=pk)
+                df = self._retry(fn, f"express_vip {period_key}")
+                if df is not None:
+                    self._save_cache(df, folder, period_key)
+                    if not df.empty:
+                        rows.append(df)
+                time.sleep(max(self.config.request_pause_sec, 0.12))
+        else:
+            for code in codes:
+                cached = self._load_cache(folder, code)
+                if cached is not None:
+                    if not cached.empty:
+                        rows.append(cached)
+                    continue
+                fn = lambda c=code: self.ts.express(
+                    ts_code=c,
+                    start_date=self.config.start_date,
+                    end_date=self.config.end_date,
+                )
+                df = self._retry(fn, f"express {code}")
+                if df is not None:
+                    self._save_cache(df, folder, code)
+                    if not df.empty:
+                        rows.append(df)
+                time.sleep(max(self.config.request_pause_sec, 0.12))
+        out = pd.concat(rows, ignore_index=True) if rows else pd.DataFrame()
+        if out.empty:
+            return out
+        out = out[out["ts_code"].isin(codes)].copy()
+        for col in ["ann_date", "end_date"]:
+            if col in out.columns:
+                out[col] = self._parse_trade_date(out[col])
+        out["source_endpoint"] = folder
+        out = out.sort_values([c for c in ["ts_code", "end_date", "ann_date"] if c in out.columns]).reset_index(drop=True)
+        self.logger.info("Express rows collected: %s", len(out))
+        return out
+
+    def get_fina_indicator_data(self, stocks: pd.DataFrame) -> pd.DataFrame:
+        if stocks.empty or self.ts is None or not self.config.use_fina_indicator:
+            return pd.DataFrame()
+        rows: list[pd.DataFrame] = []
+        codes = list(stocks["ts_code"].dropna().unique())
+        with ThreadPoolExecutor(max_workers=min(self.config.max_workers, 6)) as ex:
+            future_map = {ex.submit(self._get_fina_indicator_single, code): code for code in codes}
             for fut in as_completed(future_map):
                 df = fut.result()
                 if df is not None and not df.empty:
-                    all_rows.append(df)
-
-        if not all_rows:
-            self.logger.warning("No earnings records collected.")
-            return pd.DataFrame()
-
-        earnings = pd.concat(all_rows, ignore_index=True)
-        earnings["ann_date"] = pd.to_datetime(earnings["ann_date"], format="%Y%m%d", errors="coerce")
-        earnings["end_date"] = pd.to_datetime(earnings["end_date"], format="%Y%m%d", errors="coerce")
-        earnings = earnings.dropna(subset=["ts_code", "ann_date", "end_date"])
-        earnings = earnings.sort_values(["ts_code", "ann_date", "end_date"]).reset_index(drop=True)
-        self.logger.info("Earnings records collected: %s rows", len(earnings))
-        return earnings
-
-    def get_guidance_data(self, stocks: pd.DataFrame) -> pd.DataFrame:
-        """Collect earnings guidance (业绩预告) from Tushare forecast endpoint."""
-        if stocks.empty or self.ts is None:
-            return pd.DataFrame()
-
-        rows: list[pd.DataFrame] = []
-        codes = list(stocks["ts_code"].dropna().unique())
-
-        # The forecast endpoint is rate-limited aggressively, so use a serial pull in test mode.
-        if self.config.run_mode == "test":
-            for code in codes:
-                df = self._get_guidance_single_stock(code)
-                if df is not None and not df.empty:
                     rows.append(df)
-                time.sleep(max(self.config.request_pause_sec, 0.15))
-        else:
-            with ThreadPoolExecutor(max_workers=min(self.config.max_workers, 4)) as ex:
-                future_map = {ex.submit(self._get_guidance_single_stock, code): code for code in codes}
-                for fut in as_completed(future_map):
-                    df = fut.result()
-                    if df is not None and not df.empty:
-                        rows.append(df)
-
-        if not rows:
-            self.logger.warning("No guidance rows collected.")
-            return pd.DataFrame()
-
-        out = pd.concat(rows, ignore_index=True)
-        out["ann_date"] = pd.to_datetime(out["ann_date"], format="%Y%m%d", errors="coerce")
-        out["end_date"] = pd.to_datetime(out["end_date"], format="%Y%m%d", errors="coerce")
-        if "first_ann_date" in out.columns:
-            out["first_ann_date"] = pd.to_datetime(out["first_ann_date"], format="%Y%m%d", errors="coerce")
-        out = out.dropna(subset=["ts_code", "ann_date", "end_date"])
-        out = out.sort_values(["ts_code", "end_date", "ann_date"]).reset_index(drop=True)
-        self.logger.info("Guidance rows collected: %s", len(out))
+        out = pd.concat(rows, ignore_index=True) if rows else pd.DataFrame()
+        if out.empty:
+            return out
+        for col in ["ann_date", "end_date"]:
+            if col in out.columns:
+                out[col] = self._parse_trade_date(out[col])
+        out["source_endpoint"] = "fina_indicator"
+        out = out.sort_values([c for c in ["ts_code", "end_date", "ann_date"] if c in out.columns]).reset_index(drop=True)
+        self.logger.info("Fina indicator rows collected: %s", len(out))
         return out
 
-    def _get_guidance_single_stock(self, ts_code: str) -> pd.DataFrame | None:
-        cached = self._load_cache("guidance", ts_code)
+    def _get_fina_indicator_single(self, ts_code: str) -> pd.DataFrame | None:
+        cached = self._load_cache("fina_indicator", ts_code)
         if cached is not None and not cached.empty:
             return cached
         if self.ts is None:
             return None
         try:
-            fn = lambda: self.ts.forecast(
+            fn = lambda: self.ts.fina_indicator(
                 ts_code=ts_code,
                 start_date=self.config.start_date,
                 end_date=self.config.end_date,
             )
-            df = self._retry(fn, f"forecast {ts_code}")
+            df = self._retry(fn, f"fina_indicator {ts_code}")
             if df is None:
                 return None
             if not df.empty:
-                self._save_cache(df, "guidance", ts_code)
+                self._save_cache(df, "fina_indicator", ts_code)
             return df
         except Exception as exc:
-            self.logger.warning("forecast failed for %s: %s", ts_code, exc)
+            self.logger.warning("fina_indicator failed for %s: %s", ts_code, exc)
             return None
 
-    def _get_earnings_single_stock(self, ts_code: str) -> pd.DataFrame | None:
-        cached = self._load_cache("earnings", ts_code)
-        if cached is not None and not cached.empty:
-            return cached
-
-        if self.ts is not None:
-            # Primary approach: use income statement quarterly records.
-            for endpoint in ("income", "fina_indicator"):
-                try:
-                    if endpoint == "income":
-                        fn = lambda: self.ts.income(
-                            ts_code=ts_code,
-                            start_date=self.config.start_date,
-                            end_date=self.config.end_date,
-                            fields=(
-                                "ts_code,ann_date,end_date,"
-                                "n_income_attr_p,basic_eps,diluted_eps"
-                            ),
-                        )
-                        df = self._retry(fn, f"income {ts_code}")
-                        if df is None:
-                            continue
-                        if not df.empty:
-                            df["actual_earnings"] = (
-                                df["n_income_attr_p"]
-                                .fillna(df["basic_eps"])
-                                .fillna(df["diluted_eps"])
-                            )
-                            out = df[
-                                [
-                                    "ts_code",
-                                    "ann_date",
-                                    "end_date",
-                                    "n_income_attr_p",
-                                    "basic_eps",
-                                    "diluted_eps",
-                                    "actual_earnings",
-                                ]
-                            ]
-                            self._save_cache(out, "earnings", ts_code)
-                            return out
-                    else:
-                        fn = lambda: self.ts.fina_indicator(
-                            ts_code=ts_code,
-                            start_date=self.config.start_date,
-                            end_date=self.config.end_date,
-                            fields="ts_code,ann_date,end_date,eps,dt_eps",
-                        )
-                        df = self._retry(fn, f"fina_indicator {ts_code}")
-                        if df is None:
-                            continue
-                        if not df.empty:
-                            df["actual_earnings"] = df["dt_eps"].fillna(df["eps"])
-                            df["n_income_attr_p"] = np.nan
-                            df["basic_eps"] = df["eps"]
-                            df["diluted_eps"] = np.nan
-                            out = df[
-                                [
-                                    "ts_code",
-                                    "ann_date",
-                                    "end_date",
-                                    "n_income_attr_p",
-                                    "basic_eps",
-                                    "diluted_eps",
-                                    "actual_earnings",
-                                ]
-                            ]
-                            self._save_cache(out, "earnings", ts_code)
-                            return out
-                except Exception as exc:
-                    self.logger.warning(
-                        "Tushare %s failed for %s: %s", endpoint, ts_code, exc
-                    )
-
-        # Akshare fallback for financials is less standardized across symbols/endpoints.
-        # We return None if unavailable and allow downstream logic to drop sparse records.
-        return None
+    def get_report_rc_data(self) -> pd.DataFrame:
+        if self.ts is None or not self.config.use_report_rc:
+            return pd.DataFrame()
+        rows: list[pd.DataFrame] = []
+        months = pd.period_range(
+            start=pd.to_datetime(self.config.start_date, format="%Y%m%d"),
+            end=pd.to_datetime(self.config.end_date, format="%Y%m%d"),
+            freq="M",
+        )
+        for month in months:
+            start = month.start_time.strftime("%Y%m%d")
+            end = month.end_time.strftime("%Y%m%d")
+            cache_key = f"{start}_{end}"
+            cached = self._load_cache("report_rc", cache_key)
+            if cached is not None:
+                if not cached.empty:
+                    rows.append(cached)
+                continue
+            fn = lambda s=start, e=end: self.ts.report_rc(start_date=s, end_date=e)
+            df = self._retry(fn, f"report_rc {cache_key}")
+            if df is not None:
+                self._save_cache(df, "report_rc", cache_key)
+                if not df.empty:
+                    rows.append(df)
+            time.sleep(max(self.config.request_pause_sec, 0.12))
+        out = pd.concat(rows, ignore_index=True) if rows else pd.DataFrame()
+        if out.empty:
+            return out
+        if "report_date" in out.columns:
+            out["report_date"] = self._parse_trade_date(out["report_date"])
+        out["source_endpoint"] = "report_rc"
+        out = out.sort_values([c for c in ["ts_code", "quarter", "report_date"] if c in out.columns]).reset_index(drop=True)
+        self.logger.info("report_rc rows collected: %s", len(out))
+        return out
 
     def get_stock_prices(self, stocks: pd.DataFrame) -> pd.DataFrame:
         rows: list[pd.DataFrame] = []
         if stocks.empty:
             return pd.DataFrame()
-
         jobs = [(row["ts_code"], row["symbol"]) for _, row in stocks.iterrows()]
-        with ThreadPoolExecutor(max_workers=self.config.max_workers) as ex:
+        with ThreadPoolExecutor(max_workers=min(self.config.max_workers, 8)) as ex:
             future_map = {
                 ex.submit(self._get_single_stock_price, ts_code, symbol): ts_code
                 for ts_code, symbol in jobs
@@ -340,15 +444,13 @@ class DataCollector:
                 price_df = fut.result()
                 if price_df is not None and not price_df.empty:
                     rows.append(price_df)
-
         if not rows:
             self.logger.warning("No stock price data collected.")
             return pd.DataFrame()
-
         prices = pd.concat(rows, ignore_index=True)
         prices["trade_date"] = self._parse_trade_date(prices["trade_date"])
         prices = prices.sort_values(["ts_code", "trade_date"]).reset_index(drop=True)
-        prices["ret"] = prices.groupby("ts_code")["close"].pct_change()
+        prices["ret"] = pd.to_numeric(prices["close"], errors="coerce").groupby(prices["ts_code"]).pct_change()
         self.logger.info("Stock daily prices collected: %s rows", len(prices))
         return prices
 
@@ -356,7 +458,6 @@ class DataCollector:
         cached = self._load_cache("prices", ts_code)
         if cached is not None and not cached.empty:
             return cached
-
         if self.ts is not None:
             try:
                 fn = lambda: self.ts.daily(
@@ -373,7 +474,6 @@ class DataCollector:
                     return df
             except Exception as exc:
                 self.logger.warning("Tushare daily failed for %s: %s", ts_code, exc)
-
         if self.ak is not None:
             try:
                 df = self.ak.stock_zh_a_hist(
@@ -403,7 +503,6 @@ class DataCollector:
                 return df
             except Exception as exc:
                 self.logger.warning("Akshare daily fallback failed for %s: %s", ts_code, exc)
-
         return None
 
     def get_market_index(self) -> pd.DataFrame:
@@ -415,7 +514,6 @@ class DataCollector:
                 cached = cached.sort_values("trade_date").reset_index(drop=True)
                 cached["mkt_ret"] = pd.to_numeric(cached["close"], errors="coerce").pct_change()
             return cached
-
         if self.ts is not None:
             try:
                 fn = lambda: self.ts.index_daily(
@@ -428,69 +526,83 @@ class DataCollector:
                 if df is None:
                     df = pd.DataFrame()
                 if not df.empty:
-                    df["trade_date"] = pd.to_datetime(df["trade_date"])
+                    df["trade_date"] = self._parse_trade_date(df["trade_date"])
                     df = df.sort_values("trade_date").reset_index(drop=True)
-                    df["mkt_ret"] = df["close"].pct_change()
+                    df["mkt_ret"] = pd.to_numeric(df["close"], errors="coerce").pct_change()
                     self._save_cache(df, "market", cache_key)
                     self.logger.info("Market index from Tushare: %s rows", len(df))
                     return df
             except Exception as exc:
                 self.logger.warning("Tushare index_daily failed: %s", exc)
-
         if self.ak is not None:
-            # Akshare fallback using index daily close.
             try:
                 df = self.ak.stock_zh_index_daily_em(symbol=self.config.market_index_symbol_akshare)
-                col_map = {"date": "trade_date", "close": "close"}
-                df = df.rename(columns=col_map)
+                df = df.rename(columns={"date": "trade_date", "close": "close"})
                 if "trade_date" not in df.columns or "close" not in df.columns:
                     return pd.DataFrame()
                 df["trade_date"] = pd.to_datetime(df["trade_date"])
-                df = df[(df["trade_date"] >= pd.to_datetime(self.config.start_date)) &
-                        (df["trade_date"] <= pd.to_datetime(self.config.end_date))]
+                df = df[(df["trade_date"] >= pd.to_datetime(self.config.start_date)) & (df["trade_date"] <= pd.to_datetime(self.config.end_date))]
                 df["ts_code"] = self.config.market_index_code_tushare
                 df = df.sort_values("trade_date").reset_index(drop=True)
-                df["mkt_ret"] = df["close"].pct_change()
+                df["mkt_ret"] = pd.to_numeric(df["close"], errors="coerce").pct_change()
                 self._save_cache(df, "market", cache_key)
                 self.logger.info("Market index from Akshare: %s rows", len(df))
                 return df
             except Exception as exc:
                 self.logger.warning("Akshare market fallback failed: %s", exc)
-
         self.logger.error("Market index collection failed.")
         return pd.DataFrame(columns=["ts_code", "trade_date", "close", "mkt_ret"])
 
     def get_daily_basic(self, stocks: pd.DataFrame) -> pd.DataFrame:
         if self.ts is None or stocks.empty:
             return pd.DataFrame()
-
         rows: list[pd.DataFrame] = []
         codes = list(stocks["ts_code"].dropna().unique())
-        with ThreadPoolExecutor(max_workers=self.config.max_workers) as ex:
+        with ThreadPoolExecutor(max_workers=min(self.config.max_workers, 6)) as ex:
             future_map = {ex.submit(self._get_daily_basic_single, ts_code): ts_code for ts_code in codes}
             for fut in as_completed(future_map):
                 df = fut.result()
                 if df is not None and not df.empty:
                     rows.append(df)
-
         if not rows:
             return pd.DataFrame()
         out = pd.concat(rows, ignore_index=True)
-        out["trade_date"] = pd.to_datetime(out["trade_date"])
+        out["trade_date"] = self._parse_trade_date(out["trade_date"])
+        numeric_cols = [
+            "close",
+            "turnover_rate",
+            "turnover_rate_f",
+            "pe",
+            "pe_ttm",
+            "pb",
+            "ps",
+            "ps_ttm",
+            "total_mv",
+            "circ_mv",
+        ]
+        for col in numeric_cols:
+            if col in out.columns:
+                out[col] = pd.to_numeric(out[col], errors="coerce")
         out = out.sort_values(["ts_code", "trade_date"]).reset_index(drop=True)
         self.logger.info("Daily basic data collected: %s rows", len(out))
         return out
 
     def _get_daily_basic_single(self, ts_code: str) -> pd.DataFrame | None:
         cached = self._load_cache("daily_basic", ts_code)
-        if cached is not None and not cached.empty:
+        required_cols = {"turnover_rate", "turnover_rate_f", "ps_ttm", "circ_mv"}
+        if cached is not None and not cached.empty and required_cols.issubset(set(cached.columns)):
             return cached
+        if self.ts is None:
+            return None
         try:
             fn = lambda: self.ts.daily_basic(
                 ts_code=ts_code,
                 start_date=self.config.start_date,
                 end_date=self.config.end_date,
-                fields="ts_code,trade_date,total_mv,pb,pe_ttm",
+                fields=(
+                    "ts_code,trade_date,close,turnover_rate,turnover_rate_f,"
+                    "pe,pe_ttm,pb,ps,ps_ttm,total_mv,circ_mv"
+                ),
             )
             df = self._retry(fn, f"daily_basic {ts_code}")
             if df is None:
@@ -501,53 +613,3 @@ class DataCollector:
         except Exception as exc:
             self.logger.warning("daily_basic failed for %s: %s", ts_code, exc)
             return None
-
-    def build_cross_check(self, stocks: pd.DataFrame) -> pd.DataFrame:
-        """
-        Cross-check key fields between Tushare and Akshare.
-        Here we compare daily close prices for a few sample stocks.
-        """
-        if self.ts is None or self.ak is None or stocks.empty:
-            return pd.DataFrame()
-
-        check_rows: list[pd.DataFrame] = []
-        check_sample = stocks.head(min(self.config.cross_check_sample_count, len(stocks)))
-
-        for _, row in check_sample.iterrows():
-            ts_code = row["ts_code"]
-            symbol = row["symbol"]
-            try:
-                ts_df = self.ts.daily(
-                    ts_code=ts_code,
-                    start_date=self.config.start_date,
-                    end_date=self.config.end_date,
-                    fields="trade_date,close",
-                )
-                ak_df = self.ak.stock_zh_a_hist(
-                    symbol=symbol,
-                    period="daily",
-                    start_date=self.config.start_date,
-                    end_date=self.config.end_date,
-                    adjust="qfq",
-                )
-                ak_df = ak_df.rename(columns={"日期": "trade_date", "收盘": "close_ak"})
-                if ts_df.empty or ak_df.empty or "close_ak" not in ak_df.columns:
-                    continue
-                ts_df["trade_date"] = pd.to_datetime(ts_df["trade_date"])
-                ak_df["trade_date"] = pd.to_datetime(ak_df["trade_date"])
-                merged = ts_df.merge(ak_df[["trade_date", "close_ak"]], on="trade_date", how="inner")
-                if merged.empty:
-                    continue
-                merged["ts_code"] = ts_code
-                merged["abs_diff"] = (merged["close"] - merged["close_ak"]).abs()
-                merged["pct_diff"] = merged["abs_diff"] / merged["close"].abs().replace(0, np.nan)
-                check_rows.append(merged[["ts_code", "trade_date", "close", "close_ak", "abs_diff", "pct_diff"]])
-            except Exception as exc:
-                self.logger.warning("Cross-check failed for %s: %s", ts_code, exc)
-
-        if not check_rows:
-            return pd.DataFrame()
-
-        check_df = pd.concat(check_rows, ignore_index=True)
-        self.logger.info("Cross-check rows: %s", len(check_df))
-        return check_df

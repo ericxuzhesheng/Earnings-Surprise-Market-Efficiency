@@ -49,199 +49,131 @@
 
 \begin{frame}{Motivation}
 \begin{itemize}
-  \item Earnings guidance updates expected future cash flows and should affect firm value.
-  \item In semi-strong efficiency, public guidance information should be priced quickly.
-  \item China A-share is a useful setting for testing whether pricing is immediate or delayed.
-  \item The goal is not to maximize t-stats, but to estimate a defensible valuation-adjustment effect.
+  \item Earnings-related disclosures update expectations about future cash flows and should affect valuation.
+  \item The key issue is not whether a noisy long-window drift exists, but whether a cleaner design identifies defensible short-run pricing adjustment.
+  \item Tushare Pro allows us to move from a weak internal proxy to a stronger event-expectation framework.
 \end{itemize}
 \end{frame}
 
 \begin{frame}{Research Question}
 \begin{block}{Core Question}
-Do cleaner guidance-surprise signals predict post-announcement abnormal return in China A-shares?
+Do China A-share earnings-related events generate short-run abnormal return once surprise is measured relative to stricter sell-side expectations?
 \end{block}
 \begin{itemize}
-  \item Research question is unchanged.
-  \item What changed is the empirical design: we now prefer a cleaner signal and a shorter event window.
-  \item Final framing emphasizes limited short-run valuation adjustment, not strong long-run PEAD.
-\end{itemize}
-\end{frame}
-
-\section{Theory}
-
-\begin{frame}{Valuation Logic}
-\begin{itemize}
-  \item Firm value reflects discounted expected future cash flows.
-  \item Guidance matters because it updates expected profitability.
-  \item Prices should react to the surprise component relative to expectations, not to raw earnings news alone.
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Efficiency Interpretation}
-\begin{itemize}
-  \item Under semi-strong efficiency, public information should be incorporated quickly.
-  \item If abnormal return appears shortly after announcement, that suggests incomplete immediate adjustment.
-  \item But a long-window return pattern can be contaminated by unrelated news.
-  \item So the identification strategy matters for how strong the inference can be.
+  \item Old version: guidance-only proxy design.
+  \item New version: Tushare-first framework with explicit event types and pre-event expectation matching.
+  \item Final framing emphasizes limited short-run valuation adjustment, not aggressive long-run inefficiency claims.
 \end{itemize}
 \end{frame}
 
 \section{Data and Design}
 
-\begin{frame}{Sample and Events}
+\begin{frame}{Tushare-first Research Framework}
 \begin{itemize}
-  \item Sample period: 2020-01-01 to 2026-04-21.
-  \item Test run shown here: 300 stocks, 5,162 raw guidance rows, 2,858 candidate events.
-  \item Event types:
-  \begin{itemize}
-    \item guidance\_initial
-    \item guidance\_upward\_revision
-  \end{itemize}
-  \item Event trading date: first trading day after announcement.
+  \item Sell-side expectation module: \texttt{report\_rc}
+  \item Event modules: \texttt{forecast}/\texttt{forecast\_vip}, \texttt{express}/\texttt{express\_vip}, \texttt{fina\_indicator}
+  \item Market/control module: \texttt{daily\_basic}, stock prices, market index
+  \item Legacy guidance-only path is retained only as fallback / comparison
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Filtering and Tradability}
+\begin{frame}{Why the Old Proxy Was Weak}
 \begin{itemize}
-  \item Exclude ST / *ST firms.
-  \item Require at least 120 trading days since listing.
-  \item Require tradable event-day return and non-zero event-day volume.
-  \item Apply 20-day turnover-based liquidity filter.
-  \item Purpose: reduce microstructure noise and make inference more credible.
+  \item The older \texttt{ES\_main}/\texttt{ES\_std} path inferred expectations from prior guidance and historical heuristics.
+  \item That is weaker than a true pre-event sell-side benchmark.
+  \item It also mixes event types and makes look-ahead control harder to audit.
+  \item So the old path now serves as legacy robustness rather than headline evidence.
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Why the Baseline Was Noisy}
+\begin{frame}{Standardized Event Types}
 \begin{itemize}
-  \item Old signal \texttt{ES\_main} used a noisy proxy for expectations.
-  \item Old headline outcome \texttt{CAR60} absorbed too much non-event information.
-  \item Pooled long-window regressions were easy to over-interpret as strong PEAD.
-  \item Group comparisons like ``moderate beats extreme'' were not stable enough to be the main conclusion.
+  \item \texttt{preannouncement}: management forecast / guidance event
+  \item \texttt{revision}: updated forecast for the same period
+  \item \texttt{express}: earnings express release
+  \item \texttt{formal\_release}: formal realized financial release
+  \item Event trading date: first trading day after the disclosure date
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Why the Improved Specification Is More Defensible}
+\begin{frame}{Signal Construction}
 \begin{itemize}
-  \item \texttt{ES\_std} better standardizes guidance surprise intensity.
-  \item \texttt{CAR5} focuses on short-run valuation adjustment close to the announcement.
-  \item Industry FE and year-quarter FE control for common shocks.
-  \item Firm-clustered SE improve inference when firms appear repeatedly.
-  \item This design is better suited to a cautious academic interpretation.
+  \item Main expectation source: pre-event \texttt{report\_rc}
+  \item Forecast surprise: management forecast vs sell-side expectation
+  \item Express surprise: express result vs sell-side expectation
+  \item Final surprise: realized result vs sell-side expectation
+  \item Main standardized signal: \texttt{main\_surprise\_std}
 \end{itemize}
-\end{frame}
-
-\section{Variables and Methodology}
-
-\begin{frame}{Preferred Variables}
-\begin{itemize}
-  \item Abnormal return: \(AR_{i,t}=R_{i,t}-R_{m,t}\)
-  \item Preferred event window: \(CAR5 = \sum_{t=1}^{5} AR_{i,t}\)
-  \item Preferred signal: \texttt{ES\_std}
-  \item Controls: log size, beta
-\end{itemize}
-\begin{block}{Preferred Interpretation}
-We test whether cleaner standardized surprise predicts short-run abnormal return, not whether large surprise mechanically implies strong long-run drift.
+\begin{block}{Key Principle}
+Do not silently collapse missing sell-side matches into the old proxy path; weak matches must be labeled and audited.
 \end{block}
 \end{frame}
 
+\begin{frame}{Controls and Filters}
+\begin{itemize}
+  \item Controls from \texttt{daily\_basic}: total market value, float market value, turnover, PE, PB, PS
+  \item Tradability filters: ST exclusion, minimum listing history, valid event-day return, positive event-day volume
+  \item Event windows: \texttt{CAR3}, \texttt{CAR5}, \texttt{CAR10}, \texttt{CAR20}, \texttt{CAR60}
+\end{itemize}
+\end{frame}
+
+\section{Methodology}
+
 \begin{frame}{Preferred Regression}
 \[
-CAR5_i = \alpha + \beta_1 ES\_std_i + \beta_2 \log(size_i) + \beta_3 beta_i + \text{Industry FE} + \text{YearQuarter FE} + \varepsilon_i
+CAR_w = \alpha + \beta_1 main\_surprise\_std + \beta_2 \log(total\_mv) + \beta_3 beta + \beta_4 book\_to\_market + \beta_5 turnover20 + \text{Industry FE} + \text{YearQuarter FE} + \text{EventType FE} + \varepsilon
 \]
 \begin{itemize}
   \item Standard errors clustered by firm.
-  \item Baseline CAR60 regression is retained only as a comparison benchmark.
+  \item Headline window: \texttt{CAR5}.
+  \item Additional windows are used for robustness and horizon comparison.
 \end{itemize}
 \end{frame}
 
-\section{Results}
+\section{Current Implementation Status}
 
-\begin{frame}{Baseline vs Preferred Specification}
-\begin{center}
-\begin{tabular}{lcc}
-\toprule
- & Baseline & Preferred \\
-\midrule
-Signal & ES\_main / moderate dummy & ES\_std \\
-Outcome & CAR60 & CAR5 \\
-Sample size & 2,375 & 2,529 \\
-Key coefficient & 0.0225 & 0.00173 \\
-p-value & 0.0481 & 0.0195 \\
-Inference & clustered OLS & FE + clustered SE \\
-\bottomrule
-\end{tabular}
-\end{center}
-\vspace{0.5em}
+\begin{frame}{Current Test-Run Audit}
 \begin{itemize}
-  \item Preferred specification is statistically cleaner, but the economic effect is modest.
+  \item Current test mode uses 120 stocks.
+  \item Raw pull succeeded for \texttt{forecast}, \texttt{express}, \texttt{fina\_indicator}, and \texttt{report\_rc}.
+  \item Legacy guidance fallback produced a usable event panel.
+  \item The strict Tushare-first sample is currently the bottleneck because coverage and filter alignment remain tight.
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Preferred Main Result}
-\begin{columns}[T,totalwidth=\textwidth]
-\begin{column}{0.47\textwidth}
+\begin{frame}{What Improved in the Codebase}
 \begin{itemize}
-  \item \texttt{ES\_std} coefficient on \texttt{CAR5}: 0.001732
-  \item p-value: 0.0195
-  \item Sample size: 2,529
-  \item Interpretation: cleaner standardized surprise predicts modest short-run abnormal return.
-\end{itemize}
-\end{column}
-\begin{column}{0.51\textwidth}
-\includegraphics[width=\linewidth]{outputs/figures/fig1_es_group_comparison_improved.png}
-\end{column}
-\end{columns}
-\end{frame}
-
-\begin{frame}{Group Evidence Is Supplementary, Not Headline}
-\begin{columns}[T,totalwidth=\textwidth]
-\begin{column}{0.47\textwidth}
-\begin{itemize}
-  \item Improved group means at \texttt{CAR5} are small.
-  \item Moderate group \texttt{CAR5}: about -0.18\%
-  \item Extreme group \texttt{CAR5}: about 0.16\%
-  \item So monotonic or dummy-group claims should not be the main narrative.
-\end{itemize}
-\end{column}
-\begin{column}{0.51\textwidth}
-\includegraphics[width=\linewidth]{outputs/figures/fig2_cum_return_moderate_vs_extreme_improved.png}
-\end{column}
-\end{columns}
-\end{frame}
-
-\begin{frame}{Baseline as Robustness / Cautionary Comparison}
-\begin{columns}[T,totalwidth=\textwidth]
-\begin{column}{0.47\textwidth}
-\begin{itemize}
-  \item Baseline \texttt{CAR60} result remains positive and borderline significant.
-  \item But long-window evidence is much easier to contaminate with later news.
-  \item Therefore it should be treated as a robustness comparison, not the headline finding.
-\end{itemize}
-\end{column}
-\begin{column}{0.51\textwidth}
-\includegraphics[width=\linewidth]{outputs/figures/fig3_event_type_comparison_baseline.png}
-\end{column}
-\end{columns}
-\end{frame}
-
-\section{Interpretation and Conclusion}
-
-\begin{frame}{Corporate Finance Interpretation}
-\begin{itemize}
-  \item Guidance surprise affects valuation because it changes expectations about future profitability.
-  \item The preferred evidence supports limited short-run underreaction, not a dramatic inefficiency story.
-  \item Better signal construction matters as much as better regression design.
-  \item The result is statistically meaningful, but economically modest.
+  \item Added explicit Tushare-first config and directory structure.
+  \item Added endpoint normalization, expectation alignment, event construction, and audit-output modules.
+  \item Fixed the incomplete \texttt{daily\_basic} field request so turnover and valuation controls are available.
+  \item Added endpoint capability checks and run-level audit notes.
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Final Conclusion}
+\begin{frame}{Why Coverage Is the Main Limitation}
 \begin{itemize}
-  \item Main result: cleaner standardized guidance surprise predicts modest but statistically significant short-run abnormal return.
-  \item Best framing: limited short-run valuation adjustment after cleaner guidance surprise.
-  \item Not supported as a headline claim: strong long-run PEAD, strong market inefficiency, or stable monotonic group ordering.
-  \item Next step: improve the expectation benchmark further with better analyst-consensus data.
+  \item The strict design requires pre-event \texttt{report\_rc} matches for the same fiscal period.
+  \item That improves identification but sharply reduces usable sample coverage.
+  \item So the main research tradeoff is now sample purity versus sample size.
+  \item This is preferable to overstating evidence from a weak expectation proxy.
 \end{itemize}
+\end{frame}
+
+\section{Conclusion}
+
+\begin{frame}{Main Conclusion}
+\begin{itemize}
+  \item The repository is now organized around a stronger Tushare-first research design.
+  \item The old weak-proxy path is preserved only as fallback / comparison.
+  \item The most defensible headline remains: cleaner earnings-surprise measurement should be evaluated through short-run valuation adjustment, not strong long-run drift claims.
+  \item The main empirical next step is improving matched-sample coverage while preserving strict pre-event alignment.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Final Takeaway}
+\begin{block}{Recommended headline}
+A Tushare-first earnings-surprise design is more credible than the old guidance-only proxy, but the final inference should remain cautious until strict matched-sample coverage is stronger.
+\end{block}
 \end{frame}
 
 \end{document}

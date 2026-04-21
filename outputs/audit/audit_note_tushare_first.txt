@@ -1,0 +1,7 @@
+Tushare-first audit note (tushare_first)
+Sample size: 4145
+Event types: express, formal_release, preannouncement, revision
+Strict report_rc matches: 518 / 4145
+Usable standardized surprise rows: 518 / 4145
+Headline specification: CAR5 on standardized surprise with controls, industry FE, year-quarter FE, event-type FE, and firm-clustered SE.
+Interpret the preferred result as a cleaner short-window valuation-adjustment design; treat fallback or weak-match samples as supplementary.

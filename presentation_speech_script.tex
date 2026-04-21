@@ -17,54 +17,48 @@
 Good afternoon everyone. We are presenting our FIN803 Corporate Finance project on earnings surprise, valuation adjustment, and market efficiency in China A-share stocks.
 
 \section*{Slide 2: Motivation}
-Our motivation is simple. Earnings guidance changes expectations about future cash flows, so it should affect firm value. The key question is not whether we can force a strong drift story, but whether a defensible surprise measure predicts meaningful post-announcement abnormal return.
+Our motivation is to move away from a weak internal proxy design and toward a more defensible earnings-surprise framework. The key question is whether cleaner earnings-related surprises, measured relative to sell-side expectations, predict short-run abnormal return.
 
 \section*{Slide 3: Research Question}
-Our research question is unchanged: do earnings-related guidance events predict abnormal return in China A-shares? What changed is the empirical design. We now emphasize a cleaner short-window design instead of relying on long-window CAR60 as the main result.
+Our research question is now framed more carefully. Instead of asking whether a noisy long-window drift exists, we ask whether earnings-related events in China A-shares generate short-run abnormal return once surprise is measured relative to stricter pre-event expectations.
 
-\section*{Slide 4: Valuation Logic}
-In Corporate Finance terms, stock prices reflect discounted expected future cash flows. Guidance announcements matter because they update beliefs about profitability. So the relevant object is the surprise relative to expectations, not the raw guidance number by itself.
+\section*{Slide 4: Tushare-first Framework}
+The new framework is Tushare-first. We use report\_rc for sell-side expectations, forecast and forecast\_vip for management preannouncements, express and express\_vip for earnings express releases, fina\_indicator for formal realized data, and daily\_basic for market controls and liquidity filters.
 
-\section*{Slide 5: Efficiency Interpretation}
-Under semi-strong efficiency, public information should be incorporated quickly. If we still see abnormal return immediately after the announcement, that suggests incomplete adjustment. But if we move too far out in time, we also pick up unrelated news, so window choice matters a lot.
+\section*{Slide 5: Why the Old Proxy Was Weak}
+The older guidance-only design inferred expectations from prior guidance, firm history, and industry heuristics. That is weaker than a direct sell-side benchmark and much harder to interpret as a clean expectation measure. So the old path is now retained only as legacy fallback, not as the headline design.
 
-\section*{Slide 6: Sample and Events}
-Our sample covers 2020-01-01 to 2026-04-21. In the current successful test run, we use 300 stocks, 5,162 raw guidance observations, and 2,858 candidate events. We focus on two event types: initial guidance and upward guidance revisions.
+\section*{Slide 6: Event Types}
+We now separate events into preannouncements, revisions, express releases, and formal releases. This is important because these disclosures are not economically identical, and treating them as one noisy event pool would weaken identification.
 
-\section*{Slide 7: Filtering and Tradability}
-We exclude ST firms, very newly listed firms, and event-day observations that are not tradable. We also apply a 20-day turnover liquidity filter. These steps are meant to reduce microstructure noise and keep the sample economically interpretable.
+\section*{Slide 7: Signal Construction}
+Our signal construction is also event-specific. We build forecast surprise, express surprise, and final surprise relative to report\_rc expectations, then standardize within comparable event families. The main summary variable is main\_surprise\_std.
 
-\section*{Slide 8: Why the Baseline Was Noisy}
-The older baseline design had two main weaknesses. First, the old surprise proxy, ES\_main, was noisy because the expectations benchmark was weak. Second, CAR60 is a long window, so it mixes announcement effects with lots of later information. That makes it too easy to overstate the evidence as strong PEAD.
+\section*{Slide 8: Controls and Filters}
+We also upgraded the control module. From daily\_basic we now collect total market value, float market value, turnover, PE, PB, and PS. We retain sensible tradability filters such as ST exclusion, minimum listing history, valid event-day return, and positive event-day volume.
 
-\section*{Slide 9: Why the Improved Specification Is Better}
-The improved design solves those problems in a more defensible way. We use ES\_std, which standardizes guidance surprise more cleanly, and we focus on CAR5, which is much closer to the immediate valuation response. We also add industry fixed effects, year-quarter fixed effects, and firm-clustered standard errors.
+\section*{Slide 9: Regression Design}
+Our preferred regression explains CAR over multiple windows using standardized surprise, valuation and liquidity controls, industry fixed effects, year-quarter fixed effects, and event-type fixed effects, with firm-clustered standard errors. The headline window remains CAR5 because it is the cleanest short-run response window.
 
-\section*{Slide 10: Preferred Variables}
-Our preferred dependent variable is CAR5, the cumulative abnormal return over five trading days after the event. Abnormal return is defined as stock return minus market return. Our preferred explanatory variable is ES\_std, and we control for log size and beta.
+\section*{Slide 10: Current Test-Run Status}
+In the current implementation, the raw Tushare-first pull succeeds for forecast, express, fina\_indicator, and report\_rc. The legacy guidance fallback also runs successfully. The current bottleneck is that the strict matched-sample path remains tight, so usable Tushare-first sample coverage is still limited.
 
-\section*{Slide 11: Preferred Regression}
-The preferred regression explains CAR5 using ES\_std, size, beta, industry fixed effects, and year-quarter fixed effects, with firm-clustered standard errors. The baseline CAR60 regression is still kept, but only as a comparison benchmark.
+\section*{Slide 11: What Changed in the Code}
+On the code side, we added new modules for normalization, expectation alignment, event design, and panel outputs. We also added endpoint capability checks, audit outputs, and a clearer raw-to-processed directory structure. This makes the research workflow more reproducible and much easier to audit.
 
-\section*{Slide 12: Baseline vs Preferred}
-This slide summarizes the design change. The baseline used ES\_main and CAR60; the preferred design uses ES\_std and CAR5. The baseline coefficient is larger in magnitude, but the preferred result is more credible because it better isolates short-run announcement-related pricing.
+\section*{Slide 12: Why Coverage Is Now the Main Limitation}
+This is an important point. The stronger design improves identification by requiring strict pre-event sell-side matching for the same fiscal period. But that also reduces sample size and coverage. So the main tradeoff is no longer p-values versus weaker proxies. It is sample purity versus sample breadth.
 
-\section*{Slide 13: Preferred Main Result}
-Our main empirical result is that ES\_std has a positive and statistically significant coefficient in the CAR5 regression. The coefficient is about 0.00173 with a p-value of about 0.0195. So cleaner standardized guidance surprise predicts modest but statistically significant short-run abnormal return.
+\section*{Slide 13: How to Interpret the Current State}
+The right interpretation is that the repository now reflects a much better research architecture, but the final headline result should still be cautious until the strict matched-sample coverage improves. That is a better academic position than overstating evidence from a weak proxy.
 
-\section*{Slide 14: Why We Do Not Use Group Ordering as the Headline}
-The group-level CAR5 means are small and not strongly monotonic. That means we should not tell a story like moderate positive always beats extreme surprise, or larger surprise always means larger abnormal return. Those claims are weaker than the regression evidence in the preferred design.
+\section*{Slide 14: Legacy Path as Comparison}
+The old guidance-only path is still useful as a comparison benchmark and for reproducibility. But it should not be presented as the main contribution anymore, because the expectation measurement is weaker and the interpretation is less clean.
 
-\section*{Slide 15: Baseline as Robustness, Not Headline}
-The old CAR60 baseline still shows a positive borderline-significant coefficient. But because CAR60 is much more exposed to contamination, we now treat that result as supplementary robustness, not as the main evidence. This is a more cautious and more academically defensible choice.
+\section*{Slide 15: Final Conclusion}
+Our final conclusion is that a Tushare-first earnings-surprise framework is clearly more credible than the previous guidance-only proxy design. The right headline is not strong long-run inefficiency. The right headline is that cleaner short-run valuation-adjustment testing is now possible, but the strict matched-sample coverage remains the key empirical constraint.
 
-\section*{Slide 16: Corporate Finance Interpretation}
-The right interpretation is that earnings-related guidance surprise affects valuation, and the market does not appear to absorb that information completely immediately. But the magnitude is modest. So we interpret the result as limited short-run valuation adjustment, not as dramatic market inefficiency.
-
-\section*{Slide 17: Final Conclusion}
-Our final conclusion is: cleaner standardized guidance surprise predicts modest but statistically significant short-run abnormal return in China A-shares. The preferred framing is limited short-run valuation adjustment after cleaner guidance surprise. We do not present strong long-run PEAD or strong market inefficiency as the headline conclusion.
-
-\section*{Slide 18: Final Caution and Next Step}
-The most important next step is better expectation measurement, ideally with stronger analyst-consensus data. If that improves, we can sharpen the economic interpretation further. But with the current evidence, a cautious short-run valuation-adjustment story is the right final presentation.
+\section*{Slide 16: Next Step}
+The next step is to keep improving the matched-sample coverage while preserving strict pre-event alignment and clean event separation. That way, the stronger research design can eventually support a stronger empirical headline without sacrificing credibility.
 
 \end{document}

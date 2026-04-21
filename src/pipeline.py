@@ -4,84 +4,31 @@ import pandas as pd
 
 from src.config import ProjectConfig
 from src.data_collection import DataCollector
-from src.guidance_design import (
-    add_event_returns_and_controls,
-    apply_tradability_filters,
-    build_guidance_events,
-    save_core_outputs,
-)
+from src.guidance_design import save_core_outputs
 from src.io_utils import ensure_directories, save_csv, save_text
 from src.logger_utils import setup_logger
+from src.panel_outputs import save_tushare_outputs
+from src.tushare_event_design import (
+    apply_event_filters,
+    build_legacy_guidance_panel,
+    build_tushare_event_panel,
+    build_tushare_events,
+)
+from src.tushare_normalization import (
+    normalize_daily_basic,
+    normalize_express,
+    normalize_fina_indicator,
+    normalize_forecast,
+    normalize_report_rc,
+)
 
 
-def _build_before_after_comparison(
-    config: ProjectConfig,
-    baseline_metrics: dict[str, float | str],
-    improved_metrics: dict[str, float | str],
-    baseline_events: pd.DataFrame,
-    improved_events: pd.DataFrame,
-    baseline_reg: pd.DataFrame,
-    improved_reg: pd.DataFrame,
-) -> None:
-    tables = config.outputs_tables_dir
-
-    comparison = pd.DataFrame(
-        {
-            "metric": [
-                "sample_size",
-                "primary_car",
-                "moderate_group_mean",
-                "extreme_group_mean",
-                "key_coef",
-                "key_p_value",
-            ],
-            "baseline": [
-                baseline_metrics.get("sample_size"),
-                baseline_metrics.get("primary_car"),
-                baseline_metrics.get("moderate_group_mean"),
-                baseline_metrics.get("extreme_group_mean"),
-                baseline_metrics.get("coef"),
-                baseline_metrics.get("p_value"),
-            ],
-            "improved": [
-                improved_metrics.get("sample_size"),
-                improved_metrics.get("primary_car"),
-                improved_metrics.get("moderate_group_mean"),
-                improved_metrics.get("extreme_group_mean"),
-                improved_metrics.get("coef"),
-                improved_metrics.get("p_value"),
-            ],
-        }
-    )
-    save_csv(comparison, tables / "before_after_method_comparison.csv")
-
-    baseline_car_cols = [c for c in baseline_events.columns if c.startswith("CAR")]
-    improved_car_cols = [c for c in improved_events.columns if c.startswith("CAR")]
-    sample_comp = pd.DataFrame(
-        {
-            "scenario": ["baseline", "improved"],
-            "event_rows": [len(baseline_events), len(improved_events)],
-            "car_columns": [", ".join(baseline_car_cols), ", ".join(improved_car_cols)],
-        }
-    )
-    save_csv(sample_comp, tables / "before_after_sample_sizes.csv")
-
-    def _coef_line(metrics: dict[str, float | str], label: str) -> str:
-        return f"{label}: coef={metrics.get('coef', float('nan')):.6f}, p={metrics.get('p_value', float('nan')):.3f}, N={int(metrics.get('sample_size', 0) or 0)}"
-
-    text = "\n".join(
-        [
-            "Before vs After Comparison",
-            "Baseline uses legacy ES_main, longer CAR window, and clustered OLS on the moderate-positive dummy.",
-            "Improved uses standardized ES_std, CAR5 as the headline short-window outcome, and event-level OLS with industry FE, year-quarter FE, and firm-clustered standard errors.",
-            _coef_line(baseline_metrics, "Baseline"),
-            _coef_line(improved_metrics, "Improved"),
-            f"Baseline primary window: {baseline_metrics.get('primary_car')}; Improved primary window: {improved_metrics.get('primary_car')}.",
-            f"Moderate-vs-extreme comparison moved from {baseline_metrics.get('moderate_group_mean', float('nan')):.3%} vs {baseline_metrics.get('extreme_group_mean', float('nan')):.3%} to {improved_metrics.get('moderate_group_mean', float('nan')):.3%} vs {improved_metrics.get('extreme_group_mean', float('nan')):.3%}.",
-            "Preferred presentation should emphasize the improved specification only if the sign and magnitude are economically interpretable and robust, not merely smaller p-values.",
-        ]
-    )
-    save_text(text + "\n", tables / "before_after_interpretation.txt")
+def _save_normalized_outputs(config: ProjectConfig, normalized: dict[str, pd.DataFrame]) -> None:
+    save_csv(normalized["report_rc"], config.data_processed_normalized_dir / "report_rc_normalized.csv")
+    save_csv(normalized["forecast"], config.data_processed_normalized_dir / "forecast_normalized.csv")
+    save_csv(normalized["express"], config.data_processed_normalized_dir / "express_normalized.csv")
+    save_csv(normalized["fina_indicator"], config.data_processed_normalized_dir / "fina_indicator_normalized.csv")
+    save_csv(normalized["daily_basic"], config.data_processed_normalized_dir / "daily_basic_normalized.csv")
 
 
 def run_pipeline() -> None:
@@ -89,145 +36,142 @@ def run_pipeline() -> None:
     ensure_directories(
         [
             config.data_raw_dir,
+            config.data_raw_tushare_dir,
             config.data_processed_dir,
+            config.data_processed_normalized_dir,
+            config.data_processed_expectations_dir,
+            config.data_processed_events_dir,
+            config.data_processed_panels_dir,
             config.outputs_dir,
             config.outputs_figures_dir,
             config.outputs_tables_dir,
+            config.outputs_audit_dir,
             config.logs_dir,
         ]
     )
     logger = setup_logger(config.logs_dir)
     logger.info(
-        "Guidance-design pipeline start | RUN_MODE=%s | period=%s-%s",
+        "Pipeline start | framework=%s | RUN_MODE=%s | period=%s-%s",
+        config.framework_mode,
         config.run_mode,
         config.start_date,
         config.end_date,
     )
 
     collector = DataCollector(config=config, logger=logger)
-    stocks = collector.get_stock_universe()
-    guidance = collector.get_guidance_data(stocks)
-    prices = collector.get_stock_prices(stocks)
-    market = collector.get_market_index()
-    daily_basic = collector.get_daily_basic(stocks)
+    bundle = collector.collect_all()
 
-    save_csv(stocks, config.data_raw_dir / "stock_universe.csv")
-    save_csv(guidance, config.data_raw_dir / "guidance_forecast_raw.csv")
-    save_csv(prices, config.data_raw_dir / "stock_prices_raw.csv")
-    save_csv(market, config.data_raw_dir / "market_index_raw.csv")
-    save_csv(daily_basic, config.data_raw_dir / "daily_basic_raw.csv")
+    normalized = {
+        "report_rc": normalize_report_rc(bundle.report_rc),
+        "forecast": normalize_forecast(bundle.forecast),
+        "express": normalize_express(bundle.express),
+        "fina_indicator": normalize_fina_indicator(bundle.fina_indicator),
+        "daily_basic": normalize_daily_basic(bundle.daily_basic),
+    }
+    _save_normalized_outputs(config, normalized)
 
-    events = build_guidance_events(
-        guidance_df=guidance,
-        stocks_df=stocks,
-        market_df=market,
-        logger=logger,
-    )
+    summary_rows: list[dict[str, object]] = [
+        {"metric": "run_mode", "value": config.run_mode},
+        {"metric": "framework_mode", "value": config.framework_mode},
+        {"metric": "sample_stocks", "value": len(bundle.stocks)},
+        {"metric": "forecast_rows_raw", "value": len(bundle.forecast)},
+        {"metric": "express_rows_raw", "value": len(bundle.express)},
+        {"metric": "fina_indicator_rows_raw", "value": len(bundle.fina_indicator)},
+        {"metric": "report_rc_rows_raw", "value": len(bundle.report_rc)},
+        {"metric": "period_start", "value": config.start_date},
+        {"metric": "period_end", "value": config.end_date},
+    ]
 
-    baseline_events = apply_tradability_filters(
-        events_df=events.copy(),
-        prices_df=prices,
-        daily_basic_df=daily_basic,
-        market_df=market,
-        min_listed_trading_days=120,
-        turnover20_threshold=config.liquidity_turnover20_old,
-    )
-    improved_events = apply_tradability_filters(
-        events_df=events.copy(),
-        prices_df=prices,
-        daily_basic_df=daily_basic,
-        market_df=market,
-        min_listed_trading_days=120,
-        turnover20_threshold=config.liquidity_turnover20_new,
-    )
+    if config.run_tushare_first:
+        tushare_events, expectation_audit = build_tushare_events(
+            stocks_df=bundle.stocks,
+            market_df=bundle.market,
+            forecast_df=normalized["forecast"],
+            express_df=normalized["express"],
+            fina_df=normalized["fina_indicator"],
+            report_rc_df=normalized["report_rc"],
+            config=config,
+        )
+        save_csv(tushare_events, config.data_processed_events_dir / "event_master_tushare_first.csv")
+        save_csv(expectation_audit, config.data_processed_expectations_dir / "expectation_match_audit_tushare_first.csv")
 
-    baseline_dataset, baseline_paths = add_event_returns_and_controls(
-        events_df=baseline_events,
-        prices_df=prices,
-        market_df=market,
-        daily_basic_df=daily_basic,
-        event_windows=(20, 60),
-    )
-    improved_dataset, improved_paths = add_event_returns_and_controls(
-        events_df=improved_events,
-        prices_df=prices,
-        market_df=market,
-        daily_basic_df=daily_basic,
-        event_windows=(3, 5, 20),
-    )
+        filtered_tushare_events = apply_event_filters(
+            events_df=tushare_events,
+            prices_df=bundle.prices,
+            daily_basic_df=normalized["daily_basic"],
+            market_df=bundle.market,
+            config=config,
+        )
+        save_csv(filtered_tushare_events, config.data_processed_events_dir / "event_master_tushare_first_filtered.csv")
 
-    save_csv(events, config.data_processed_dir / "guidance_events_all.csv")
-    save_csv(baseline_events, config.data_processed_dir / "guidance_events_filtered_baseline.csv")
-    save_csv(improved_events, config.data_processed_dir / "guidance_events_filtered_improved.csv")
-    save_csv(baseline_dataset, config.data_processed_dir / "event_dataset_guidance_baseline.csv")
-    save_csv(improved_dataset, config.data_processed_dir / "event_dataset_guidance_improved.csv")
-    save_csv(baseline_paths, config.data_processed_dir / "event_paths_guidance_baseline.csv")
-    save_csv(improved_paths, config.data_processed_dir / "event_paths_guidance_improved.csv")
+        tushare_panel, tushare_paths = build_tushare_event_panel(
+            events_df=filtered_tushare_events,
+            prices_df=bundle.prices,
+            market_df=bundle.market,
+            daily_basic_df=normalized["daily_basic"],
+            config=config,
+        )
+        save_csv(tushare_panel, config.data_processed_panels_dir / "event_panel_tushare_first.csv")
+        save_csv(tushare_paths, config.data_processed_panels_dir / "event_paths_tushare_first.csv")
 
-    baseline_metrics = save_core_outputs(
-        event_df=baseline_dataset,
-        path_df=baseline_paths,
-        outputs_tables_dir=config.outputs_tables_dir,
-        outputs_figures_dir=config.outputs_figures_dir,
-        logger=logger,
-        scenario_name="baseline",
-        primary_car="CAR60",
-        car_windows=(20, 60),
-        signal_col="earnings_surprise",
-        use_panel_regression=False,
-    )
-    improved_metrics = save_core_outputs(
-        event_df=improved_dataset,
-        path_df=improved_paths,
-        outputs_tables_dir=config.outputs_tables_dir,
-        outputs_figures_dir=config.outputs_figures_dir,
-        logger=logger,
-        scenario_name="improved",
-        primary_car="CAR5",
-        car_windows=(3, 5, 20),
-        signal_col="ES_std",
-        use_panel_regression=True,
-    )
+        tushare_metrics = save_tushare_outputs(
+            event_df=tushare_panel,
+            path_df=tushare_paths,
+            outputs_tables_dir=config.outputs_tables_dir,
+            outputs_audit_dir=config.outputs_audit_dir,
+            scenario_name="tushare_first",
+        )
+        summary_rows.extend(
+            [
+                {"metric": "tushare_events_all", "value": len(tushare_events)},
+                {"metric": "tushare_events_filtered", "value": len(filtered_tushare_events)},
+                {"metric": "tushare_panel_rows", "value": len(tushare_panel)},
+                {"metric": "tushare_headline_coef", "value": tushare_metrics.get("headline_coef")},
+                {"metric": "tushare_headline_p_value", "value": tushare_metrics.get("headline_p_value")},
+            ]
+        )
 
-    baseline_reg = pd.read_csv(config.outputs_tables_dir / "final_regression_results_baseline.csv")
-    improved_reg = pd.read_csv(config.outputs_tables_dir / "final_regression_results_improved.csv")
-    _build_before_after_comparison(
-        config=config,
-        baseline_metrics=baseline_metrics,
-        improved_metrics=improved_metrics,
-        baseline_events=baseline_dataset,
-        improved_events=improved_dataset,
-        baseline_reg=baseline_reg,
-        improved_reg=improved_reg,
-    )
+    if config.run_legacy_guidance:
+        legacy_events, legacy_dataset, legacy_paths = build_legacy_guidance_panel(
+            guidance_df=normalized["forecast"],
+            stocks_df=bundle.stocks,
+            prices_df=bundle.prices,
+            market_df=bundle.market,
+            daily_basic_df=normalized["daily_basic"],
+            logger=logger,
+        )
+        save_csv(legacy_events, config.data_processed_events_dir / "guidance_events_legacy.csv")
+        save_csv(legacy_dataset, config.data_processed_panels_dir / "event_dataset_legacy_guidance.csv")
+        save_csv(legacy_paths, config.data_processed_panels_dir / "event_paths_legacy_guidance.csv")
+        legacy_metrics = save_core_outputs(
+            event_df=legacy_dataset,
+            path_df=legacy_paths,
+            outputs_tables_dir=config.outputs_tables_dir,
+            outputs_figures_dir=config.outputs_figures_dir,
+            logger=logger,
+            scenario_name="legacy_guidance",
+            primary_car="CAR60",
+            car_windows=(20, 60),
+            signal_col="earnings_surprise",
+            use_panel_regression=False,
+        )
+        summary_rows.extend(
+            [
+                {"metric": "legacy_guidance_events", "value": len(legacy_events)},
+                {"metric": "legacy_guidance_panel_rows", "value": len(legacy_dataset)},
+                {"metric": "legacy_headline_coef", "value": legacy_metrics.get("coef")},
+                {"metric": "legacy_headline_p_value", "value": legacy_metrics.get("p_value")},
+            ]
+        )
 
-    summary = pd.DataFrame(
-        {
-            "metric": [
-                "run_mode",
-                "sample_stocks",
-                "guidance_rows_raw",
-                "events_all",
-                "events_baseline_after_filters",
-                "events_improved_after_filters",
-                "event_dataset_rows_baseline",
-                "event_dataset_rows_improved",
-                "period_start",
-                "period_end",
-            ],
-            "value": [
-                config.run_mode,
-                len(stocks),
-                len(guidance),
-                len(events),
-                len(baseline_events),
-                len(improved_events),
-                len(baseline_dataset),
-                len(improved_dataset),
-                config.start_date,
-                config.end_date,
-            ],
-        }
-    )
+    summary = pd.DataFrame(summary_rows)
     save_csv(summary, config.outputs_tables_dir / "run_summary.csv")
-    logger.info("Guidance-design pipeline complete.")
+
+    note_lines = [
+        "Tushare-first pipeline update note",
+        f"Framework mode: {config.framework_mode}",
+        "The preferred path now uses report_rc for sell-side expectations, forecast/express/fina_indicator for event types, and daily_basic for controls.",
+        "Legacy guidance-only outputs remain runnable as fallback and comparison.",
+    ]
+    save_text("\n".join(note_lines) + "\n", config.outputs_audit_dir / "tushare_first_update_note.txt")
+    logger.info("Pipeline complete.")
