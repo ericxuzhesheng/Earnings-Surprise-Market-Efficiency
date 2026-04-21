@@ -1,0 +1,8 @@
+Before vs After Comparison
+Baseline uses legacy ES_main, longer CAR window, and clustered OLS on the moderate-positive dummy.
+Improved uses standardized ES_std, short-window CAR, and panel regression with firm/time fixed effects.
+Baseline: coef=0.022523, p=0.048, N=2375
+Improved: coef=0.001732, p=0.020, N=2529
+Baseline primary window: CAR60; Improved primary window: CAR5.
+Moderate-vs-extreme comparison moved from 4.895% vs 6.981% to -0.180% vs 0.158%.
+Preferred presentation should emphasize the improved specification only if the sign and magnitude are economically interpretable and robust, not merely smaller p-values.

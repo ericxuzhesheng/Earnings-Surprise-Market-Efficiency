@@ -56,7 +56,7 @@ def build_guidance_events(
         (g["p_change_max"] > g["prev_high_same_period"])
     )
 
-    # Consensus proxy and ES_main.
+    # Consensus proxy and ES_main (legacy baseline).
     g["consensus_source"] = "fallback_zero"
     g["analyst_consensus_yoy_proxy"] = 0.0
 
@@ -83,6 +83,61 @@ def build_guidance_events(
 
     g["analyst_consensus_yoy_proxy"] = g["analyst_consensus_yoy_proxy"].fillna(0.0)
     g["ES_main"] = g["guidance_yoy_midpoint"] - g["analyst_consensus_yoy_proxy"]
+
+    # --- New Standardized Signal: ES_std ---
+
+    # 1. Hierarchical consensus proxy v2
+    g["consensus_proxy_v2"] = 0.0
+    g["consensus_source_v2"] = "fallback_zero"
+
+    # 1a. Firm-report prior guidance (strongest)
+    g.loc[has_prev, "consensus_proxy_v2"] = g.loc[has_prev, "prev_mid_same_period"]
+    g.loc[has_prev, "consensus_source_v2"] = "prior_guidance_same_period"
+
+    # 1b. Firm historical midpoint for same quarter
+    g["quarter"] = pd.to_datetime(g["end_date"]).dt.quarter
+    g["firm_hist_mid"] = g.groupby(["ts_code", "quarter"])["guidance_yoy_midpoint"].transform(
+        lambda x: x.rolling(window=4, min_periods=1).mean().shift(1)
+    )
+
+    mask_1b = g["consensus_source_v2"] == "fallback_zero"
+    has_hist = mask_1b & g["firm_hist_mid"].notna()
+    g.loc[has_hist, "consensus_proxy_v2"] = g.loc[has_hist, "firm_hist_mid"]
+    g.loc[has_hist, "consensus_source_v2"] = "firm_hist_mid_same_q"
+
+    # 1c. Industry-quarter trailing median
+    # Create a rolling industry median
+    g["ind_q"] = g["industry"] + "_" + g["quarter"].astype(str)
+    ind_medians = g.sort_values(["ind_q", "ann_date"]).groupby("ind_q")["guidance_yoy_midpoint"].transform(
+        lambda x: x.rolling(window=20, min_periods=5).median().shift(1)
+    )
+    g["ind_hist_mid"] = ind_medians
+
+    mask_1c = g["consensus_source_v2"] == "fallback_zero"
+    has_ind = mask_1c & g["ind_hist_mid"].notna()
+    g.loc[has_ind, "consensus_proxy_v2"] = g.loc[has_ind, "ind_hist_mid"]
+    g.loc[has_ind, "consensus_source_v2"] = "industry_hist_median"
+
+    # 2. Raw Surprise v2
+    g["ES_raw_v2"] = g["guidance_yoy_midpoint"] - g["consensus_proxy_v2"]
+
+    # 3. Standardize by historical volatility
+    # MAD of prior ES_raw_v2 for the firm
+    g["firm_es_mad"] = g.groupby("ts_code")["ES_raw_v2"].transform(
+        lambda x: x.rolling(window=8, min_periods=3).apply(lambda y: np.mean(np.abs(y - np.mean(y))), raw=True).shift(1)
+    )
+
+    scale_floor = 0.05  # 5% volatility floor
+    global_es_mad = float(np.mean(np.abs(g["ES_raw_v2"].dropna() - g["ES_raw_v2"].dropna().mean()))) if g["ES_raw_v2"].notna().any() else scale_floor
+    g["ES_scale"] = np.maximum(1.4826 * g["firm_es_mad"].fillna(global_es_mad), scale_floor)
+
+    g["ES_std_unclipped"] = g["ES_raw_v2"] / g["ES_scale"]
+
+    # Winsorize at 1/99 percentile to remove extreme outliers
+    lower_bound = g["ES_std_unclipped"].quantile(0.01)
+    upper_bound = g["ES_std_unclipped"].quantile(0.99)
+    g["ES_std"] = g["ES_std_unclipped"].clip(lower=lower_bound, upper=upper_bound)
+    # --- End New Signal ---
 
     # Keep first valid event per stock/report period for base events.
     base = g.sort_values(["ts_code", "end_date", "ann_date"]).groupby(["ts_code", "end_date"], as_index=False).head(1).copy()
@@ -176,6 +231,7 @@ def add_event_returns_and_controls(
     prices_df: pd.DataFrame,
     market_df: pd.DataFrame,
     daily_basic_df: pd.DataFrame,
+    event_windows: tuple[int, ...] = (3, 5, 20, 60),
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     if events_df.empty:
         return pd.DataFrame(), pd.DataFrame()
@@ -200,6 +256,7 @@ def add_event_returns_and_controls(
 
     rows = []
     path_rows = []
+    max_window = max(event_windows)
     for _, ev in events_df.iterrows():
         ts_code = ev["ts_code"]
         event_date = pd.to_datetime(ev["event_trade_date"])
@@ -210,11 +267,13 @@ def add_event_returns_and_controls(
         mm = mm.sort_values("trade_date")
         mm["abret"] = mm["ret"] - mm["mkt_ret"]
         post = mm[mm["trade_date"] >= event_date].copy().reset_index(drop=True)
-        if len(post) < 60:
+        if len(post) < max_window:
             continue
         post["event_day"] = np.arange(1, len(post) + 1)
-        car20 = post.loc[post["event_day"] <= 20, "abret"].sum()
-        car60 = post.loc[post["event_day"] <= 60, "abret"].sum()
+
+        cars = {}
+        for w in event_windows:
+            cars[f"CAR{w}"] = post.loc[post["event_day"] <= w, "abret"].sum()
 
         beta = _estimate_beta(mm, event_date, est_window=120)
 
@@ -227,31 +286,33 @@ def add_event_returns_and_controls(
                 pb = d["pb"].iloc[0] if "pb" in d.columns else np.nan
                 bm = np.nan if pd.isna(pb) or pb == 0 else 1.0 / pb
 
-        rows.append(
-            {
-                "ts_code": ts_code,
-                "event_type": ev["event_type"],
-                "report_period": pd.to_datetime(ev["end_date"]).strftime("%Y-%m-%d"),
-                "announcement_date": pd.to_datetime(ev["ann_date"]).strftime("%Y-%m-%d"),
-                "event_trading_date": event_date.strftime("%Y-%m-%d"),
-                "earnings_surprise": ev["ES_main"],
-                "guidance_yoy_midpoint": ev["guidance_yoy_midpoint"],
-                "analyst_consensus_yoy_proxy": ev["analyst_consensus_yoy_proxy"],
-                "consensus_source": ev["consensus_source"],
-                "positive_revision_dummy": int(ev["positive_revision_dummy"]),
-                "CAR20": car20,
-                "CAR60": car60,
-                "size": size,
-                "beta": beta,
-                "book_to_market": bm,
-                "turnover20": ev.get("turnover20", np.nan),
-            }
-        )
+        row_data = {
+            "ts_code": ts_code,
+            "event_type": ev["event_type"],
+            "industry": ev.get("industry", np.nan),
+            "report_period": pd.to_datetime(ev["end_date"]).strftime("%Y-%m-%d"),
+            "announcement_date": pd.to_datetime(ev["ann_date"]).strftime("%Y-%m-%d"),
+            "event_trading_date": event_date.strftime("%Y-%m-%d"),
+            "earnings_surprise": ev["ES_main"],
+            "ES_std": ev.get("ES_std", np.nan),
+            "guidance_yoy_midpoint": ev["guidance_yoy_midpoint"],
+            "analyst_consensus_yoy_proxy": ev["analyst_consensus_yoy_proxy"],
+            "consensus_source": ev["consensus_source"],
+            "consensus_source_v2": ev.get("consensus_source_v2", np.nan),
+            "positive_revision_dummy": int(ev["positive_revision_dummy"]),
+            "size": size,
+            "beta": beta,
+            "book_to_market": bm,
+            "turnover20": ev.get("turnover20", np.nan),
+        }
+        row_data.update(cars)
+        rows.append(row_data)
 
-        tmp = post[post["event_day"] <= 60][["event_day", "abret"]].copy()
+        tmp = post[post["event_day"] <= max_window][["event_day", "abret"]].copy()
         tmp["ts_code"] = ts_code
         tmp["event_trading_date"] = event_date
         tmp["earnings_surprise"] = ev["ES_main"]
+        tmp["ES_std"] = ev.get("ES_std", np.nan)
         path_rows.append(tmp)
 
     event_final = pd.DataFrame(rows)
@@ -277,48 +338,68 @@ def save_core_outputs(
     outputs_tables_dir: Path,
     outputs_figures_dir: Path,
     logger: logging.Logger,
-) -> None:
+    scenario_name: str = "baseline",
+    primary_car: str = "CAR60",
+    car_windows: tuple[int, ...] = (20, 60),
+    signal_col: str = "earnings_surprise",
+    use_panel_regression: bool = False,
+) -> dict[str, float | str]:
     outputs_tables_dir.mkdir(parents=True, exist_ok=True)
     outputs_figures_dir.mkdir(parents=True, exist_ok=True)
+    dataset_path = outputs_tables_dir / f"final_dataset_{scenario_name}.csv"
+    group_path = outputs_tables_dir / f"final_group_summary_{scenario_name}.csv"
+    reg_path = outputs_tables_dir / f"final_regression_results_{scenario_name}.csv"
+    note_path = outputs_tables_dir / f"final_interpretation_{scenario_name}.txt"
+
     if event_df.empty:
-        save_csv(pd.DataFrame(), outputs_tables_dir / "final_dataset.csv")
-        save_csv(pd.DataFrame(), outputs_tables_dir / "final_group_summary.csv")
-        save_csv(pd.DataFrame(), outputs_tables_dir / "final_regression_results.csv")
-        save_text("No valid events after filters.", outputs_tables_dir / "final_interpretation.txt")
-        logger.info("Core outputs saved (empty).")
-        return
+        save_csv(pd.DataFrame(), dataset_path)
+        save_csv(pd.DataFrame(), group_path)
+        save_csv(pd.DataFrame(), reg_path)
+        save_text("No valid events after filters.", note_path)
+        logger.info("Core outputs saved (empty) for %s.", scenario_name)
+        return {
+            "scenario": scenario_name,
+            "sample_size": 0,
+            "primary_car": primary_car,
+            "moderate_group_mean": np.nan,
+            "extreme_group_mean": np.nan,
+            "coef": np.nan,
+            "p_value": np.nan,
+        }
 
     df = event_df.copy()
     df["announcement_date"] = pd.to_datetime(df["announcement_date"], errors="coerce")
     df["event_trading_date"] = pd.to_datetime(df["event_trading_date"], errors="coerce")
-    for c in ["earnings_surprise", "CAR20", "CAR60", "size", "beta"]:
-        df[c] = pd.to_numeric(df[c], errors="coerce")
+    numeric_cols = [signal_col, "size", "beta", "book_to_market", "turnover20"] + [f"CAR{w}" for w in car_windows]
+    for c in numeric_cols:
+        if c in df.columns:
+            df[c] = pd.to_numeric(df[c], errors="coerce")
     df["log_size"] = np.log(df["size"].where(df["size"] > 0))
+    df["year_quarter"] = df["event_trading_date"].dt.to_period("Q").astype(str)
+    df["industry"] = df.get("industry", pd.Series(index=df.index, dtype=object)).fillna("unknown")
 
-    # Final framing dummies.
-    df["positive_ES_dummy"] = (df["earnings_surprise"] > 0).astype(int)
+    signal = df[signal_col]
+    df["positive_ES_dummy"] = (signal > 0).astype(int)
     df["high_ES_dummy"] = 0
     df["moderate_positive_ES_dummy"] = 0
-    for ev_type, d in df.groupby("event_type"):
-        pos = d[d["earnings_surprise"] > 0]["earnings_surprise"].dropna()
+    for _, d in df.groupby("event_type"):
+        pos = d[d["positive_ES_dummy"] == 1][signal_col].dropna()
         if len(pos) < 10:
             continue
         p50 = pos.quantile(0.50)
         p80 = pos.quantile(0.80)
-        idx_high = d.index[d["earnings_surprise"] > p80]
-        idx_mod = d.index[(d["earnings_surprise"] > p50) & (d["earnings_surprise"] <= p80)]
+        idx_high = d.index[d[signal_col] > p80]
+        idx_mod = d.index[(d[signal_col] > p50) & (d[signal_col] <= p80)]
         df.loc[idx_high, "high_ES_dummy"] = 1
         df.loc[idx_mod, "moderate_positive_ES_dummy"] = 1
 
     df["event_type_dummy"] = (df["event_type"] == "guidance_upward_revision").astype(int)
-    save_csv(df, outputs_tables_dir / "final_dataset.csv")
+    save_csv(df, dataset_path)
 
-    # Group summary for final story.
-    by_type = (
-        df.groupby("event_type", as_index=False)[["CAR20", "CAR60"]]
-        .mean()
-        .rename(columns={"CAR20": "avg_CAR20", "CAR60": "avg_CAR60"})
-    )
+    avg_cols = [f"avg_CAR{w}" for w in car_windows]
+    car_cols = [f"CAR{w}" for w in car_windows]
+    by_type = df.groupby("event_type", as_index=False)[car_cols].mean().rename(columns=dict(zip(car_cols, avg_cols)))
+
     group_rows = []
     group_defs = [
         ("all_events", df),
@@ -327,52 +408,121 @@ def save_core_outputs(
         ("extreme_es_top20", df[df["high_ES_dummy"] == 1]),
     ]
     for name, d in group_defs:
-        group_rows.append(
-            {
-                "group": name,
-                "avg_CAR20": d["CAR20"].mean(),
-                "avg_CAR60": d["CAR60"].mean(),
-                "count": len(d),
-            }
-        )
+        row = {"group": name, "count": len(d)}
+        for w in car_windows:
+            row[f"avg_CAR{w}"] = d[f"CAR{w}"].mean() if f"CAR{w}" in d.columns else np.nan
+        group_rows.append(row)
     group_summary = pd.DataFrame(group_rows)
     by_type_out = by_type.rename(columns={"event_type": "group"})
     by_type_out["count"] = by_type_out["group"].map(df["event_type"].value_counts()).fillna(0).astype(int)
     final_group = pd.concat([group_summary, by_type_out], ignore_index=True, sort=False)
-    save_csv(final_group, outputs_tables_dir / "final_group_summary.csv")
+    save_csv(final_group, group_path)
 
-    # Final regressions (HC3 robust SE).
-    reg_df = _run_final_regressions(df)
-    save_csv(reg_df, outputs_tables_dir / "final_regression_results.csv")
-
-    # Final PPT figures.
-    _plot_final_group_comparison(group_summary, outputs_figures_dir / "fig1_es_group_comparison.png")
-    _plot_final_cum_moderate_vs_extreme(
-        path_df=path_df,
-        event_df=df,
-        output_path=outputs_figures_dir / "fig2_cum_return_moderate_vs_extreme.png",
+    reg_df = _run_final_regressions(
+        df=df,
+        signal_col=signal_col,
+        primary_car=primary_car,
+        use_panel_regression=use_panel_regression,
     )
-    _plot_final_event_type(by_type, outputs_figures_dir / "fig3_event_type_comparison.png")
+    save_csv(reg_df, reg_path)
 
-    note = _build_final_interpretation(df=df, by_type=by_type, group_summary=group_summary, reg_df=reg_df)
-    save_text(note, outputs_tables_dir / "final_interpretation.txt")
-    logger.info("Core outputs saved.")
+    fig1 = outputs_figures_dir / f"fig1_es_group_comparison_{scenario_name}.png"
+    fig2 = outputs_figures_dir / f"fig2_cum_return_moderate_vs_extreme_{scenario_name}.png"
+    fig3 = outputs_figures_dir / f"fig3_event_type_comparison_{scenario_name}.png"
+    _plot_final_group_comparison(group_summary, fig1, primary_car=primary_car)
+    _plot_final_cum_moderate_vs_extreme(path_df=path_df, event_df=df, output_path=fig2, max_window=max(car_windows))
+    _plot_final_event_type(by_type, fig3, primary_car=primary_car)
+
+    note = _build_final_interpretation(
+        df=df,
+        by_type=by_type,
+        group_summary=group_summary,
+        reg_df=reg_df,
+        primary_car=primary_car,
+        signal_col=signal_col,
+        scenario_name=scenario_name,
+    )
+    save_text(note, note_path)
+    logger.info("Core outputs saved for %s.", scenario_name)
+
+    key_var = "ES_std" if signal_col == "ES_std" else "moderate_positive_ES_dummy"
+    key_model = "panel_signal_model" if use_panel_regression else "model_moderate_es"
+    target = reg_df[(reg_df["model"] == key_model) & (reg_df["variable"] == key_var)]
+    return {
+        "scenario": scenario_name,
+        "sample_size": int(len(df)),
+        "primary_car": primary_car,
+        "moderate_group_mean": float(group_summary.loc[group_summary["group"] == "moderate_es_50_80", f"avg_{primary_car}"].iloc[0]) if (group_summary["group"] == "moderate_es_50_80").any() else np.nan,
+        "extreme_group_mean": float(group_summary.loc[group_summary["group"] == "extreme_es_top20", f"avg_{primary_car}"].iloc[0]) if (group_summary["group"] == "extreme_es_top20").any() else np.nan,
+        "coef": float(target["coef"].iloc[0]) if not target.empty else np.nan,
+        "p_value": float(target["p_value"].iloc[0]) if not target.empty else np.nan,
+    }
 
 
-def _run_final_regressions(df: pd.DataFrame) -> pd.DataFrame:
+def _run_final_regressions(
+    df: pd.DataFrame,
+    signal_col: str,
+    primary_car: str,
+    use_panel_regression: bool,
+) -> pd.DataFrame:
+    rows = []
+
+    try:
+        import statsmodels.api as sm  # type: ignore
+        import statsmodels.formula.api as smf  # type: ignore
+    except Exception:
+        return pd.DataFrame()
+
+    if use_panel_regression:
+        regressors = [signal_col, "log_size", "beta"]
+        if "turnover20" in df.columns and df["turnover20"].notna().sum() >= 40:
+            regressors.append("turnover20")
+        cols = [primary_car, "ts_code", "year_quarter", "industry"] + regressors
+        dd = df[cols].dropna().copy()
+        if len(dd) >= 40:
+            rhs = " + ".join(regressors)
+            formula = f"{primary_car} ~ {rhs} + C(industry) + C(year_quarter)"
+            model = smf.ols(formula=formula, data=dd).fit(cov_type="cluster", cov_kwds={"groups": dd["ts_code"]})
+            for var in regressors:
+                rows.append(
+                    {
+                        "model": "panel_signal_model",
+                        "dependent_var": primary_car,
+                        "variable": var,
+                        "coef": model.params.get(var, np.nan),
+                        "t_stat": model.tvalues.get(var, np.nan),
+                        "p_value": model.pvalues.get(var, np.nan),
+                        "n_obs": int(model.nobs),
+                        "r2": model.rsquared,
+                    }
+                )
+        else:
+            rows.append(
+                {
+                    "model": "panel_signal_model",
+                    "dependent_var": primary_car,
+                    "variable": "insufficient_obs",
+                    "coef": np.nan,
+                    "t_stat": np.nan,
+                    "p_value": np.nan,
+                    "n_obs": int(len(dd)),
+                    "r2": np.nan,
+                }
+            )
+        return pd.DataFrame(rows)
+
     try:
         import statsmodels.api as sm  # type: ignore
     except Exception:
         return pd.DataFrame()
-    rows = []
 
-    def run_model(model_name: str, d: pd.DataFrame, xcols: list[str]) -> None:
-        dd = d[["CAR60"] + xcols].dropna().copy()
+    def run_model(model_name: str, xcols: list[str]) -> None:
+        dd = df[[primary_car, "ts_code"] + xcols].dropna().copy()
         if len(dd) < 40:
             rows.append(
                 {
                     "model": model_name,
-                    "dependent_var": "CAR60",
+                    "dependent_var": primary_car,
                     "variable": "insufficient_obs",
                     "coef": np.nan,
                     "t_stat": np.nan,
@@ -383,43 +533,44 @@ def _run_final_regressions(df: pd.DataFrame) -> pd.DataFrame:
             )
             return
         x = sm.add_constant(dd[xcols], has_constant="add")
-        m = sm.OLS(dd["CAR60"], x).fit(cov_type="HC3")
+        model = sm.OLS(dd[primary_car], x).fit(cov_type="cluster", cov_kwds={"groups": dd["ts_code"]})
         for var in ["const"] + xcols:
             rows.append(
                 {
                     "model": model_name,
-                    "dependent_var": "CAR60",
+                    "dependent_var": primary_car,
                     "variable": var,
-                    "coef": m.params.get(var, np.nan),
-                    "t_stat": m.tvalues.get(var, np.nan),
-                    "p_value": m.pvalues.get(var, np.nan),
-                    "n_obs": int(m.nobs),
-                    "r2": m.rsquared,
+                    "coef": model.params.get(var, np.nan),
+                    "t_stat": model.tvalues.get(var, np.nan),
+                    "p_value": model.pvalues.get(var, np.nan),
+                    "n_obs": int(model.nobs),
+                    "r2": model.rsquared,
                 }
             )
 
-    run_model("model_moderate_es", df, ["moderate_positive_ES_dummy", "log_size", "beta"])
-    run_model("model_event_type", df, ["event_type_dummy", "log_size", "beta"])
+    run_model("model_moderate_es", ["moderate_positive_ES_dummy", "log_size", "beta"])
+    run_model("model_event_type", ["event_type_dummy", "log_size", "beta"])
     return pd.DataFrame(rows)
 
 
-def _plot_final_group_comparison(group_summary: pd.DataFrame, output_path: Path) -> None:
+def _plot_final_group_comparison(group_summary: pd.DataFrame, output_path: Path, primary_car: str) -> None:
     import matplotlib.pyplot as plt
 
-    if group_summary.empty:
+    metric_col = f"avg_{primary_car}"
+    if group_summary.empty or metric_col not in group_summary.columns:
         return
     fig, ax = plt.subplots(figsize=(8, 5))
-    ax.bar(group_summary["group"], group_summary["avg_CAR60"], color="#4C72B0")
+    ax.bar(group_summary["group"], group_summary[metric_col], color="#4C72B0")
     ax.set_xlabel("Group")
-    ax.set_ylabel("Average CAR60")
-    ax.set_title("CAR60 Comparison by ES Group")
+    ax.set_ylabel(f"Average {primary_car}")
+    ax.set_title(f"{primary_car} Comparison by ES Group")
     ax.tick_params(axis="x", rotation=15)
     fig.tight_layout()
     fig.savefig(output_path, dpi=300, bbox_inches="tight")
     plt.close(fig)
 
 
-def _plot_final_cum_moderate_vs_extreme(path_df: pd.DataFrame, event_df: pd.DataFrame, output_path: Path) -> None:
+def _plot_final_cum_moderate_vs_extreme(path_df: pd.DataFrame, event_df: pd.DataFrame, output_path: Path, max_window: int) -> None:
     import matplotlib.pyplot as plt
 
     if path_df.empty or event_df.empty:
@@ -430,6 +581,7 @@ def _plot_final_cum_moderate_vs_extreme(path_df: pd.DataFrame, event_df: pd.Data
     e["event_trading_date"] = pd.to_datetime(e["event_trading_date"], errors="coerce")
     d = p.merge(e, on=["ts_code", "event_trading_date"], how="left")
     d = d.dropna(subset=["event_day", "abret"])
+    d = d[d["event_day"] <= max_window]
     mod = d[d["moderate_positive_ES_dummy"] == 1].groupby("event_day")["abret"].mean().sort_index().cumsum()
     ext = d[d["high_ES_dummy"] == 1].groupby("event_day")["abret"].mean().sort_index().cumsum()
     if mod.empty or ext.empty:
@@ -448,16 +600,17 @@ def _plot_final_cum_moderate_vs_extreme(path_df: pd.DataFrame, event_df: pd.Data
     plt.close(fig)
 
 
-def _plot_final_event_type(by_type: pd.DataFrame, output_path: Path) -> None:
+def _plot_final_event_type(by_type: pd.DataFrame, output_path: Path, primary_car: str) -> None:
     import matplotlib.pyplot as plt
 
-    if by_type.empty:
+    metric_col = f"avg_{primary_car}"
+    if by_type.empty or metric_col not in by_type.columns:
         return
     fig, ax = plt.subplots(figsize=(8, 5))
-    ax.bar(by_type["event_type"], by_type["avg_CAR60"], color="#2A9D8F")
+    ax.bar(by_type["event_type"], by_type[metric_col], color="#2A9D8F")
     ax.set_xlabel("Event Type")
-    ax.set_ylabel("Average CAR60")
-    ax.set_title("CAR60 by Event Type")
+    ax.set_ylabel(f"Average {primary_car}")
+    ax.set_title(f"{primary_car} by Event Type")
     fig.tight_layout()
     fig.savefig(output_path, dpi=300, bbox_inches="tight")
     plt.close(fig)
@@ -468,19 +621,31 @@ def _build_final_interpretation(
     by_type: pd.DataFrame,
     group_summary: pd.DataFrame,
     reg_df: pd.DataFrame,
+    primary_car: str,
+    signal_col: str,
+    scenario_name: str,
 ) -> str:
+    metric_col = f"avg_{primary_car}"
+
     def gval(name: str) -> float:
         r = group_summary[group_summary["group"] == name]
-        return float(r["avg_CAR60"].iloc[0]) if not r.empty else np.nan
+        return float(r[metric_col].iloc[0]) if (not r.empty and metric_col in r.columns) else np.nan
 
     all_car = gval("all_events")
     pos_car = gval("positive_es")
     mod_car = gval("moderate_es_50_80")
     ext_car = gval("extreme_es_top20")
-    init_car = float(by_type.loc[by_type["event_type"] == "guidance_initial", "avg_CAR60"].iloc[0]) if (by_type["event_type"] == "guidance_initial").any() else np.nan
-    rev_car = float(by_type.loc[by_type["event_type"] == "guidance_upward_revision", "avg_CAR60"].iloc[0]) if (by_type["event_type"] == "guidance_upward_revision").any() else np.nan
+    init_car = float(by_type.loc[by_type["event_type"] == "guidance_initial", metric_col].iloc[0]) if ((by_type["event_type"] == "guidance_initial").any() and metric_col in by_type.columns) else np.nan
+    rev_car = float(by_type.loc[by_type["event_type"] == "guidance_upward_revision", metric_col].iloc[0]) if ((by_type["event_type"] == "guidance_upward_revision").any() and metric_col in by_type.columns) else np.nan
 
-    m1 = reg_df[(reg_df["model"] == "model_moderate_es") & (reg_df["variable"] == "moderate_positive_ES_dummy")]
+    if signal_col == "ES_std":
+        model_name = "panel_signal_model"
+        variable_name = "ES_std"
+    else:
+        model_name = "model_moderate_es"
+        variable_name = "moderate_positive_ES_dummy"
+
+    m1 = reg_df[(reg_df["model"] == model_name) & (reg_df["variable"] == variable_name)]
     m2 = reg_df[(reg_df["model"] == "model_event_type") & (reg_df["variable"] == "event_type_dummy")]
     m1_coef = float(m1["coef"].iloc[0]) if not m1.empty else np.nan
     m1_p = float(m1["p_value"].iloc[0]) if not m1.empty else np.nan
@@ -488,14 +653,11 @@ def _build_final_interpretation(
     m2_p = float(m2["p_value"].iloc[0]) if not m2.empty else np.nan
 
     lines = [
-        "Final Interpretation",
-        "ES 分位单调性失败的主要原因是当前 ES 代理噪声较大，且极端值会扭曲排序结果。",
-        f"在分组结果中，全样本 CAR60={all_car:.3%}，正向 ES 组 CAR60={pos_car:.3%}，中等正向 ES（50-80%）CAR60={mod_car:.3%}，极端 ES（Top20%）CAR60={ext_car:.3%}。",
-        "核心发现是：中等正向超预期比极端超预期更稳定，后者并不对应更强的后续超额收益。",
-        f"事件类型上，guidance_initial 的 CAR60={init_car:.3%}，guidance_upward_revision 的 CAR60={rev_car:.3%}，说明不同事件类型信息含量存在差异。",
-        f"回归中 moderate_positive_ES_dummy 系数为 {m1_coef:.6f}（p={m1_p:.3f}），event_type_dummy 系数为 {m2_coef:.6f}（p={m2_p:.3f}），支持“事件有效但线性强度有限”的结论。",
-        "经济含义是：盈利信息会影响估值，但市场调整并非线性且并非一次性完成，存在有限的公告后漂移特征。",
-        "从公司金融视角看，CAPM 风险控制后仍有短期公告效应，说明基本面信息在短期价格形成中具有独立作用。",
-        "因此本项目最终叙事应聚焦“适度正向盈利信号与特定事件类型”而非“惊喜越大收益越高”。",
+        f"Final Interpretation ({scenario_name})",
+        "Weak significance mainly comes from noisy surprise measurement, long return windows, and under-specified regressions.",
+        f"Group results show all-events {primary_car}={all_car:.3%}, positive-ES {primary_car}={pos_car:.3%}, moderate-positive {primary_car}={mod_car:.3%}, and extreme-ES {primary_car}={ext_car:.3%}.",
+        f"By event type, guidance_initial has {primary_car}={init_car:.3%} and guidance_upward_revision has {primary_car}={rev_car:.3%}.",
+        f"Key regression coefficient on {variable_name} is {m1_coef:.6f} (p={m1_p:.3f}); event_type_dummy is {m2_coef:.6f} (p={m2_p:.3f}).",
+        "Economically, the preferred interpretation should focus on whether cleaner guidance surprises predict short-horizon valuation adjustment, not on mechanically maximizing t-stats.",
     ]
     return "\n".join(lines) + "\n"

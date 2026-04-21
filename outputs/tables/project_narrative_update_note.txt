@@ -1,0 +1,44 @@
+Project Narrative Update Note
+
+1) Code changes
+- Updated signal construction in src/guidance_design.py to add ES_std.
+- Added short-window CAR outputs (CAR3, CAR5, CAR20) while preserving baseline CAR20/CAR60.
+- Added preferred regression using industry FE, year-quarter FE, and firm-clustered SE.
+- Updated src/pipeline.py to run baseline and improved specifications side by side.
+- Updated src/config.py and src/data_collection.py so test-mode runs are reproducible and use end date 20260421.
+
+2) README changes
+- Replaced the old CAR60 / PEAD headline with ES_std + CAR5 as the preferred specification.
+- Reframed baseline CAR60 results as supplementary comparison only.
+- Updated output file references to point to final_*_baseline and final_*_improved files.
+- Added explicit explanation of why the improved specification is more defensible.
+
+3) PPT framing changes
+- Updated presentation.tex so the main result is the ES_std -> CAR5 FE regression.
+- Added slides explaining why the baseline was noisy.
+- Added slides explaining why the improved specification is more defensible.
+- Moved CAR60 and group-ordering discussion into robustness / cautionary comparison.
+
+4) Speech changes
+- Updated presentation_speech_script.tex to match the new headline result.
+- Removed overstatement about strong long-run PEAD and strong market inefficiency.
+- Reframed the conclusion as limited short-run valuation adjustment after cleaner guidance surprise.
+
+5) Final recommended headline conclusion
+Cleaner standardized guidance surprise predicts modest but statistically significant short-run abnormal return in China A-shares.
+
+6) Presentation wording guidance
+Use:
+- ES_std
+- CAR5
+- industry fixed effects
+- year-quarter fixed effects
+- firm-clustered standard errors
+- limited short-run valuation adjustment
+
+Avoid as headline wording:
+- strong PEAD
+- long-run drift as main evidence
+- CAR60 as headline result
+- moderate positive beats extreme
+- strong market inefficiency

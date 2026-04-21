@@ -195,12 +195,21 @@ class DataCollector:
 
         rows: list[pd.DataFrame] = []
         codes = list(stocks["ts_code"].dropna().unique())
-        with ThreadPoolExecutor(max_workers=self.config.max_workers) as ex:
-            future_map = {ex.submit(self._get_guidance_single_stock, code): code for code in codes}
-            for fut in as_completed(future_map):
-                df = fut.result()
+
+        # The forecast endpoint is rate-limited aggressively, so use a serial pull in test mode.
+        if self.config.run_mode == "test":
+            for code in codes:
+                df = self._get_guidance_single_stock(code)
                 if df is not None and not df.empty:
                     rows.append(df)
+                time.sleep(max(self.config.request_pause_sec, 0.15))
+        else:
+            with ThreadPoolExecutor(max_workers=min(self.config.max_workers, 4)) as ex:
+                future_map = {ex.submit(self._get_guidance_single_stock, code): code for code in codes}
+                for fut in as_completed(future_map):
+                    df = fut.result()
+                    if df is not None and not df.empty:
+                        rows.append(df)
 
         if not rows:
             self.logger.warning("No guidance rows collected.")

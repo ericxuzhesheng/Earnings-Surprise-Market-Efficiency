@@ -1,8 +1,11 @@
 ﻿metric,value
 run_mode,test
-sample_stocks,800
-guidance_rows_raw,10920
-events_after_filters,5348
-event_dataset_rows,4980
+sample_stocks,300
+guidance_rows_raw,5162
+events_all,2858
+events_baseline_after_filters,2541
+events_improved_after_filters,2541
+event_dataset_rows_baseline,2375
+event_dataset_rows_improved,2529
 period_start,20200101
-period_end,20260416
+period_end,20260421

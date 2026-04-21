@@ -13,10 +13,10 @@ class ProjectConfig:
     market_index_code_tushare: str = "399300.SZ"  # CSI 300
     market_index_symbol_akshare: str = "sh000300"
     start_date_test: str = "20200101"
-    end_date_test: str = "20260416"
+    end_date_test: str = os.getenv("END_DATE_TEST", "20260421")
     start_date_full: str = "20200101"
-    end_date_full: str = "20260416"
-    sample_stock_count_test: int = int(os.getenv("SAMPLE_STOCK_COUNT_TEST", "0"))
+    end_date_full: str = os.getenv("END_DATE_FULL", "20260421")
+    sample_stock_count_test: int = int(os.getenv("SAMPLE_STOCK_COUNT_TEST", "300"))
     sample_stock_count_full: int = int(os.getenv("SAMPLE_STOCK_COUNT_FULL", "1200"))
     min_events_per_stock: int = 2
     beta_estimation_window: int = 120

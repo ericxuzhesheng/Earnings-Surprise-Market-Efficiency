@@ -1,0 +1,6 @@
+Final Interpretation (baseline)
+Weak significance mainly comes from noisy surprise measurement, long return windows, and under-specified regressions.
+Group results show all-events CAR60=3.288%, positive-ES CAR60=4.581%, moderate-positive CAR60=4.895%, and extreme-ES CAR60=6.981%.
+By event type, guidance_initial has CAR60=3.237% and guidance_upward_revision has CAR60=10.429%.
+Key regression coefficient on moderate_positive_ES_dummy is 0.022523 (p=0.048); event_type_dummy is 0.062943 (p=0.153).
+Economically, the preferred interpretation should focus on whether cleaner guidance surprises predict short-horizon valuation adjustment, not on mechanically maximizing t-stats.

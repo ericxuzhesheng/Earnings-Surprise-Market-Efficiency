@@ -1,21 +1,25 @@
 Figure Notes for PPT
-1) fig1_es_distribution.png: This figure shows the distribution of event-level earnings surprise proxies.
-A right-skewed shape indicates more events with moderate positive surprises than extreme negative ones.
 
-2) fig2_es_vs_car20.png: This scatter plot visualizes the relation between earnings surprise and CAR20.
-An upward trend line suggests firms with stronger positive surprises tend to have higher short-horizon abnormal returns.
+1) fig1_es_group_comparison_improved.png
+This figure is presentation-facing only if it is described as supplementary group evidence under the improved specification.
+The preferred interpretation is not monotonic group ordering, but that short-window evidence should be judged together with the ES_std regression.
 
-3) fig3_es_vs_car60.png: This figure extends the horizon to CAR60.
-If the slope remains positive, the market appears to adjust gradually after earnings announcements.
+2) fig2_cum_return_moderate_vs_extreme_improved.png
+This figure is a cautionary comparison rather than a headline result.
+It shows that moderate-versus-extreme group paths are not strong enough to support a simple monotonic surprise story.
 
-4) fig4_quantile_group_car_comparison.png: Events are sorted into earnings-surprise quantiles.
-Average CAR20/CAR40/CAR60 by quantile highlight whether high-surprise groups outperform low-surprise groups consistently.
+3) fig3_event_type_comparison_improved.png
+This figure shows differences across event types under the improved short-window framing.
+It should be discussed descriptively, not as the core identification result.
 
-5) fig5_high_vs_low_es_caar.png: This cumulative abnormal return path compares high-surprise and low-surprise portfolios.
-A widening gap after day 1 is consistent with post-earnings-announcement drift in the sample period.
+4) final_regression_results_improved.csv
+This is the main result table for presentation.
+The key result is the ES_std coefficient in the CAR5 regression with industry FE, year-quarter FE, and firm-clustered SE.
 
-6) fig6_regression_es_coefficient.png: This chart summarizes estimated coefficients of earnings surprise from OLS regressions.
-Positive coefficients across CAR horizons support a positive earnings surprise-return relationship.
+5) final_group_summary_baseline.csv and final_group_summary_improved.csv
+These are comparison tables, not equal headline candidates.
+Baseline CAR60 results help explain why the old narrative looked stronger, while improved CAR5 results show the more defensible short-run effect.
 
-Method note: Following the 'earnings surprise' strategy literature, the project prioritizes
-single-quarter YoY surprise and cross-sectional ranking/winsorized variants to improve signal stability.
+Method note:
+The project now prioritizes cleaner standardized surprise measurement and short-window abnormal returns.
+Long-window CAR60 results are retained only for robustness and cautionary comparison.

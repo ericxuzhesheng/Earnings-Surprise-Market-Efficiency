@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import shutil
 import pandas as pd
 
 from src.config import ProjectConfig
@@ -11,133 +10,78 @@ from src.guidance_design import (
     build_guidance_events,
     save_core_outputs,
 )
-from src.io_utils import ensure_directories, save_csv
+from src.io_utils import ensure_directories, save_csv, save_text
 from src.logger_utils import setup_logger
 
 
-def _safe_read_csv(path) -> pd.DataFrame:
-    try:
-        return pd.read_csv(path)
-    except Exception:
-        return pd.DataFrame()
-
-
-def _extract_old_metrics(outputs_tables_dir) -> dict:
-    run_summary = _safe_read_csv(outputs_tables_dir / "run_summary.csv")
-    final_group = _safe_read_csv(outputs_tables_dir / "final_group_summary.csv")
-    final_reg = _safe_read_csv(outputs_tables_dir / "final_regression_results.csv")
-
-    old_stock = float(run_summary.loc[run_summary["metric"] == "sample_stocks", "value"].iloc[0]) if not run_summary.empty and (run_summary["metric"] == "sample_stocks").any() else float("nan")
-    old_event = float(run_summary.loc[run_summary["metric"] == "event_dataset_rows", "value"].iloc[0]) if not run_summary.empty and (run_summary["metric"] == "event_dataset_rows").any() else float("nan")
-
-    old_mod_car60 = float(final_group.loc[final_group["group"] == "moderate_es_50_80", "avg_CAR60"].iloc[0]) if not final_group.empty and (final_group["group"] == "moderate_es_50_80").any() else float("nan")
-
-    reg_mask = (
-        (final_reg.get("model", pd.Series(dtype=str)) == "model_moderate_es")
-        & (final_reg.get("variable", pd.Series(dtype=str)) == "moderate_positive_ES_dummy")
-    )
-    old_coef = float(final_reg.loc[reg_mask, "coef"].iloc[0]) if (not final_reg.empty) and reg_mask.any() else float("nan")
-    old_p = float(final_reg.loc[reg_mask, "p_value"].iloc[0]) if (not final_reg.empty) and reg_mask.any() else float("nan")
-    return {
-        "old_stock_count": old_stock,
-        "old_event_count": old_event,
-        "old_avg_CAR60_moderate_ES": old_mod_car60,
-        "old_coef_moderate_dummy": old_coef,
-        "old_p_value_moderate_dummy": old_p,
-    }
-
-
-def _write_expanded_outputs(config: ProjectConfig) -> None:
-    tables = config.outputs_tables_dir
-    figs = config.outputs_figures_dir
-
-    # Duplicate final outputs with expanded names for presentation robustness round.
-    mapping_tables = {
-        "final_group_summary.csv": "final_group_summary_expanded.csv",
-        "final_regression_results.csv": "final_regression_results_expanded.csv",
-        "final_interpretation.txt": "final_interpretation_expanded.txt",
-    }
-    mapping_figs = {
-        "fig1_es_group_comparison.png": "fig1_es_group_comparison_expanded.png",
-        "fig2_cum_return_moderate_vs_extreme.png": "fig2_cum_return_moderate_vs_extreme_expanded.png",
-        "fig3_event_type_comparison.png": "fig3_event_type_comparison_expanded.png",
-    }
-    for src, dst in mapping_tables.items():
-        s, d = tables / src, tables / dst
-        if s.exists():
-            shutil.copy2(s, d)
-    for src, dst in mapping_figs.items():
-        s, d = figs / src, figs / dst
-        if s.exists():
-            shutil.copy2(s, d)
-
-
-def _build_expansion_comparison_and_note(
+def _build_before_after_comparison(
     config: ProjectConfig,
-    old_metrics: dict,
-    new_stock_count: int,
-    new_event_count: int,
+    baseline_metrics: dict[str, float | str],
+    improved_metrics: dict[str, float | str],
+    baseline_events: pd.DataFrame,
+    improved_events: pd.DataFrame,
+    baseline_reg: pd.DataFrame,
+    improved_reg: pd.DataFrame,
 ) -> None:
     tables = config.outputs_tables_dir
-    final_group = _safe_read_csv(tables / "final_group_summary.csv")
-    final_reg = _safe_read_csv(tables / "final_regression_results.csv")
 
-    new_mod_car60 = float(final_group.loc[final_group["group"] == "moderate_es_50_80", "avg_CAR60"].iloc[0]) if not final_group.empty and (final_group["group"] == "moderate_es_50_80").any() else float("nan")
-    reg_mask = (
-        (final_reg.get("model", pd.Series(dtype=str)) == "model_moderate_es")
-        & (final_reg.get("variable", pd.Series(dtype=str)) == "moderate_positive_ES_dummy")
-    )
-    new_coef = float(final_reg.loc[reg_mask, "coef"].iloc[0]) if (not final_reg.empty) and reg_mask.any() else float("nan")
-    new_p = float(final_reg.loc[reg_mask, "p_value"].iloc[0]) if (not final_reg.empty) and reg_mask.any() else float("nan")
-
-    comp = pd.DataFrame(
+    comparison = pd.DataFrame(
         {
-            "old_stock_count": [old_metrics["old_stock_count"]],
-            "new_stock_count": [new_stock_count],
-            "old_event_count": [old_metrics["old_event_count"]],
-            "new_event_count": [new_event_count],
-            "old_avg_CAR60_moderate_ES": [old_metrics["old_avg_CAR60_moderate_ES"]],
-            "new_avg_CAR60_moderate_ES": [new_mod_car60],
-            "old_coef_moderate_positive_ES_dummy": [old_metrics["old_coef_moderate_dummy"]],
-            "new_coef_moderate_positive_ES_dummy": [new_coef],
-            "old_p_value": [old_metrics["old_p_value_moderate_dummy"]],
-            "new_p_value": [new_p],
-            "old_liquidity_turnover20_filter": [config.liquidity_turnover20_old],
-            "new_liquidity_turnover20_filter": [config.liquidity_turnover20_new],
+            "metric": [
+                "sample_size",
+                "primary_car",
+                "moderate_group_mean",
+                "extreme_group_mean",
+                "key_coef",
+                "key_p_value",
+            ],
+            "baseline": [
+                baseline_metrics.get("sample_size"),
+                baseline_metrics.get("primary_car"),
+                baseline_metrics.get("moderate_group_mean"),
+                baseline_metrics.get("extreme_group_mean"),
+                baseline_metrics.get("coef"),
+                baseline_metrics.get("p_value"),
+            ],
+            "improved": [
+                improved_metrics.get("sample_size"),
+                improved_metrics.get("primary_car"),
+                improved_metrics.get("moderate_group_mean"),
+                improved_metrics.get("extreme_group_mean"),
+                improved_metrics.get("coef"),
+                improved_metrics.get("p_value"),
+            ],
         }
     )
-    save_csv(comp, tables / "sample_expansion_comparison.csv")
+    save_csv(comparison, tables / "before_after_method_comparison.csv")
 
-    old_stock = old_metrics["old_stock_count"]
-    old_event = old_metrics["old_event_count"]
-    expand_stock_ratio = (new_stock_count / old_stock - 1.0) if pd.notna(old_stock) and old_stock > 0 else float("nan")
-    expand_event_ratio = (new_event_count / old_event - 1.0) if pd.notna(old_event) and old_event > 0 else float("nan")
-    new_ext_car60 = float(final_group.loc[final_group["group"] == "extreme_es_top20", "avg_CAR60"].iloc[0]) if not final_group.empty and (final_group["group"] == "extreme_es_top20").any() else float("nan")
-    old_ext_car60 = float(final_group.loc[final_group["group"] == "extreme_es_top20", "avg_CAR60"].iloc[0]) if not final_group.empty and (final_group["group"] == "extreme_es_top20").any() else float("nan")
-    core_same = pd.notna(new_mod_car60) and pd.notna(new_ext_car60) and (new_mod_car60 >= new_ext_car60)
-    core_line = (
-        "2) Core conclusion remains: moderate positive surprise is more reliable than extreme surprise in this framework."
-        if core_same
-        else "2) Expanded sample partially overturns the prior ordering: extreme ES currently shows higher average CAR60 than moderate ES."
+    baseline_car_cols = [c for c in baseline_events.columns if c.startswith("CAR")]
+    improved_car_cols = [c for c in improved_events.columns if c.startswith("CAR")]
+    sample_comp = pd.DataFrame(
+        {
+            "scenario": ["baseline", "improved"],
+            "event_rows": [len(baseline_events), len(improved_events)],
+            "car_columns": [", ".join(baseline_car_cols), ", ".join(improved_car_cols)],
+        }
     )
-    detail_line = (
-        f"3) Current expanded averages: moderate ES CAR60={new_mod_car60:.3%}, extreme ES CAR60={new_ext_car60:.3%}."
-        if pd.notna(new_mod_car60) and pd.notna(new_ext_car60)
-        else "3) Moderate vs extreme ES comparison is unavailable due to missing group estimates."
-    )
+    save_csv(sample_comp, tables / "before_after_sample_sizes.csv")
 
-    note = (
-        "Final Interpretation Expanded\n"
-        f"1) Sample expanded from stock count {old_stock:.0f} to {new_stock_count:.0f}, and event count {old_event:.0f} to {new_event_count:.0f} "
-        f"(stock change {expand_stock_ratio:.1%}, event change {expand_event_ratio:.1%}).\n"
-        f"{core_line}\n"
-        f"{detail_line}\n"
-        f"4) Regression stability check: coefficient moved from {old_metrics['old_coef_moderate_dummy']:.6f} (p={old_metrics['old_p_value_moderate_dummy']:.3f}) "
-        f"to {new_coef:.6f} (p={new_p:.3f}).\n"
-        "5) The expanded-sample version is better for final presentation because it reduces small-sample concern while preserving the same corporate-finance narrative.\n"
-        f"Liquidity filter was relaxed from turnover20 >= {config.liquidity_turnover20_old:.2f} to >= {config.liquidity_turnover20_new:.2f}.\n"
+    def _coef_line(metrics: dict[str, float | str], label: str) -> str:
+        return f"{label}: coef={metrics.get('coef', float('nan')):.6f}, p={metrics.get('p_value', float('nan')):.3f}, N={int(metrics.get('sample_size', 0) or 0)}"
+
+    text = "\n".join(
+        [
+            "Before vs After Comparison",
+            "Baseline uses legacy ES_main, longer CAR window, and clustered OLS on the moderate-positive dummy.",
+            "Improved uses standardized ES_std, short-window CAR, and panel regression with firm/time fixed effects.",
+            _coef_line(baseline_metrics, "Baseline"),
+            _coef_line(improved_metrics, "Improved"),
+            f"Baseline primary window: {baseline_metrics.get('primary_car')}; Improved primary window: {improved_metrics.get('primary_car')}.",
+            f"Moderate-vs-extreme comparison moved from {baseline_metrics.get('moderate_group_mean', float('nan')):.3%} vs {baseline_metrics.get('extreme_group_mean', float('nan')):.3%} to {improved_metrics.get('moderate_group_mean', float('nan')):.3%} vs {improved_metrics.get('extreme_group_mean', float('nan')):.3%}.",
+            "Preferred presentation should emphasize the improved specification only if the sign and magnitude are economically interpretable and robust, not merely smaller p-values.",
+        ]
     )
-    (tables / "final_interpretation_expanded.txt").write_text(note, encoding="utf-8")
+    save_text(text + "\n", tables / "before_after_interpretation.txt")
 
 
 def run_pipeline() -> None:
@@ -159,7 +103,6 @@ def run_pipeline() -> None:
         config.start_date,
         config.end_date,
     )
-    old_metrics = _extract_old_metrics(config.outputs_tables_dir)
 
     collector = DataCollector(config=config, logger=logger)
     stocks = collector.get_stock_universe()
@@ -180,38 +123,82 @@ def run_pipeline() -> None:
         market_df=market,
         logger=logger,
     )
-    events = apply_tradability_filters(
-        events_df=events,
+
+    baseline_events = apply_tradability_filters(
+        events_df=events.copy(),
+        prices_df=prices,
+        daily_basic_df=daily_basic,
+        market_df=market,
+        min_listed_trading_days=120,
+        turnover20_threshold=config.liquidity_turnover20_old,
+    )
+    improved_events = apply_tradability_filters(
+        events_df=events.copy(),
         prices_df=prices,
         daily_basic_df=daily_basic,
         market_df=market,
         min_listed_trading_days=120,
         turnover20_threshold=config.liquidity_turnover20_new,
     )
-    event_dataset, event_paths = add_event_returns_and_controls(
-        events_df=events,
+
+    baseline_dataset, baseline_paths = add_event_returns_and_controls(
+        events_df=baseline_events,
         prices_df=prices,
         market_df=market,
         daily_basic_df=daily_basic,
+        event_windows=(20, 60),
+    )
+    improved_dataset, improved_paths = add_event_returns_and_controls(
+        events_df=improved_events,
+        prices_df=prices,
+        market_df=market,
+        daily_basic_df=daily_basic,
+        event_windows=(3, 5, 20),
     )
 
-    save_csv(events, config.data_processed_dir / "guidance_events_filtered.csv")
-    save_csv(event_dataset, config.data_processed_dir / "event_dataset_guidance_2020plus.csv")
-    save_csv(event_paths, config.data_processed_dir / "event_paths_guidance_2020plus.csv")
+    save_csv(events, config.data_processed_dir / "guidance_events_all.csv")
+    save_csv(baseline_events, config.data_processed_dir / "guidance_events_filtered_baseline.csv")
+    save_csv(improved_events, config.data_processed_dir / "guidance_events_filtered_improved.csv")
+    save_csv(baseline_dataset, config.data_processed_dir / "event_dataset_guidance_baseline.csv")
+    save_csv(improved_dataset, config.data_processed_dir / "event_dataset_guidance_improved.csv")
+    save_csv(baseline_paths, config.data_processed_dir / "event_paths_guidance_baseline.csv")
+    save_csv(improved_paths, config.data_processed_dir / "event_paths_guidance_improved.csv")
 
-    save_core_outputs(
-        event_df=event_dataset,
-        path_df=event_paths,
+    baseline_metrics = save_core_outputs(
+        event_df=baseline_dataset,
+        path_df=baseline_paths,
         outputs_tables_dir=config.outputs_tables_dir,
         outputs_figures_dir=config.outputs_figures_dir,
         logger=logger,
+        scenario_name="baseline",
+        primary_car="CAR60",
+        car_windows=(20, 60),
+        signal_col="earnings_surprise",
+        use_panel_regression=False,
     )
-    _write_expanded_outputs(config)
-    _build_expansion_comparison_and_note(
+    improved_metrics = save_core_outputs(
+        event_df=improved_dataset,
+        path_df=improved_paths,
+        outputs_tables_dir=config.outputs_tables_dir,
+        outputs_figures_dir=config.outputs_figures_dir,
+        logger=logger,
+        scenario_name="improved",
+        primary_car="CAR5",
+        car_windows=(3, 5, 20),
+        signal_col="ES_std",
+        use_panel_regression=True,
+    )
+
+    baseline_reg = pd.read_csv(config.outputs_tables_dir / "final_regression_results_baseline.csv")
+    improved_reg = pd.read_csv(config.outputs_tables_dir / "final_regression_results_improved.csv")
+    _build_before_after_comparison(
         config=config,
-        old_metrics=old_metrics,
-        new_stock_count=len(stocks),
-        new_event_count=len(event_dataset),
+        baseline_metrics=baseline_metrics,
+        improved_metrics=improved_metrics,
+        baseline_events=baseline_dataset,
+        improved_events=improved_dataset,
+        baseline_reg=baseline_reg,
+        improved_reg=improved_reg,
     )
 
     summary = pd.DataFrame(
@@ -220,8 +207,11 @@ def run_pipeline() -> None:
                 "run_mode",
                 "sample_stocks",
                 "guidance_rows_raw",
-                "events_after_filters",
-                "event_dataset_rows",
+                "events_all",
+                "events_baseline_after_filters",
+                "events_improved_after_filters",
+                "event_dataset_rows_baseline",
+                "event_dataset_rows_improved",
                 "period_start",
                 "period_end",
             ],
@@ -230,7 +220,10 @@ def run_pipeline() -> None:
                 len(stocks),
                 len(guidance),
                 len(events),
-                len(event_dataset),
+                len(baseline_events),
+                len(improved_events),
+                len(baseline_dataset),
+                len(improved_dataset),
                 config.start_date,
                 config.end_date,
             ],

@@ -14,63 +14,57 @@
 \maketitle
 
 \section*{Slide 1: Title}
-Good afternoon everyone. We are presenting our FIN803 Corporate Finance project on earnings-related information, firm valuation adjustment, and market efficiency in China A-share stocks.
+Good afternoon everyone. We are presenting our FIN803 Corporate Finance project on earnings surprise, valuation adjustment, and market efficiency in China A-share stocks.
 
 \section*{Slide 2: Motivation}
-Our motivation is straightforward: earnings guidance updates expectations of future cash flows, so it should affect valuation. This project is directly aligned with FIN803 topics including stock valuation, capital market pricing of risk, CAPM-based abnormal return measurement, and cost-of-capital intuition.
+Our motivation is simple. Earnings guidance changes expectations about future cash flows, so it should affect firm value. The key question is not whether we can force a strong drift story, but whether a defensible surprise measure predicts meaningful post-announcement abnormal return.
 
 \section*{Slide 3: Research Question}
-Our core question is whether earnings-related guidance events are followed by positive abnormal returns. We emphasize event occurrence effects, and then test whether cross-sectional ranking by our current earnings surprise proxy is stable.
+Our research question is unchanged: do earnings-related guidance events predict abnormal return in China A-shares? What changed is the empirical design. We now emphasize a cleaner short-window design instead of relying on long-window CAR60 as the main result.
 
-\section*{Slide 4: Firm Valuation and Earnings}
-In valuation terms, price reflects discounted expected future cash flows. Earnings disclosures matter because they shift expectations, and market reactions should depend on the gap between realized information and prior expectations.
+\section*{Slide 4: Valuation Logic}
+In Corporate Finance terms, stock prices reflect discounted expected future cash flows. Guidance announcements matter because they update beliefs about profitability. So the relevant object is the surprise relative to expectations, not the raw guidance number by itself.
 
-\section*{Slide 5: Market Efficiency}
-Under semi-strong efficiency, public information should be impounded quickly into prices. If we still observe positive post-announcement CAR, that suggests delayed adjustment and potential underreaction.
+\section*{Slide 5: Efficiency Interpretation}
+Under semi-strong efficiency, public information should be incorporated quickly. If we still see abnormal return immediately after the announcement, that suggests incomplete adjustment. But if we move too far out in time, we also pick up unrelated news, so window choice matters a lot.
 
-\section*{Slide 6: Abnormal Returns and CAPM}
-We use abnormal return as stock return minus market return. CAPM provides a benchmark intuition for normal required return, and helps us separate event-driven price effects from broad market movement.
+\section*{Slide 6: Sample and Events}
+Our sample covers 2020-01-01 to 2026-04-21. In the current successful test run, we use 300 stocks, 5,162 raw guidance observations, and 2,858 candidate events. We focus on two event types: initial guidance and upward guidance revisions.
 
-\section*{Slide 7: PEAD Intuition}
-PEAD means returns continue to drift after earnings news. We test for delayed reaction, but we do not impose a strong monotonic PEAD assumption because our earnings-expectation proxy is imperfect.
+\section*{Slide 7: Filtering and Tradability}
+We exclude ST firms, very newly listed firms, and event-day observations that are not tradable. We also apply a 20-day turnover liquidity filter. These steps are meant to reduce microstructure noise and keep the sample economically interpretable.
 
-\section*{Slide 8: Data Description}
-Our sample covers 2020-01-01 to 2026-04-16 in China A-share. The expanded sample includes 800 stocks and 4,980 usable events, with Tushare as the main source and backup/cross-check logic in the pipeline.
+\section*{Slide 8: Why the Baseline Was Noisy}
+The older baseline design had two main weaknesses. First, the old surprise proxy, ES\_main, was noisy because the expectations benchmark was weak. Second, CAR60 is a long window, so it mixes announcement effects with lots of later information. That makes it too easy to overstate the evidence as strong PEAD.
 
-\section*{Slide 9: Event Definition}
-We use two event types: guidance\_initial and guidance\_upward\_revision. Event timing is the first trading day after announcement, and we avoid duplicate counting within a report-period event timeline.
+\section*{Slide 9: Why the Improved Specification Is Better}
+The improved design solves those problems in a more defensible way. We use ES\_std, which standardizes guidance surprise more cleanly, and we focus on CAR5, which is much closer to the immediate valuation response. We also add industry fixed effects, year-quarter fixed effects, and firm-clustered standard errors.
 
-\section*{Slide 10: Filtering and Tradability}
-We apply practical filters: exclude ST stocks, newly listed firms with short trading history, and suspended event-day observations, plus a liquidity filter. These controls reduce noise and make the event sample more tradable.
+\section*{Slide 10: Preferred Variables}
+Our preferred dependent variable is CAR5, the cumulative abnormal return over five trading days after the event. Abnormal return is defined as stock return minus market return. Our preferred explanatory variable is ES\_std, and we control for log size and beta.
 
-\section*{Slide 11: Return Measurement}
-We compute CAR20 and CAR60 from daily abnormal returns. CAR60 is our main outcome because delayed reaction often appears over a medium post-announcement horizon rather than only immediately.
+\section*{Slide 11: Preferred Regression}
+The preferred regression explains CAR5 using ES\_std, size, beta, industry fixed effects, and year-quarter fixed effects, with firm-clustered standard errors. The baseline CAR60 regression is still kept, but only as a comparison benchmark.
 
-\section*{Slide 12: Earnings Surprise Proxy}
-Our ES measure is guidance midpoint growth minus a consensus-growth proxy. This is not true analyst consensus, so we explicitly treat it as a pragmatic proxy and keep interpretation conservative.
+\section*{Slide 12: Baseline vs Preferred}
+This slide summarizes the design change. The baseline used ES\_main and CAR60; the preferred design uses ES\_std and CAR5. The baseline coefficient is larger in magnitude, but the preferred result is more credible because it better isolates short-run announcement-related pricing.
 
-\section*{Slide 13: ES Grouping}
-We group events into positive ES, moderate ES (50th--80th percentile within event type), and extreme ES (top 20\%). This allows us to compare economically meaningful categories without overfitting.
+\section*{Slide 13: Preferred Main Result}
+Our main empirical result is that ES\_std has a positive and statistically significant coefficient in the CAR5 regression. The coefficient is about 0.00173 with a p-value of about 0.0195. So cleaner standardized guidance surprise predicts modest but statistically significant short-run abnormal return.
 
-\section*{Slide 14: Empirical Strategy}
-The design combines event-study averages, group comparisons, and simple regressions. The goal is theory-consistent inference for valuation adjustment, not a trading system.
+\section*{Slide 14: Why We Do Not Use Group Ordering as the Headline}
+The group-level CAR5 means are small and not strongly monotonic. That means we should not tell a story like moderate positive always beats extreme surprise, or larger surprise always means larger abnormal return. Those claims are weaker than the regression evidence in the preferred design.
 
-\section*{Slide 15: Regression Model}
-We estimate CAR60 on key signals plus only two basic controls: log size and beta. This keeps the model transparent and aligned with course-level capital market intuition.
+\section*{Slide 15: Baseline as Robustness, Not Headline}
+The old CAR60 baseline still shows a positive borderline-significant coefficient. But because CAR60 is much more exposed to contamination, we now treat that result as supplementary robustness, not as the main evidence. This is a more cautious and more academically defensible choice.
 
-\section*{Slide 16: Main Event-Level Results}
-At the event level, guidance-related announcements are associated with positive CAR60. In the expanded sample, all-events CAR60 is about 3.02\%, and positive-ES events are about 3.77\%.
+\section*{Slide 16: Corporate Finance Interpretation}
+The right interpretation is that earnings-related guidance surprise affects valuation, and the market does not appear to absorb that information completely immediately. But the magnitude is modest. So we interpret the result as limited short-run valuation adjustment, not as dramatic market inefficiency.
 
-\section*{Slide 17: ES Group Comparison}
-Moderate ES events have CAR60 around 3.715\%, while extreme ES events are around 5.964\% in this expanded run. The key point is that cross-sectional ranking remains unstable across specifications, so we avoid claiming strict monotonic PEAD.
+\section*{Slide 17: Final Conclusion}
+Our final conclusion is: cleaner standardized guidance surprise predicts modest but statistically significant short-run abnormal return in China A-shares. The preferred framing is limited short-run valuation adjustment after cleaner guidance surprise. We do not present strong long-run PEAD or strong market inefficiency as the headline conclusion.
 
-\section*{Slide 18: Regression Results}
-The moderate-ES dummy is positive but statistically insignificant, and the event-type dummy is also insignificant. Although the chart can show a higher raw mean for revision events, the conditional difference is not robust after controls, so we keep a conservative interpretation.
-
-\section*{Slide 19: Corporate Finance Interpretation}
-The evidence supports that earnings-related events affect valuation and that market adjustment may be delayed. CAPM controls do not fully explain these short-horizon announcement effects, which is consistent with partial underreaction.
-
-\section*{Slide 20: Limitations and Conclusion}
-Our main limitation is measurement of expected earnings without full analyst-consensus coverage. Final takeaway: event-level evidence is more reliable than ES-magnitude ranking, and better expectation measurement is the most important next step.
+\section*{Slide 18: Final Caution and Next Step}
+The most important next step is better expectation measurement, ideally with stronger analyst-consensus data. If that improves, we can sharpen the economic interpretation further. But with the current evidence, a cautious short-run valuation-adjustment story is the right final presentation.
 
 \end{document}
