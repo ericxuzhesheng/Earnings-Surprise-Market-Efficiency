@@ -16,40 +16,31 @@
 \section*{Slide 1: Title}
 Good afternoon everyone. We are presenting our FIN803 Corporate Finance project on earnings surprise, valuation adjustment, and market efficiency in China A-share stocks.
 
-\section*{Slide 2: Motivation}
-Our motivation is to move away from a weak pooled headline and toward a cleaner Tushare-first diagnostic baseline. The key question is not whether one broad specification looks significant, but how short-run inference changes when expectation measurement and match quality become more disciplined.
+\section*{Slide 2: Why This Matters in Corporate Finance}
+In corporate finance, earnings disclosures matter because they update beliefs about future cash flows, profitability, and firm value. If markets are reasonably efficient, stock prices should respond when these disclosures contain new information. So this project asks a classic finance question: how quickly and how clearly does disclosure news enter prices?
 
-\section*{Slide 3: Research Question}
-Our research question is now framed more narrowly. We ask whether China A-share earnings-related events generate short-run abnormal return when surprise is measured against stricter sell-side expectations, and how much that answer changes across signal scaling choices and explicit match tiers.
+\section*{Slide 3: Research Question and Prediction}
+Our research question is straightforward. Do firms with more positive earnings surprise experience better short-run abnormal returns around the disclosure date? The prediction from standard valuation logic is yes. If the disclosed earnings news is better than expected, then prices should adjust upward. At the same time, we want to be careful, because a clean test depends heavily on how expectations are measured.
 
-\section*{Slide 4: New Headline Baseline}
-The default headline sample is now preannouncement-only with strict same-quarter matching. We compare CAR3, CAR5, CAR10, and CAR20, and we compare raw, percent, and standardized surprise in parallel. The figure on this slide gives a visual diagnostic example by contrasting the cumulative return path of high-surprise and low-surprise groups.
+\section*{Slide 4: Sample and Empirical Setup}
+We focus our headline analysis on earnings preannouncements. The reason is that preannouncements are the cleanest event type for identifying the information shock. They are easier to interpret than mixing together revisions, express releases, and formal releases, which can reflect different information environments. We then study short-run abnormal returns over several windows after the event, from 3 to 20 trading days.
 
-\section*{Slide 5: Why We Changed the Headline}
-We made this change because the pooled all-event standardized design hides important heterogeneity. Preannouncements are cleaner as a default headline sample, and standardization should be treated as a robustness lens rather than the only lens.
+\section*{Slide 5: How We Measure Earnings Surprise}
+The main methodological challenge is measuring surprise in a credible way. We benchmark the disclosure against analyst expectations that are matched as closely as possible to the same reporting period. We also compare three versions of surprise: level surprise, percentage surprise, and standardized surprise. This comparison matters because the empirical conclusion can change depending on how the surprise variable is scaled, so we do not want to rely on only one definition.
 
-\section*{Slide 6: Expectation-Matching Ladder}
-We also rebuilt the expectation-matching logic into an explicit ladder. The tiers are strict same quarter, same fiscal year nearest valid, latest valid pre-event, and multi-report median. The important point is that we no longer silently blend these tiers. The strict tier is the headline baseline, and the relaxed tiers are reported separately as diagnostics.
+\section*{Slide 6: Main Result: Directional but Modest Evidence}
+This slide shows the main visual result. In the cleaner baseline sample, firms with higher earnings surprise tend to outperform firms with lower earnings surprise after the disclosure. That is directionally consistent with short-run valuation adjustment. But the important point is that the separation is modest rather than dramatic. So the figure supports the theory, but it does not justify a strong headline claim on its own.
 
-\section*{Slide 7: Focused Diagnostic Package}
-The repository now produces a side-by-side diagnostic package covering preannouncement-only versus all event types, raw versus percent versus standardized surprise, CAR3 through CAR20, strict versus relaxed matching, tier augmentation, and minimum analyst coverage thresholds. The regression figure on this slide adds a second lens for how the measured signal moves with specification choices.
+\section*{Slide 7: Results Depend on Specification Choices}
+The second result is that the estimated relation is sensitive to specification choices. When we change how surprise is scaled, or how tightly analyst expectations are matched to the event, the estimated coefficient can move noticeably. This is important because it means the result is not fully robust across all reasonable designs. In other words, the evidence is informative, but it is not strong enough for us to overstate the conclusion.
 
-\section*{Slide 8: Free-data Augmentation as Diagnostic Extension}
-A key extension is a controlled free-data augmentation layer. We keep Tushare report\_rc as the default expectation baseline, and we add Eastmoney profit-forecast and research-report text only as labeled augmentation tiers. The purpose is to study coverage-versus-quality tradeoffs, not to claim that free public proxies solve the expectation-quality problem.
+\section*{Slide 8: What We Learn About Valuation and Efficiency}
+What do we learn from this? First, the cleaner baseline is broadly consistent with the idea that earnings disclosures affect valuation in the short run. Second, the evidence is not strong enough to claim a large or universal market inefficiency story. A more defensible interpretation is that there is some short-window price adjustment, but the measured strength depends heavily on expectation construction and empirical design.
 
-\section*{Slide 9: How to Read Augmentation Results}
-The interpretation rule is simple. If a free-data tier adds coverage but materially weakens identification, it should remain supplementary. Only if coverage expands without obvious deterioration should it be discussed as an augmentation route, and even then it should not replace the baseline by default.
+\section*{Slide 9: Why We Keep the Conclusion Cautious}
+This is why our final interpretation is deliberately cautious. The headline result is weak rather than decisive. The inference changes when we alter surprise measurement, matching quality, or event composition. That means empirical discipline matters as much as statistical significance here. For a class project, we think it is better to present an honest result with clear logic than to force a stronger claim than the evidence can support.
 
-\section*{Slide 10: What the Repository Claims Now}
-So the repository should now be read as a Tushare-first diagnostic baseline with a controlled augmentation layer. Its value is in showing how expectation measurement, source quality, and matching discipline shape the empirical conclusion, not in overstating headline evidence.
-
-\section*{Slide 11: Updated Recommendation}
-Our updated recommendation is therefore a cautious B plus. Keep Tushare report\_rc as the default expectation benchmark, keep preannouncement-only strict matching as the headline sample, and use Eastmoney tiers only as explicit diagnostic extensions when asking whether extra free coverage is worth the loss in expectation quality.
-
-\section*{Slide 12: Next Step}
-The next step is not to redesign the framework again. The next step is to preserve the Tushare event architecture and focused diagnostics, evaluate free-data augmentation only through separate labeled tier comparisons, and add stronger external analyst-expectation data only if the goal is a stronger final headline.
-
-\section*{Slide 13: Conclusion}
-Our final conclusion is narrower and more defensible. We kept the Tushare-first architecture, narrowed the headline sample, exposed match quality explicitly, and added free-data augmentation only as a diagnostic extension. The repository's main contribution remains a cleaner and more auditable diagnostic baseline.
+\section*{Slide 10: Conclusion}
+To conclude, we take away three main points. First, earnings-related disclosures do appear to matter for valuation in the cleaner preannouncement sample. Second, the evidence is directionally supportive, but modest and sensitive to measurement choices. Third, the most credible interpretation is therefore cautious: this is suggestive evidence on disclosure and market efficiency, not a definitive headline result. Thank you.
 
 \end{document}
