@@ -21,10 +21,12 @@
 
 - headline 样本：`preannouncement_only`
 - headline 匹配层级：`strict_same_quarter`
-- headline 展示窗口：默认先看 `CAR3`、`CAR5`、`CAR10`、`CAR20`
+- headline 预期层级：`tier_1_tushare_report_rc`
+- headline 展示窗口：默认先看 `CAR3`、`CAR5`、`CAR10`、`CAR20`，其中重点看 `CAR10`
 - headline 信号比较：`raw`、`pct`、`std` 并行比较
 - `std` 角色：robustness，不再自动充当唯一主信号
 - supplementary 输出：`revision` / `express` / `formal_release` 以及 `all_event_types`
+- free-data augmentation：仅作为诊断扩展层，提供 `tier_2_eastmoney_profit_forecast` 和 `tier_3_eastmoney_research_report_text` 的 coverage-vs-quality 对照，不替代 baseline
 
 当前更合适的 repo 叙述是：
 
@@ -139,9 +141,38 @@ supplementary 事件：
 - `multi_report_median`
 
 其中：
-- headline baseline 只使用 `strict_same_quarter`；
+- headline baseline 只使用 `strict_same_quarter` + `tier_1_tushare_report_rc`；
 - 其他 tiers 作为 relaxed / supplementary diagnostics 单独输出；
+- Eastmoney public expectation proxies 被显式标记为 `tier_2` / `tier_3`，只用于 coverage-vs-quality 诊断；
 - 输出会分别给出 coverage、regression、CAR 对照表，而不是静默 fallback。
+
+## Free-data augmentation route
+
+当前仓库新增了一条受控的 Route A：free-data augmentation。
+
+它的目标不是替代 Tushare report\_rc，而是回答一个更窄的问题：
+
+> 在保持 `preannouncement_only`、`strict_same_quarter`、`raw surprise`、`CAR10` 等 baseline 口径不变的前提下，加入弱一些但更容易获取的公开 expectation proxies，是否能提高可用覆盖率，同时不明显削弱 identification？
+
+当前分层如下：
+
+- `tier_1_tushare_report_rc`：默认 headline baseline
+- `tier_2_eastmoney_profit_forecast`：聚合型公开预期 proxy
+- `tier_3_eastmoney_research_report_text`：文本型公开研报 proxy
+
+当前新增的诊断输出包括：
+
+- `outputs/audit/coverage_by_expectation_tier_tushare_first.csv`
+- `outputs/audit/coverage_by_event_tier_tushare_first.csv`
+- `outputs/audit/coverage_by_tier_stack_tushare_first.csv`
+- `outputs/audit/usable_sample_counts_by_tier_year_tushare_first.csv`
+- `outputs/tables/regression_results_by_expectation_tier_tushare_first.csv`
+- `outputs/audit/augmentation_vs_baseline_note_tushare_first.csv`
+- `outputs/audit/free_data_limitations_note_tushare_first.csv`
+
+解释原则：
+- 如果 free augmentation 只是增加 coverage 但明显削弱识别质量，就不能作为 headline 替代；
+- 如果 free augmentation 在窄样本上增加了可用观测且没有明显破坏 inference，它才有资格作为 diagnostic extension 被展示。
 
 ## 事件研究与回归设计
 

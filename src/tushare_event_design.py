@@ -27,6 +27,8 @@ def build_tushare_events(
     report_rc_df: pd.DataFrame,
     config: ProjectConfig,
     match_tier: str = "strict_same_quarter",
+    eastmoney_profit_forecast_df: pd.DataFrame | None = None,
+    eastmoney_research_report_df: pd.DataFrame | None = None,
 ) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     if stocks_df.empty or market_df.empty:
         return pd.DataFrame(), pd.DataFrame(), pd.DataFrame()
@@ -171,6 +173,8 @@ def build_tushare_events(
         report_rc_df,
         config,
         selected_tier=match_tier,
+        eastmoney_profit_forecast_df=eastmoney_profit_forecast_df,
+        eastmoney_research_report_df=eastmoney_research_report_df,
     )
     revision_panel = build_sell_side_revision_panel(report_rc_df)
     if not revision_panel.empty:
@@ -251,9 +255,13 @@ def build_tushare_events(
     matched_events["usable_surprise_flag"] = matched_events["main_surprise_std"].notna().astype(int)
     matched_events["usable_raw_surprise_flag"] = matched_events["main_surprise_raw"].notna().astype(int)
     matched_events["usable_pct_surprise_flag"] = matched_events["main_surprise_pct"].notna().astype(int)
+    matched_events["event_source_name"] = matched_events.get("event_source_name", matched_events.get("event_source", "tushare_event"))
+    matched_events["event_source_tier"] = matched_events.get("event_source_tier", "event_tier_0_tushare_builtin")
+    matched_events["event_tier"] = matched_events.get("event_tier", matched_events["event_source_tier"])
+    matched_events["event_is_official"] = matched_events.get("event_is_official", 1)
     matched_events["headline_sample_flag"] = (
         matched_events["event_type"].eq("preannouncement")
-        & matched_events.get("report_rc_match_tier", pd.Series(index=matched_events.index, dtype=object)).eq("strict_same_quarter")
+        & matched_events.get("match_tier", matched_events.get("report_rc_match_tier", pd.Series(index=matched_events.index, dtype=object))).eq("strict_same_quarter")
     ).astype(int)
 
     return matched_events, expectation_audit, expectation_candidates

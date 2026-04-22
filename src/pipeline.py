@@ -25,7 +25,10 @@ from src.tushare_event_design import (
     summarize_window_availability,
 )
 from src.tushare_normalization import (
+    normalize_cninfo_preannouncement,
     normalize_daily_basic,
+    normalize_eastmoney_profit_forecast,
+    normalize_eastmoney_research_report,
     normalize_express,
     normalize_fina_indicator,
     normalize_forecast,
@@ -33,12 +36,87 @@ from src.tushare_normalization import (
 )
 
 
+def _build_augmentation_audit_frames(
+    config: ProjectConfig,
+    bundle,
+    normalized: dict[str, pd.DataFrame],
+) -> dict[str, pd.DataFrame]:
+    source_rows = [
+        {
+            "source_name": "cninfo_preannouncement",
+            "source_tier": "event_tier_1_cninfo_official_disclosure",
+            "enabled": int(config.enable_free_augmentation and config.use_cninfo_event_augmentation),
+            "raw_rows": len(bundle.cninfo_preannouncement),
+            "normalized_rows": len(normalized.get("cninfo_preannouncement", pd.DataFrame())),
+        },
+        {
+            "source_name": "eastmoney_profit_forecast",
+            "source_tier": "tier_2_eastmoney_profit_forecast",
+            "enabled": int(config.enable_free_augmentation and config.use_eastmoney_expectation_augmentation),
+            "raw_rows": len(bundle.eastmoney_profit_forecast),
+            "normalized_rows": len(normalized.get("eastmoney_profit_forecast", pd.DataFrame())),
+        },
+        {
+            "source_name": "eastmoney_research_report",
+            "source_tier": "tier_3_eastmoney_research_report_text",
+            "enabled": int(config.enable_free_augmentation and config.use_eastmoney_expectation_augmentation),
+            "raw_rows": len(bundle.eastmoney_research_report),
+            "normalized_rows": len(normalized.get("eastmoney_research_report", pd.DataFrame())),
+        },
+    ]
+    return {
+        "free_source_capabilities": bundle.free_source_capabilities.copy(),
+        "augmentation_status": pd.DataFrame(
+            [
+                {
+                    "enable_free_augmentation": int(config.enable_free_augmentation),
+                    "use_cninfo_event_augmentation": int(config.use_cninfo_event_augmentation),
+                    "use_eastmoney_expectation_augmentation": int(config.use_eastmoney_expectation_augmentation),
+                    "strict_match_mode": config.strict_match_mode,
+                    "source_tier_stack": config.source_tier_stack,
+                }
+            ]
+        ),
+        "augmentation_collection_status": pd.DataFrame(source_rows),
+        "source_tier_stack": pd.DataFrame(
+            [
+                {"tier_order": idx + 1, "source_tier": tier.strip()}
+                for idx, tier in enumerate(config.source_tier_stack.split(","))
+                if tier.strip()
+            ]
+        ),
+        "augmentation_match_modes": pd.DataFrame(
+            [{"match_mode": config.strict_match_mode, "mode_group": "strict"}]
+            + [{"match_mode": mode, "mode_group": "relaxed"} for mode in config.relaxed_match_modes]
+        ),
+    }
+
+
 def _save_normalized_outputs(config: ProjectConfig, normalized: dict[str, pd.DataFrame]) -> None:
-    save_csv(normalized["report_rc"], config.data_processed_normalized_dir / "report_rc_normalized.csv")
-    save_csv(normalized["forecast"], config.data_processed_normalized_dir / "forecast_normalized.csv")
-    save_csv(normalized["express"], config.data_processed_normalized_dir / "express_normalized.csv")
-    save_csv(normalized["fina_indicator"], config.data_processed_normalized_dir / "fina_indicator_normalized.csv")
-    save_csv(normalized["daily_basic"], config.data_processed_normalized_dir / "daily_basic_normalized.csv")
+    normalized_output_paths = {
+        "report_rc": config.data_processed_normalized_dir / "report_rc_normalized.csv",
+        "forecast": config.data_processed_normalized_dir / "forecast_normalized.csv",
+        "express": config.data_processed_normalized_dir / "express_normalized.csv",
+        "fina_indicator": config.data_processed_normalized_dir / "fina_indicator_normalized.csv",
+        "daily_basic": config.data_processed_normalized_dir / "daily_basic_normalized.csv",
+        "cninfo_preannouncement": config.data_processed_normalized_dir / "cninfo_preannouncement_normalized.csv",
+        "eastmoney_profit_forecast": config.data_processed_normalized_dir / "eastmoney_profit_forecast_normalized.csv",
+        "eastmoney_research_report": config.data_processed_normalized_dir / "eastmoney_research_report_normalized.csv",
+    }
+    for key, path in normalized_output_paths.items():
+        if key in normalized:
+            save_csv(normalized[key], path)
+
+    audit_output_paths = {
+        "free_source_capabilities": config.outputs_audit_dir / "free_source_capabilities.csv",
+        "augmentation_status": config.outputs_audit_dir / "augmentation_status.csv",
+        "augmentation_collection_status": config.outputs_audit_dir / "augmentation_collection_status.csv",
+        "source_tier_stack": config.outputs_audit_dir / "source_tier_stack_config.csv",
+        "augmentation_match_modes": config.outputs_audit_dir / "augmentation_match_modes.csv",
+    }
+    for key, path in audit_output_paths.items():
+        if key in normalized:
+            save_csv(normalized[key], path)
 
 
 def run_pipeline() -> None:
@@ -77,7 +155,11 @@ def run_pipeline() -> None:
         "express": normalize_express(bundle.express),
         "fina_indicator": normalize_fina_indicator(bundle.fina_indicator),
         "daily_basic": normalize_daily_basic(bundle.daily_basic),
+        "cninfo_preannouncement": normalize_cninfo_preannouncement(bundle.cninfo_preannouncement),
+        "eastmoney_profit_forecast": normalize_eastmoney_profit_forecast(bundle.eastmoney_profit_forecast),
+        "eastmoney_research_report": normalize_eastmoney_research_report(bundle.eastmoney_research_report),
     }
+    normalized.update(_build_augmentation_audit_frames(config, bundle, normalized))
     _save_normalized_outputs(config, normalized)
 
     summary_rows: list[dict[str, object]] = [
@@ -102,6 +184,8 @@ def run_pipeline() -> None:
             report_rc_df=normalized["report_rc"],
             config=config,
             match_tier="strict_same_quarter",
+            eastmoney_profit_forecast_df=normalized["eastmoney_profit_forecast"],
+            eastmoney_research_report_df=normalized["eastmoney_research_report"],
         )
         save_csv(tushare_events, config.data_processed_events_dir / "event_master_tushare_first.csv")
         save_csv(expectation_audit, config.data_processed_expectations_dir / "expectation_match_audit_tushare_first.csv")
@@ -173,6 +257,8 @@ def run_pipeline() -> None:
                     report_rc_df=normalized["report_rc"],
                     config=diagnostic_config,
                     match_tier=match_tier,
+                    eastmoney_profit_forecast_df=normalized["eastmoney_profit_forecast"],
+                    eastmoney_research_report_df=normalized["eastmoney_research_report"],
                 )
                 diag_events = annotate_event_filters(
                     events_df=diag_events,

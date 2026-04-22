@@ -22,7 +22,11 @@ class DataBundle:
     express: pd.DataFrame
     fina_indicator: pd.DataFrame
     report_rc: pd.DataFrame
+    cninfo_preannouncement: pd.DataFrame
+    eastmoney_profit_forecast: pd.DataFrame
+    eastmoney_research_report: pd.DataFrame
     capabilities: pd.DataFrame
+    free_source_capabilities: pd.DataFrame
 
 
 class DataCollector:
@@ -42,6 +46,9 @@ class DataCollector:
             "express_vip",
             "fina_indicator",
             "report_rc",
+            "cninfo_preannouncement",
+            "eastmoney_profit_forecast",
+            "eastmoney_research_report",
             "prices",
             "daily_basic",
             "market",
@@ -78,7 +85,15 @@ class DataCollector:
         express = self.get_express_data(stocks)
         fina_indicator = self.get_fina_indicator_data(stocks)
         report_rc = self.get_report_rc_data()
+        cninfo_preannouncement = self.get_cninfo_preannouncement_data(stocks)
+        eastmoney_profit_forecast = self.get_eastmoney_profit_forecast_data(stocks)
+        eastmoney_research_report = self.get_eastmoney_research_report_data(stocks)
         capabilities = self.get_endpoint_capabilities()
+        free_source_capabilities = self.get_free_source_capabilities(
+            cninfo_preannouncement=cninfo_preannouncement,
+            eastmoney_profit_forecast=eastmoney_profit_forecast,
+            eastmoney_research_report=eastmoney_research_report,
+        )
 
         save_csv(stocks, self.config.data_raw_dir / "stock_universe.csv")
         save_csv(prices, self.config.data_raw_dir / "stock_prices_raw.csv")
@@ -88,7 +103,11 @@ class DataCollector:
         save_csv(express, self.config.data_raw_dir / "express_raw.csv")
         save_csv(fina_indicator, self.config.data_raw_dir / "fina_indicator_raw.csv")
         save_csv(report_rc, self.config.data_raw_dir / "report_rc_raw.csv")
+        save_csv(cninfo_preannouncement, self.config.data_raw_dir / "cninfo_preannouncement_raw.csv")
+        save_csv(eastmoney_profit_forecast, self.config.data_raw_dir / "eastmoney_profit_forecast_raw.csv")
+        save_csv(eastmoney_research_report, self.config.data_raw_dir / "eastmoney_research_report_raw.csv")
         save_csv(capabilities, self.config.outputs_audit_dir / "tushare_endpoint_capabilities.csv")
+        save_csv(free_source_capabilities, self.config.outputs_audit_dir / "free_source_capabilities.csv")
 
         save_csv(stocks, self.config.data_raw_tushare_dir / "stock_basic" / "stock_universe.csv")
         save_csv(prices, self.config.data_raw_tushare_dir / "prices" / "stock_prices_raw.csv")
@@ -98,6 +117,9 @@ class DataCollector:
         save_csv(express, self.config.data_raw_tushare_dir / "express" / "express_raw.csv")
         save_csv(fina_indicator, self.config.data_raw_tushare_dir / "fina_indicator" / "fina_indicator_raw.csv")
         save_csv(report_rc, self.config.data_raw_tushare_dir / "report_rc" / "report_rc_raw.csv")
+        save_csv(cninfo_preannouncement, self.config.data_raw_dir / "free_sources" / "cninfo" / "preannouncement_raw.csv")
+        save_csv(eastmoney_profit_forecast, self.config.data_raw_dir / "free_sources" / "eastmoney" / "profit_forecast_raw.csv")
+        save_csv(eastmoney_research_report, self.config.data_raw_dir / "free_sources" / "eastmoney" / "research_report_raw.csv")
 
         return DataBundle(
             stocks=stocks,
@@ -108,7 +130,11 @@ class DataCollector:
             express=express,
             fina_indicator=fina_indicator,
             report_rc=report_rc,
+            cninfo_preannouncement=cninfo_preannouncement,
+            eastmoney_profit_forecast=eastmoney_profit_forecast,
+            eastmoney_research_report=eastmoney_research_report,
             capabilities=capabilities,
+            free_source_capabilities=free_source_capabilities,
         )
 
     def _cache_path(self, folder: str, key: str) -> Path:
@@ -187,6 +213,181 @@ class DataCollector:
                     "error": str(exc),
                 })
         return pd.DataFrame(rows)
+
+    def get_free_source_capabilities(
+        self,
+        cninfo_preannouncement: pd.DataFrame,
+        eastmoney_profit_forecast: pd.DataFrame,
+        eastmoney_research_report: pd.DataFrame,
+    ) -> pd.DataFrame:
+        rows = [
+            {
+                "source_name": "cninfo_preannouncement",
+                "source_tier": "event_tier_1_cninfo_official_disclosure",
+                "enabled": int(self.config.enable_free_augmentation and self.config.use_cninfo_event_augmentation),
+                "available": int(not cninfo_preannouncement.empty),
+                "row_count": int(len(cninfo_preannouncement)),
+                "columns": ",".join(cninfo_preannouncement.columns),
+            },
+            {
+                "source_name": "eastmoney_profit_forecast",
+                "source_tier": "tier_2_eastmoney_profit_forecast",
+                "enabled": int(self.config.enable_free_augmentation and self.config.use_eastmoney_expectation_augmentation),
+                "available": int(not eastmoney_profit_forecast.empty),
+                "row_count": int(len(eastmoney_profit_forecast)),
+                "columns": ",".join(eastmoney_profit_forecast.columns),
+            },
+            {
+                "source_name": "eastmoney_research_report",
+                "source_tier": "tier_3_eastmoney_research_report_text",
+                "enabled": int(self.config.enable_free_augmentation and self.config.use_eastmoney_expectation_augmentation),
+                "available": int(not eastmoney_research_report.empty),
+                "row_count": int(len(eastmoney_research_report)),
+                "columns": ",".join(eastmoney_research_report.columns),
+            },
+        ]
+        return pd.DataFrame(rows)
+
+    @staticmethod
+    def _to_symbol(ts_code: str) -> str:
+        code = str(ts_code or "").strip()
+        return code.split(".")[0] if "." in code else code
+
+    @staticmethod
+    def _safe_concat(rows: list[pd.DataFrame]) -> pd.DataFrame:
+        valid = [df for df in rows if df is not None and not df.empty]
+        return pd.concat(valid, ignore_index=True) if valid else pd.DataFrame()
+
+    def _quarter_periods(self) -> list[str]:
+        periods = pd.period_range(
+            start=pd.to_datetime(self.config.start_date, format="%Y%m%d"),
+            end=pd.to_datetime(self.config.end_date, format="%Y%m%d"),
+            freq="Q",
+        )
+        return [period.end_time.strftime("%Y%m%d") for period in periods]
+
+    def _quarter_end_strings(self) -> list[str]:
+        return sorted(set(self._quarter_periods()))
+
+    def _retry_ak(self, fn, context: str) -> pd.DataFrame | None:
+        return self._retry(fn, context)
+
+    def get_cninfo_preannouncement_data(self, stocks: pd.DataFrame) -> pd.DataFrame:
+        if not (self.config.enable_free_augmentation and self.config.use_cninfo_event_augmentation):
+            return pd.DataFrame()
+        if stocks.empty or self.ak is None:
+            return pd.DataFrame()
+        rows: list[pd.DataFrame] = []
+        start_date = pd.to_datetime(self.config.start_date, format="%Y%m%d").strftime("%Y%m%d")
+        end_date = pd.to_datetime(self.config.end_date, format="%Y%m%d").strftime("%Y%m%d")
+        for ts_code in stocks["ts_code"].dropna().astype(str).unique():
+            symbol = self._to_symbol(ts_code)
+            cache_key = f"{symbol}_{start_date}_{end_date}"
+            cached = self._load_cache("cninfo_preannouncement", cache_key)
+            if cached is not None:
+                if not cached.empty:
+                    rows.append(cached)
+                continue
+            fn = lambda s=symbol: self.ak.stock_zh_a_disclosure_report_cninfo(
+                symbol=s,
+                market="沪深京",
+                category="业绩预告",
+                start_date=start_date,
+                end_date=end_date,
+            )
+            df = self._retry_ak(fn, f"cninfo_preannouncement {symbol}")
+            if df is None:
+                continue
+            if not df.empty:
+                df = df.copy()
+                df["symbol"] = symbol
+                df["ts_code"] = ts_code
+                df["source_name"] = "cninfo_preannouncement"
+                df["source_tier"] = "event_tier_1_cninfo_official_disclosure"
+                df["is_official_source"] = 1
+                df["is_aggregated_source"] = 0
+                df["is_text_proxy"] = 0
+                self._save_cache(df, "cninfo_preannouncement", cache_key)
+                rows.append(df)
+            time.sleep(max(self.config.request_pause_sec, 0.12))
+        out = self._safe_concat(rows)
+        if out.empty:
+            return out
+        if "公告时间" in out.columns:
+            out["公告时间"] = pd.to_datetime(out["公告时间"], errors="coerce")
+        return out.sort_values([c for c in ["ts_code", "公告时间"] if c in out.columns]).reset_index(drop=True)
+
+    def get_eastmoney_profit_forecast_data(self, stocks: pd.DataFrame) -> pd.DataFrame:
+        if not (self.config.enable_free_augmentation and self.config.use_eastmoney_expectation_augmentation):
+            return pd.DataFrame()
+        if stocks.empty or self.ak is None:
+            return pd.DataFrame()
+        cache_key = "all_symbols"
+        cached = self._load_cache("eastmoney_profit_forecast", cache_key)
+        if cached is not None and not cached.empty:
+            cached["ts_code"] = cached.get("ts_code", pd.Series(dtype=object)).astype(str)
+            return cached
+        fn = lambda: self.ak.stock_profit_forecast_em()
+        df = self._retry_ak(fn, "eastmoney_profit_forecast")
+        if df is None or df.empty:
+            return pd.DataFrame()
+        df = df.copy()
+        code_col = "代码" if "代码" in df.columns else "股票代码" if "股票代码" in df.columns else None
+        if code_col is None:
+            return pd.DataFrame()
+        df[code_col] = df[code_col].astype(str).str.zfill(6)
+        symbol_to_ts = {
+            self._to_symbol(ts_code): ts_code
+            for ts_code in stocks["ts_code"].dropna().astype(str).unique()
+        }
+        df = df[df[code_col].isin(symbol_to_ts)].copy()
+        if df.empty:
+            return df
+        df["ts_code"] = df[code_col].map(symbol_to_ts)
+        df["source_name"] = "eastmoney_profit_forecast"
+        df["source_tier"] = "tier_2_eastmoney_profit_forecast"
+        df["is_official_source"] = 0
+        df["is_aggregated_source"] = 1
+        df["is_text_proxy"] = 0
+        self._save_cache(df, "eastmoney_profit_forecast", cache_key)
+        return df.reset_index(drop=True)
+
+    def get_eastmoney_research_report_data(self, stocks: pd.DataFrame) -> pd.DataFrame:
+        if not (self.config.enable_free_augmentation and self.config.use_eastmoney_expectation_augmentation):
+            return pd.DataFrame()
+        if stocks.empty or self.ak is None:
+            return pd.DataFrame()
+        rows: list[pd.DataFrame] = []
+        codes = list(stocks["ts_code"].dropna().astype(str).unique())[: self.config.eastmoney_report_limit]
+        for ts_code in codes:
+            symbol = self._to_symbol(ts_code)
+            cached = self._load_cache("eastmoney_research_report", symbol)
+            if cached is not None:
+                if not cached.empty:
+                    rows.append(cached)
+                continue
+            fn = lambda s=symbol: self.ak.stock_research_report_em(symbol=s)
+            df = self._retry_ak(fn, f"eastmoney_research_report {symbol}")
+            if df is None:
+                continue
+            if not df.empty:
+                df = df.copy()
+                df["symbol"] = symbol
+                df["ts_code"] = ts_code
+                df["source_name"] = "eastmoney_research_report"
+                df["source_tier"] = "tier_3_eastmoney_research_report_text"
+                df["is_official_source"] = 0
+                df["is_aggregated_source"] = 0
+                df["is_text_proxy"] = 1
+                self._save_cache(df, "eastmoney_research_report", symbol)
+                rows.append(df)
+            time.sleep(max(self.config.request_pause_sec, 0.12))
+        out = self._safe_concat(rows)
+        if out.empty:
+            return out
+        if "日期" in out.columns:
+            out["日期"] = pd.to_datetime(out["日期"], errors="coerce")
+        return out.sort_values([c for c in ["ts_code", "日期"] if c in out.columns]).reset_index(drop=True)
 
     def get_stock_universe(self) -> pd.DataFrame:
         if self.ts is not None:

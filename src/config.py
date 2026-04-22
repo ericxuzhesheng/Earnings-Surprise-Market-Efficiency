@@ -49,7 +49,30 @@ class ProjectConfig:
     use_express_vip: bool = os.getenv("USE_EXPRESS_VIP", "1") == "1"
     use_fina_indicator: bool = os.getenv("USE_FINA_INDICATOR", "1") == "1"
 
+    enable_free_augmentation: bool = os.getenv("ENABLE_FREE_AUGMENTATION", "0") == "1"
+    use_cninfo_event_augmentation: bool = os.getenv("USE_CNINFO_EVENT_AUGMENTATION", "0") == "1"
+    use_eastmoney_expectation_augmentation: bool = os.getenv("USE_EASTMONEY_EXPECTATION_AUGMENTATION", "0") == "1"
+    source_tier_stack: str = os.getenv(
+        "SOURCE_TIER_STACK",
+        "tier_1_tushare_report_rc,tier_2_eastmoney_profit_forecast,tier_3_eastmoney_research_report_text",
+    )
+    eastmoney_report_limit: int = int(os.getenv("EASTMONEY_REPORT_LIMIT", "200"))
+
     report_freshness_days: int = int(os.getenv("REPORT_FRESHNESS_DAYS", "365"))
+    public_expectation_freshness_days: int = int(os.getenv("PUBLIC_EXPECTATION_FRESHNESS_DAYS", "180"))
+    cninfo_event_freshness_days: int = int(os.getenv("CNINFO_EVENT_FRESHNESS_DAYS", "365"))
+    strict_match_mode: str = os.getenv("STRICT_MATCH_MODE", "strict_pre_event_same_period").lower()
+    relaxed_match_modes: tuple[str, ...] = field(
+        default_factory=lambda: tuple(
+            x.strip()
+            for x in os.getenv(
+                "RELAXED_MATCH_MODES",
+                "latest_valid_pre_event,nearest_valid_public_expectation,text_proxy_only",
+            ).split(",")
+            if x.strip()
+        )
+    )
+
     min_valid_report_count: int = int(os.getenv("MIN_VALID_REPORT_COUNT", "1"))
     consensus_method: str = os.getenv("CONSENSUS_METHOD", "median").lower()
     consensus_value_field: str = os.getenv("CONSENSUS_VALUE_FIELD", "np_first").lower()

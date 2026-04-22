@@ -160,3 +160,92 @@ def normalize_daily_basic(daily_basic_df: pd.DataFrame) -> pd.DataFrame:
     else:
         df["turnover20"] = np.nan
     return df
+
+
+def normalize_cninfo_preannouncement(cninfo_df: pd.DataFrame) -> pd.DataFrame:
+    if cninfo_df.empty:
+        return pd.DataFrame()
+    df = cninfo_df.copy()
+    if "公告时间" in df.columns:
+        df["announcement_date"] = pd.to_datetime(df["公告时间"], errors="coerce")
+    else:
+        df["announcement_date"] = pd.NaT
+    df["event_type"] = "preannouncement"
+    df["event_source_name"] = df.get("source_name", "cninfo_preannouncement")
+    df["event_source_tier"] = df.get("source_tier", "event_tier_1_cninfo_official_disclosure")
+    df["event_tier"] = df["event_source_tier"]
+    df["source_name"] = df.get("source_name", "cninfo_preannouncement")
+    df["source_tier"] = df.get("source_tier", "event_tier_1_cninfo_official_disclosure")
+    df["is_official_source"] = pd.to_numeric(df.get("is_official_source", 1), errors="coerce").fillna(1).astype(int)
+    df["is_aggregated_source"] = pd.to_numeric(df.get("is_aggregated_source", 0), errors="coerce").fillna(0).astype(int)
+    df["is_text_proxy"] = pd.to_numeric(df.get("is_text_proxy", 0), errors="coerce").fillna(0).astype(int)
+    keep_order = [
+        "ts_code",
+        "symbol",
+        "公告时间",
+        "announcement_date",
+        "event_type",
+        "event_source_name",
+        "event_source_tier",
+        "event_tier",
+        "source_name",
+        "source_tier",
+        "is_official_source",
+        "is_aggregated_source",
+        "is_text_proxy",
+        "公告标题",
+        "公告链接",
+    ]
+    existing = [c for c in keep_order if c in df.columns]
+    return df[existing].sort_values([c for c in ["ts_code", "announcement_date"] if c in df.columns]).reset_index(drop=True)
+
+
+def normalize_eastmoney_profit_forecast(expectation_df: pd.DataFrame) -> pd.DataFrame:
+    if expectation_df.empty:
+        return pd.DataFrame()
+    df = expectation_df.copy()
+    df["source_name"] = df.get("source_name", "eastmoney_profit_forecast")
+    df["source_tier"] = df.get("source_tier", "tier_2_eastmoney_profit_forecast")
+    df["expectation_tier"] = df["source_tier"]
+    df["is_official_source"] = pd.to_numeric(df.get("is_official_source", 0), errors="coerce").fillna(0).astype(int)
+    df["is_aggregated_source"] = pd.to_numeric(df.get("is_aggregated_source", 1), errors="coerce").fillna(1).astype(int)
+    df["is_text_proxy"] = pd.to_numeric(df.get("is_text_proxy", 0), errors="coerce").fillna(0).astype(int)
+    date_cols = [c for c in df.columns if "预测每股收益" in str(c)]
+    for col in date_cols:
+        df[col] = pd.to_numeric(df[col], errors="coerce")
+    df["forecast_eps_latest"] = df[date_cols[0]] if date_cols else np.nan
+    df["matched_report_count_proxy"] = pd.to_numeric(df.get("研报数", df.get("研报数量", np.nan)), errors="coerce")
+    return df.reset_index(drop=True)
+
+
+def normalize_eastmoney_research_report(report_df: pd.DataFrame) -> pd.DataFrame:
+    if report_df.empty:
+        return pd.DataFrame()
+    df = report_df.copy()
+    if "日期" in df.columns:
+        df["report_date"] = pd.to_datetime(df["日期"], errors="coerce")
+    else:
+        df["report_date"] = pd.NaT
+    df["source_name"] = df.get("source_name", "eastmoney_research_report")
+    df["source_tier"] = df.get("source_tier", "tier_3_eastmoney_research_report_text")
+    df["expectation_tier"] = df["source_tier"]
+    df["is_official_source"] = pd.to_numeric(df.get("is_official_source", 0), errors="coerce").fillna(0).astype(int)
+    df["is_aggregated_source"] = pd.to_numeric(df.get("is_aggregated_source", 0), errors="coerce").fillna(0).astype(int)
+    df["is_text_proxy"] = pd.to_numeric(df.get("is_text_proxy", 1), errors="coerce").fillna(1).astype(int)
+    numeric_cols = [c for c in df.columns if "预测-收益" in str(c) or "预测-市盈率" in str(c)]
+    for col in numeric_cols:
+        df[col] = pd.to_numeric(df[col], errors="coerce")
+    title_col = "报告名称" if "报告名称" in df.columns else "标题" if "标题" in df.columns else None
+    if title_col is not None:
+        df["title_over_expectation_flag"] = df[title_col].fillna("").astype(str).str.contains("超预期|上调|增长|改善", regex=True).astype(int)
+    else:
+        df["title_over_expectation_flag"] = 0
+    return df.sort_values([c for c in ["ts_code", "report_date"] if c in df.columns]).reset_index(drop=True)
+
+
+def normalize_free_sources(bundle) -> dict[str, pd.DataFrame]:
+    return {
+        "cninfo_preannouncement": normalize_cninfo_preannouncement(bundle.cninfo_preannouncement),
+        "eastmoney_profit_forecast": normalize_eastmoney_profit_forecast(bundle.eastmoney_profit_forecast),
+        "eastmoney_research_report": normalize_eastmoney_research_report(bundle.eastmoney_research_report),
+    }

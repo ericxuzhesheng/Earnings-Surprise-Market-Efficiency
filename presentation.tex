@@ -113,6 +113,7 @@ The headline baseline uses only \texttt{strict\_same\_quarter}; relaxed tiers ar
   \item \texttt{raw} vs \texttt{pct} vs \texttt{std}
   \item \texttt{CAR3}, \texttt{CAR5}, \texttt{CAR10}, \texttt{CAR20}
   \item strict vs relaxed matching tiers
+  \item tier\_1 baseline vs tier\_2 / tier\_3 augmentation
   \item minimum analyst coverage thresholds
 \end{itemize}
 \column{0.60\textwidth}
@@ -123,33 +124,40 @@ The headline baseline uses only \texttt{strict\_same\_quarter}; relaxed tiers ar
 \end{columns}
 \end{frame}
 
-\begin{frame}{What Still Survives}
-\begin{columns}[T]
-\column{0.42\textwidth}
+\begin{frame}{Free-data Augmentation as Diagnostic Extension}
 \begin{itemize}
-  \item The cleanest default sample is \texttt{preannouncement\_only}.
-  \item The cleanest default tier is \texttt{strict\_same\_quarter}.
-  \item Raw surprise may still be the best main display spec if it remains the strongest surviving Tushare-only signal.
-  \item Any surviving evidence should still be described as diagnostic rather than decisive.
+  \item We keep \texttt{tier\_1\_tushare\_report\_rc} as the default headline baseline.
+  \item We add \texttt{tier\_2\_eastmoney\_profit\_forecast} and \texttt{tier\_3\_eastmoney\_research\_report\_text} only as labeled augmentation tiers.
+  \item The goal is to study coverage-versus-quality tradeoffs, not to claim that free public proxies solve the expectation-quality problem.
+  \item The main narrow comparison remains preannouncement-only, raw surprise, and CAR10-focused diagnostics.
 \end{itemize}
-\column{0.58\textwidth}
-\centering
-\includegraphics[width=\linewidth,height=0.52\textheight,keepaspectratio]{outputs/figures/fig1_es_distribution.png}
-\\[0.3em]
-{\scriptsize Signal distribution reminder: the evidence is informative, but still diagnostic rather than decisive.}
-\end{columns}
 \end{frame}
 
-\begin{frame}{Interpreting the Repo Now}
+\begin{frame}{How to Read Augmentation Results}
+\begin{block}{Interpretation rule}
+If a free-data tier adds coverage but weakens identification materially, it should remain a supplementary diagnostic. Only if coverage expands without obvious deterioration should it be shown as an augmentation route --- not as a replacement baseline.
+\end{block}
+\end{frame}
+
+\begin{frame}{What the Repository Claims Now}
 \begin{block}{Recommended narrative}
-This repository is best viewed as a Tushare-based diagnostic baseline showing how expectation measurement and match quality affect inference, not as a repository claiming strong headline evidence from the current Tushare-only sample.
+This repository is best viewed as a Tushare-first diagnostic baseline with a controlled free-data augmentation layer. The augmentation layer is used to test coverage-quality tradeoffs, not to replace the core baseline or to overstate headline evidence.
 \end{block}
 \end{frame}
 
-\begin{frame}{Recommendation}
-\begin{block}{Recommendation B}
-Keep Tushare as the baseline framework, and use the repository to diagnose how inference changes with signal scaling and match quality. Do not claim strong headline evidence without stronger external expectation data.
+\begin{frame}{Updated Recommendation}
+\begin{block}{Recommendation B+}
+Keep Tushare report\_rc as the default expectation benchmark, keep preannouncement-only strict matching as the headline sample, and use Eastmoney tiers only as explicit diagnostic extensions when evaluating whether additional free coverage is worth the loss in expectation quality.
 \end{block}
+\end{frame}
+
+\begin{frame}{Next Step}
+\begin{itemize}
+  \item Keep the Tushare event architecture and focused diagnostic outputs.
+  \item Use preannouncement-only strict matching with tier\_1 as the baseline comparison set.
+  \item Evaluate free-data augmentation only through separate labeled tier comparisons.
+  \item Add stronger external analyst-expectation data only if the goal is a stronger final headline.
+\end{itemize}
 \end{frame}
 
 \begin{frame}{Conclusion}
@@ -157,15 +165,8 @@ Keep Tushare as the baseline framework, and use the repository to diagnose how i
   \item We kept the Tushare-first architecture and narrowed the headline sample.
   \item We now compare raw, pct, and std in parallel instead of relying on one standardized headline.
   \item We now expose strict and relaxed match tiers explicitly.
-  \item The repository's main contribution is a cleaner and more auditable diagnostic baseline.
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Next Step}
-\begin{itemize}
-  \item Keep the Tushare event architecture and focused diagnostic outputs.
-  \item Use preannouncement-only strict matching as the baseline comparison set.
-  \item Add stronger external analyst-expectation data only if the goal is a stronger final headline.
+  \item We add free-data augmentation as a diagnostic extension rather than a replacement.
+  \item The repository's main contribution is still a cleaner and more auditable diagnostic baseline.
 \end{itemize}
 \end{frame}
 
