@@ -30,6 +30,12 @@
 
 > 这是一个 Tushare-based diagnostic baseline，用来展示在中国 A 股盈利相关事件研究中，事件口径、surprise 度量、匹配层级和分析师覆盖阈值如何共同影响 inference；当前 Tushare-only 样本不支持强 headline evidence。
 
+<p align="center">
+  <img src="outputs/figures/fig2_cum_return_high_vs_low.png" alt="Diagnostic example: cumulative return of high versus low earnings surprise groups" width="78%">
+</p>
+
+<p align="center"><em>示例图：高盈利意外组与低盈利意外组的累计收益路径，用于展示诊断输出的形式，而不是宣称当前样本已经支持强 headline 结论。</em></p>
+
 ## 当前诊断结论
 
 当前仓库不应再表述为“主规格已经支持强短期估值调整证据”。更合适的结论是：
@@ -290,6 +296,12 @@ The default headline is no longer the pooled all-event standardized specificatio
 The right repository framing is now:
 
 > a Tushare-based diagnostic baseline showing how event definition, surprise scaling, matching tier, and analyst coverage thresholds affect inference in China A-share earnings-event research, rather than a repository claiming strong Tushare-only headline evidence.
+
+<p align="center">
+  <img src="outputs/figures/fig2_cum_return_high_vs_low.png" alt="Diagnostic example: cumulative return of high versus low earnings surprise groups" width="78%">
+</p>
+
+<p align="center"><em>Example figure: cumulative returns for high-versus-low earnings-surprise groups. This is shown as a diagnostic output example, not as a claim of strong final headline evidence.</em></p>
 
 ## Current diagnostic conclusion
 

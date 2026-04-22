@@ -4,6 +4,7 @@
 \usepackage{amsmath}
 \usepackage{booktabs}
 \usepackage{ragged2e}
+\usepackage{graphicx}
 
 \usetheme{Madrid}
 \usecolortheme{default}
@@ -67,13 +68,20 @@ Do China A-share earnings-related events generate short-run abnormal return once
 \end{frame}
 
 \begin{frame}{New Headline Baseline}
+\begin{columns}[T]
+\column{0.42\textwidth}
 \begin{itemize}
   \item Headline sample: \texttt{preannouncement\_only}
-  \item Headline match tier: \texttt{strict\_same\_quarter}
-  \item Headline windows: \texttt{CAR3}, \texttt{CAR5}, \texttt{CAR10}, \texttt{CAR20}
-  \item Headline signal comparison: \texttt{raw}, \texttt{pct}, and \texttt{std} in parallel
-  \item Other event types and relaxed tiers remain supplementary only
+  \item Match tier: \texttt{strict\_same\_quarter}
+  \item Windows: \texttt{CAR3}, \texttt{CAR5}, \texttt{CAR10}, \texttt{CAR20}
+  \item Compare \texttt{raw}, \texttt{pct}, and \texttt{std} in parallel
 \end{itemize}
+\column{0.58\textwidth}
+\centering
+\includegraphics[width=\linewidth,height=0.6\textheight,keepaspectratio]{outputs/figures/fig2_cum_return_high_vs_low.png}
+\\[0.3em]
+{\scriptsize Diagnostic example: cumulative returns for high- vs low-surprise groups.}
+\end{columns}
 \end{frame}
 
 \begin{frame}{Why We Changed the Headline}
@@ -98,6 +106,8 @@ The headline baseline uses only \texttt{strict\_same\_quarter}; relaxed tiers ar
 \end{frame}
 
 \begin{frame}{Focused Diagnostic Package}
+\begin{columns}[T]
+\column{0.40\textwidth}
 \begin{itemize}
   \item \texttt{preannouncement\_only} vs \texttt{all\_event\_types}
   \item \texttt{raw} vs \texttt{pct} vs \texttt{std}
@@ -105,21 +115,35 @@ The headline baseline uses only \texttt{strict\_same\_quarter}; relaxed tiers ar
   \item strict vs relaxed matching tiers
   \item minimum analyst coverage thresholds
 \end{itemize}
-\end{frame}
-
-\begin{frame}{Interpreting the Repo Now}
-\begin{block}{Recommended narrative}
-This repository is best viewed as a Tushare-based diagnostic baseline showing how expectation measurement and match quality affect inference, not as a repository claiming strong headline evidence from the current Tushare-only sample.
-\end{block}
+\column{0.60\textwidth}
+\centering
+\includegraphics[width=\linewidth,height=0.58\textheight,keepaspectratio]{outputs/figures/fig6_regression_es_coefficient.png}
+\\[0.3em]
+{\scriptsize Regression-based view of how the measured surprise signal moves with specification choices.}
+\end{columns}
 \end{frame}
 
 \begin{frame}{What Still Survives}
+\begin{columns}[T]
+\column{0.42\textwidth}
 \begin{itemize}
   \item The cleanest default sample is \texttt{preannouncement\_only}.
   \item The cleanest default tier is \texttt{strict\_same\_quarter}.
   \item Raw surprise may still be the best main display spec if it remains the strongest surviving Tushare-only signal.
   \item Any surviving evidence should still be described as diagnostic rather than decisive.
 \end{itemize}
+\column{0.58\textwidth}
+\centering
+\includegraphics[width=\linewidth,height=0.52\textheight,keepaspectratio]{outputs/figures/fig1_es_distribution.png}
+\\[0.3em]
+{\scriptsize Signal distribution reminder: the evidence is informative, but still diagnostic rather than decisive.}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Interpreting the Repo Now}
+\begin{block}{Recommended narrative}
+This repository is best viewed as a Tushare-based diagnostic baseline showing how expectation measurement and match quality affect inference, not as a repository claiming strong headline evidence from the current Tushare-only sample.
+\end{block}
 \end{frame}
 
 \begin{frame}{Recommendation}

@@ -23,7 +23,7 @@ Our motivation is to move away from a weak internal proxy design and toward a mo
 Our research question is now framed more narrowly. We ask whether earnings-related events generate short-run abnormal return relative to stricter pre-event sell-side expectations, and how much that answer changes across raw, percent, and standardized surprise measures and across explicit matching tiers.
 
 \section*{Slide 4: New Headline Baseline}
-The default headline sample is no longer the pooled all-event standardized specification. The default baseline is now preannouncement-only with strict same-quarter matching. We compare CAR3, CAR5, CAR10, and CAR20, and we compare raw, percent, and standardized surprise in parallel.
+The default headline sample is no longer the pooled all-event standardized specification. The default baseline is now preannouncement-only with strict same-quarter matching. We compare CAR3, CAR5, CAR10, and CAR20, and we compare raw, percent, and standardized surprise in parallel. The figure on this slide gives an intuitive diagnostic example by contrasting the cumulative return path of high-surprise and low-surprise groups.
 
 \section*{Slide 5: Why We Narrowed the Headline}
 We made this change because the broader pooled design mixes economically different event families and can hide how much the conclusion depends on benchmark construction. Preannouncements are cleaner as a default headline sample, and standardization should be a robustness check rather than the only lens.
@@ -32,7 +32,7 @@ We made this change because the broader pooled design mixes economically differe
 We also rebuilt the expectation-matching logic into an explicit ladder. The tiers are strict same quarter, same fiscal year nearest valid, latest valid pre-event, and multi-report median. The important point is that we no longer silently mix them. The strict tier is the headline baseline, and the relaxed tiers are supplementary diagnostics.
 
 \section*{Slide 7: Focused Diagnostic Package}
-The repository now produces side-by-side tables for preannouncement-only versus all events, raw versus percent versus standardized surprise, CAR3 through CAR20, strict versus relaxed matching, and minimum analyst coverage thresholds. That package is meant to show how inference moves when identification becomes cleaner or looser.
+The repository now produces side-by-side tables for preannouncement-only versus all events, raw versus percent versus standardized surprise, CAR3 through CAR20, strict versus relaxed matching, and minimum analyst coverage thresholds. The figure on this slide adds a regression-based view of how measured earnings surprise changes across specifications.
 
 \section*{Slide 8: Tushare-first Framework}
 The framework itself is still Tushare-first. We use report\_rc for sell-side expectations, forecast and forecast\_vip for management preannouncements, express and express\_vip for earnings express releases, fina\_indicator for formal realized data, and daily\_basic for market controls and liquidity filters.
@@ -44,7 +44,7 @@ The older guidance-only design inferred expectations from prior guidance, firm h
 The current repository should be read as a diagnostic baseline, not as a strong positive result. Its main value is showing how event definition, surprise scaling, matching quality, and analyst coverage jointly shape the empirical conclusion.
 
 \section*{Slide 11: What Still Survives}
-What still survives is narrow. The cleanest default sample is preannouncement-only. The cleanest default match tier is strict same-quarter. Raw surprise may still be the best main display specification if it remains the strongest surviving Tushare-only signal, while percent and standardized surprise provide parallel checks.
+What still survives is narrow. The cleanest default sample is preannouncement-only. The cleanest default match tier is strict same-quarter. Raw surprise may still be the best main display specification if it remains the strongest surviving Tushare-only signal, while percent and standardized surprise provide parallel checks. The accompanying distribution figure is a reminder that the signal remains informative but should still be read cautiously.
 
 \section*{Slide 12: Why We Stay Cautious}
 That surviving evidence should still be described as diagnostic rather than decisive. The current Tushare-only sample can be informative, but it does not justify a strong headline claim on its own. We should not overstate what the data can currently support.
