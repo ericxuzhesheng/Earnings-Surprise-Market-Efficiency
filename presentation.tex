@@ -50,82 +50,98 @@
 \begin{frame}{Motivation}
 \begin{itemize}
   \item Earnings-related disclosures update expectations about future cash flows and should affect valuation.
-  \item The key issue is not whether a noisy long-window drift exists, but whether a cleaner design identifies defensible short-run pricing adjustment.
-  \item Tushare Pro allows us to move from a weak internal proxy to a stronger event-expectation framework.
+  \item The current goal is not to force a strong pooled headline, but to build a cleaner diagnostic baseline.
+  \item Tushare Pro lets us test how expectation measurement and match quality affect short-run inference.
 \end{itemize}
 \end{frame}
 
 \begin{frame}{Research Question}
 \begin{block}{Core Question}
-Do China A-share earnings-related events generate short-run abnormal return once surprise is measured relative to stricter sell-side expectations, and is Tushare-only expectation data strong enough for a credible main headline?
+Do China A-share earnings-related events generate short-run abnormal return once surprise is measured relative to stricter sell-side expectations, and how much do signal scaling and match quality change that inference?
 \end{block}
 \begin{itemize}
   \item Old version: guidance-only proxy design.
-  \item New version: Tushare-first framework with explicit event types and pre-event expectation matching.
-  \item Final framing now emphasizes diagnosis of the weak headline result, not a forced positive finding.
+  \item Current version: Tushare-first diagnostic baseline with explicit event types and explicit match tiers.
+  \item Final framing now emphasizes identification quality, not a forced positive finding.
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Diagnostic Result in One Slide}
+\begin{frame}{New Headline Baseline}
 \begin{itemize}
-  \item Headline Tushare-first specification: \texttt{CAR5} on \texttt{main\_surprise\_std}
-  \item Current test-run coefficient: \(-0.0030\), p-value: \(0.4967\)
-  \item Filtered Tushare-first panel: 4314 rows; usable strict standardized-signal rows: 583
-  \item Strongest surviving subset: \texttt{latest\_per\_analyst + preannouncement\_only + raw + CAR10}
-  \item That subset has only 101 regression observations and p-value \(0.181\), so it is suggestive, not decisive
+  \item Headline sample: \texttt{preannouncement\_only}
+  \item Headline match tier: \texttt{strict\_same\_quarter}
+  \item Headline windows: \texttt{CAR3}, \texttt{CAR5}, \texttt{CAR10}, \texttt{CAR20}
+  \item Headline signal comparison: \texttt{raw}, \texttt{pct}, and \texttt{std} in parallel
+  \item Other event types and relaxed tiers remain supplementary only
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Ranked Failure Diagnosis}
+\begin{frame}{Why We Changed the Headline}
 \begin{itemize}
-  \item Coverage collapse: usable strict signal rows are a small share of the full event universe
-  \item Thin analyst coverage: many matched events rely on very few broker inputs
-  \item Event heterogeneity: pooling preannouncements, revisions, express, and formal releases weakens identification
-  \item Benchmark mismatch: \texttt{report\_rc} does not always map cleanly into realized event values
-  \item Filtering and standardization choices matter, but they do not rescue the main headline
+  \item A pooled all-event standardized specification hides important heterogeneity.
+  \item Preannouncements are cleaner than revisions, express releases, and formal releases for a default headline sample.
+  \item \texttt{main\_surprise\_std} should be a robustness lens, not the only lens.
+  \item Match-quality tiers should be explicit rather than silently blended.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Expectation-Matching Ladder}
+\begin{itemize}
+  \item \texttt{strict\_same\_quarter}
+  \item \texttt{same\_fiscal\_year\_nearest\_valid}
+  \item \texttt{latest\_valid\_pre\_event}
+  \item \texttt{multi\_report\_median}
+\end{itemize}
+\begin{block}{Interpretation Rule}
+The headline baseline uses only \texttt{strict\_same\_quarter}; relaxed tiers are reported separately to show how benchmark construction changes inference.
+\end{block}
+\end{frame}
+
+\begin{frame}{Focused Diagnostic Package}
+\begin{itemize}
+  \item \texttt{preannouncement\_only} vs \texttt{all\_event\_types}
+  \item \texttt{raw} vs \texttt{pct} vs \texttt{std}
+  \item \texttt{CAR3}, \texttt{CAR5}, \texttt{CAR10}, \texttt{CAR20}
+  \item strict vs relaxed matching tiers
+  \item minimum analyst coverage thresholds
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Interpreting the Repo Now}
+\begin{block}{Recommended narrative}
+This repository is best viewed as a Tushare-based diagnostic baseline showing how expectation measurement and match quality affect inference, not as a repository claiming strong headline evidence from the current Tushare-only sample.
+\end{block}
+\end{frame}
+
+\begin{frame}{What Still Survives}
+\begin{itemize}
+  \item The cleanest default sample is \texttt{preannouncement\_only}.
+  \item The cleanest default tier is \texttt{strict\_same\_quarter}.
+  \item Raw surprise may still be the best main display spec if it remains the strongest surviving Tushare-only signal.
+  \item Any surviving evidence should still be described as diagnostic rather than decisive.
 \end{itemize}
 \end{frame}
 
 \begin{frame}{Recommendation}
 \begin{block}{Recommendation B}
-Keep Tushare as the baseline framework, but add stronger external analyst-expectation data later if the goal is a credible main empirical headline.
-\end{block}
-\begin{itemize}
-  \item Tushare-first still provides a cleaner and more auditable architecture than the old proxy design.
-  \item But the current Tushare-only evidence is too weak for a strong headline claim.
-  \item The best surviving subset is narrow and still not conventionally significant.
-\end{itemize}
-\end{frame}
-
-\begin{frame}{What Still Survives}
-\begin{itemize}
-  \item The cleanest subset is \texttt{preannouncement\_only}, not the pooled all-event sample.
-  \item The cleaner benchmark is \texttt{latest\_per\_analyst}, not the thinner latest-snapshot construction.
-  \item Raw surprise performs better than the current pooled standardized headline in the surviving subset.
-  \item The project therefore shifts from "claiming a result" to "showing what a credible next design should look like".
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Updated Final Takeaway}
-\begin{block}{Recommended headline}
-A Tushare-first framework is the right baseline architecture for this project, but the current Tushare-only matched sample is too thin for a strong main conclusion; the credible next step is to keep Tushare as the event framework and add better external analyst-expectation data.
+Keep Tushare as the baseline framework, and use the repository to diagnose how inference changes with signal scaling and match quality. Do not claim strong headline evidence without stronger external expectation data.
 \end{block}
 \end{frame}
 
 \begin{frame}{Conclusion}
 \begin{itemize}
-  \item We successfully replaced the weak guidance-only proxy with a cleaner Tushare-first architecture.
-  \item The headline pooled specification does not survive the diagnostic run.
-  \item The strongest surviving subset is narrow, preannouncement-focused, and only suggestive.
-  \item The final project recommendation is B, not a forced positive headline.
+  \item We kept the Tushare-first architecture and narrowed the headline sample.
+  \item We now compare raw, pct, and std in parallel instead of relying on one standardized headline.
+  \item We now expose strict and relaxed match tiers explicitly.
+  \item The repository's main contribution is a cleaner and more auditable diagnostic baseline.
 \end{itemize}
 \end{frame}
 
 \begin{frame}{Next Step}
 \begin{itemize}
-  \item Keep the Tushare-first event architecture and audit outputs.
-  \item Treat the current results as a diagnostic baseline rather than a final claim.
-  \item Add stronger external analyst-expectation data if the project aims to support a main valuation-adjustment headline.
+  \item Keep the Tushare event architecture and focused diagnostic outputs.
+  \item Use preannouncement-only strict matching as the baseline comparison set.
+  \item Add stronger external analyst-expectation data only if the goal is a stronger final headline.
 \end{itemize}
 \end{frame}
 

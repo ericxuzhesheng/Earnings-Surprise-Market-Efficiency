@@ -26,6 +26,7 @@ def build_tushare_events(
     fina_df: pd.DataFrame,
     report_rc_df: pd.DataFrame,
     config: ProjectConfig,
+    match_tier: str = "strict_same_quarter",
 ) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     if stocks_df.empty or market_df.empty:
         return pd.DataFrame(), pd.DataFrame(), pd.DataFrame()
@@ -165,7 +166,12 @@ def build_tushare_events(
     events["period_end"] = events["period_end"].apply(_coerce_datetime_value)
     events["event_trade_date"] = events["event_trade_date"].apply(_coerce_datetime_value)
 
-    matched_events, expectation_audit, expectation_candidates = match_expectations_to_events(events, report_rc_df, config)
+    matched_events, expectation_audit, expectation_candidates = match_expectations_to_events(
+        events,
+        report_rc_df,
+        config,
+        selected_tier=match_tier,
+    )
     revision_panel = build_sell_side_revision_panel(report_rc_df)
     if not revision_panel.empty:
         matched_events = matched_events.merge(
@@ -244,6 +250,11 @@ def build_tushare_events(
     matched_events["main_surprise_std_event_type"] = matched_events["main_surprise_std_event_type"].clip(-5, 5)
     matched_events["usable_surprise_flag"] = matched_events["main_surprise_std"].notna().astype(int)
     matched_events["usable_raw_surprise_flag"] = matched_events["main_surprise_raw"].notna().astype(int)
+    matched_events["usable_pct_surprise_flag"] = matched_events["main_surprise_pct"].notna().astype(int)
+    matched_events["headline_sample_flag"] = (
+        matched_events["event_type"].eq("preannouncement")
+        & matched_events.get("report_rc_match_tier", pd.Series(index=matched_events.index, dtype=object)).eq("strict_same_quarter")
+    ).astype(int)
 
     return matched_events, expectation_audit, expectation_candidates
 
@@ -298,6 +309,9 @@ def annotate_event_filters(
     e["has_expectation_match"] = e["expected_value_primary"].notna()
     e["has_usable_standardized_surprise"] = e["main_surprise_std"].notna()
     e["has_usable_raw_surprise"] = e["main_surprise_raw"].notna()
+    e["has_usable_pct_surprise"] = e["main_surprise_pct"].notna()
+    e["is_strict_match_tier"] = e.get("report_rc_match_tier", pd.Series(index=e.index, dtype=object)).eq("strict_same_quarter")
+    e["headline_sample_flag"] = e.get("headline_sample_flag", pd.Series(index=e.index, dtype=float)).fillna(0).astype(int)
     e["passes_restrictive_filters"] = (
         e["is_non_st_name"]
         & e["has_event_day_ret"]
@@ -416,8 +430,11 @@ def _profile_flag(profile: str) -> str:
 
 
 def _signal_column(signal_scale: str, event_standardized: bool = False) -> str:
-    if signal_scale == "raw":
+    normalized = (signal_scale or "").strip().lower()
+    if normalized == "raw":
         return "main_surprise_raw"
+    if normalized == "pct":
+        return "main_surprise_pct"
     return "main_surprise_std_event_type" if event_standardized else "main_surprise_std"
 
 
@@ -425,11 +442,13 @@ def build_benchmark_quality_summary(events_df: pd.DataFrame) -> pd.DataFrame:
     if events_df.empty:
         return pd.DataFrame()
     summary = (
-        events_df.groupby(["benchmark_method", "event_type"], dropna=False, as_index=False)
+        events_df.groupby(["benchmark_method", "report_rc_match_tier", "report_rc_match_tier_group", "event_type"], dropna=False, as_index=False)
         .agg(
             event_count=("event_id", "count"),
             strict_count=("report_rc_match_quality", lambda s: int((s == "strict").sum())),
             usable_signal_count=("main_surprise_std", lambda s: int(s.notna().sum())),
+            usable_raw_signal_count=("main_surprise_raw", lambda s: int(s.notna().sum())),
+            usable_pct_signal_count=("main_surprise_pct", lambda s: int(s.notna().sum())),
             median_report_count=("matched_report_count", "median"),
             median_broker_count=("matched_broker_count", "median"),
             median_lag_days=("benchmark_lag_days", "median"),
@@ -446,9 +465,11 @@ def build_timing_alignment_summary(events_df: pd.DataFrame) -> pd.DataFrame:
     if events_df.empty:
         return pd.DataFrame()
     rows = []
-    for event_type, subset in events_df.groupby("event_type", dropna=False):
+    for (match_tier, event_type), subset in events_df.groupby(["report_rc_match_tier", "event_type"], dropna=False):
         rows.append(
             {
+                "report_rc_match_tier": match_tier,
+                "report_rc_match_tier_group": subset.get("report_rc_match_tier_group", pd.Series(index=subset.index, dtype=object)).iloc[0] if not subset.empty else np.nan,
                 "event_type": event_type,
                 "event_count": int(len(subset)),
                 "matched_count": int(subset["matched_report_date"].notna().sum()),
@@ -465,15 +486,19 @@ def build_event_type_signal_summary(events_df: pd.DataFrame) -> pd.DataFrame:
     if events_df.empty:
         return pd.DataFrame()
     rows = []
-    for event_type, subset in events_df.groupby("event_type", dropna=False):
+    for (match_tier, event_type), subset in events_df.groupby(["report_rc_match_tier", "event_type"], dropna=False):
         rows.append(
             {
+                "report_rc_match_tier": match_tier,
+                "report_rc_match_tier_group": subset.get("report_rc_match_tier_group", pd.Series(index=subset.index, dtype=object)).iloc[0] if not subset.empty else np.nan,
                 "event_type": event_type,
                 "event_count": int(len(subset)),
                 "usable_raw_signal_count": int(subset["main_surprise_raw"].notna().sum()),
+                "usable_pct_signal_count": int(subset["main_surprise_pct"].notna().sum()),
                 "usable_std_signal_count": int(subset["main_surprise_std"].notna().sum()),
                 "median_abs_raw_surprise": float(subset["main_surprise_raw"].abs().median()) if subset["main_surprise_raw"].notna().any() else np.nan,
                 "median_abs_pct_surprise": float(subset["main_surprise_pct"].abs().median()) if subset["main_surprise_pct"].notna().any() else np.nan,
+                "median_abs_std_surprise": float(subset["main_surprise_std"].abs().median()) if subset["main_surprise_std"].notna().any() else np.nan,
                 "median_broker_count": float(subset["matched_broker_count"].median()) if subset["matched_broker_count"].notna().any() else np.nan,
             }
         )
@@ -486,7 +511,7 @@ def build_expectation_coverage_summary(events_df: pd.DataFrame) -> pd.DataFrame:
     df = events_df.copy()
     df["year"] = pd.to_datetime(df["event_trade_date"], errors="coerce").dt.year
     summary = (
-        df.groupby(["year", "event_type"], dropna=False, as_index=False)
+        df.groupby(["year", "report_rc_match_tier", "report_rc_match_tier_group", "event_type"], dropna=False, as_index=False)
         .agg(
             event_count=("event_id", "count"),
             expectation_match_count=("has_expectation_match", lambda s: int(s.fillna(False).sum())),
@@ -588,6 +613,8 @@ def build_tushare_event_panel(
             "benchmark_basis": ev.get("benchmark_basis", np.nan),
             "benchmark_basis_mismatch_flag": ev.get("benchmark_basis_mismatch_flag", np.nan),
             "report_rc_match_quality": ev.get("report_rc_match_quality", np.nan),
+            "report_rc_match_tier": ev.get("report_rc_match_tier", np.nan),
+            "report_rc_match_tier_group": ev.get("report_rc_match_tier_group", np.nan),
             "matched_report_date": ev.get("matched_report_date", pd.NaT),
             "matched_report_count": ev.get("matched_report_count", np.nan),
             "matched_broker_count": ev.get("matched_broker_count", np.nan),
@@ -617,6 +644,8 @@ def build_tushare_event_panel(
             "surprise_family": ev.get("surprise_family", np.nan),
             "usable_surprise_flag": ev.get("usable_surprise_flag", np.nan),
             "usable_raw_surprise_flag": ev.get("usable_raw_surprise_flag", np.nan),
+            "usable_pct_surprise_flag": ev.get("usable_pct_surprise_flag", np.nan),
+            "headline_sample_flag": ev.get("headline_sample_flag", np.nan),
             "revision_magnitude_np": ev.get("revision_magnitude_np", np.nan),
             "revision_magnitude_eps": ev.get("revision_magnitude_eps", np.nan),
             "target_price_change": ev.get("target_price_change", np.nan),
@@ -656,6 +685,10 @@ def build_tushare_event_panel(
         tmp["main_surprise_std"] = ev.get("main_surprise_std", np.nan)
         tmp["main_surprise_std_event_type"] = ev.get("main_surprise_std_event_type", np.nan)
         tmp["main_surprise_raw"] = ev.get("main_surprise_raw", np.nan)
+        tmp["main_surprise_pct"] = ev.get("main_surprise_pct", np.nan)
+        tmp["report_rc_match_tier"] = ev.get("report_rc_match_tier", np.nan)
+        tmp["report_rc_match_tier_group"] = ev.get("report_rc_match_tier_group", np.nan)
+        tmp["headline_sample_flag"] = ev.get("headline_sample_flag", np.nan)
         tmp["event_type"] = ev.get("event_type", np.nan)
         path_rows.append(tmp)
 
@@ -701,22 +734,30 @@ def build_ablation_panel(
 def list_ablation_specs() -> list[dict[str, object]]:
     specs: list[dict[str, object]] = []
     spec_id = 1
-    for benchmark_method in ["latest_snapshot", "latest_per_analyst"]:
-        for event_universe in ["all_event_types", "preannouncement_only"]:
-            for signal_scale in ["raw", "standardized"]:
-                for analyst_min in [1, 2, 3, 5]:
-                    for profile in ["restrictive", "relaxed"]:
-                        specs.append(
-                            {
-                                "spec_id": f"spec_{spec_id:03d}",
-                                "benchmark_method": benchmark_method,
-                                "event_universe": event_universe,
-                                "signal_scale": signal_scale,
-                                "analyst_min": analyst_min,
-                                "filter_profile": profile,
-                            }
-                        )
-                        spec_id += 1
+    for benchmark_method in ["latest_snapshot", "latest_per_analyst", "pooled_median"]:
+        for event_universe in ["preannouncement_only", "all_event_types"]:
+            for signal_scale in ["raw", "pct", "std"]:
+                for match_tier in [
+                    "strict_same_quarter",
+                    "same_fiscal_year_nearest_valid",
+                    "latest_valid_pre_event",
+                    "multi_report_median",
+                ]:
+                    for analyst_min in [1, 2, 3, 5]:
+                        for profile in ["restrictive", "relaxed"]:
+                            specs.append(
+                                {
+                                    "spec_id": f"spec_{spec_id:03d}",
+                                    "benchmark_method": benchmark_method,
+                                    "event_universe": event_universe,
+                                    "signal_scale": signal_scale,
+                                    "match_tier": match_tier,
+                                    "match_tier_group": "strict" if match_tier == "strict_same_quarter" else "relaxed",
+                                    "analyst_min": analyst_min,
+                                    "filter_profile": profile,
+                                }
+                            )
+                            spec_id += 1
     return specs
 
 
@@ -725,6 +766,7 @@ def apply_ablation_spec(events_df: pd.DataFrame, spec: dict[str, object]) -> pd.
         return pd.DataFrame()
     df = events_df.copy()
     df = df[df["benchmark_method"].eq(spec["benchmark_method"])]
+    df = df[df.get("report_rc_match_tier", pd.Series(index=df.index, dtype=object)).eq(spec["match_tier"])]
     if spec["event_universe"] == "preannouncement_only":
         df = df[df["event_type"].eq("preannouncement")]
     df = df[df["matched_broker_count"].fillna(0) >= int(spec["analyst_min"])]
@@ -747,11 +789,18 @@ def choose_strongest_spec(results_df: pd.DataFrame) -> pd.DataFrame:
     scored = scored[scored["usable"]].copy()
     if scored.empty:
         return pd.DataFrame()
-    scored["benchmark_rank"] = scored["benchmark_method"].map({"latest_per_analyst": 0, "latest_snapshot": 1}).fillna(9)
+    scored["benchmark_rank"] = scored["benchmark_method"].map({"latest_per_analyst": 0, "latest_snapshot": 1, "pooled_median": 2}).fillna(9)
     scored["event_rank"] = scored["event_universe"].map({"preannouncement_only": 0, "all_event_types": 1}).fillna(9)
+    scored["match_tier_rank"] = scored["match_tier"].map({
+        "strict_same_quarter": 0,
+        "same_fiscal_year_nearest_valid": 1,
+        "latest_valid_pre_event": 2,
+        "multi_report_median": 3,
+    }).fillna(9)
+    scored["signal_rank"] = scored["signal_scale"].map({"raw": 0, "pct": 1, "std": 2}).fillna(9)
     scored = scored.sort_values(
-        ["benchmark_rank", "event_rank", "signal_scale", "analyst_min", "car_window", "p_value", "regression_nobs"],
-        ascending=[True, True, True, True, True, True, False],
+        ["benchmark_rank", "event_rank", "match_tier_rank", "signal_rank", "analyst_min", "car_window", "p_value", "regression_nobs"],
+        ascending=[True, True, True, True, True, True, True, False],
     )
     return scored.head(1).reset_index(drop=True)
 
@@ -763,8 +812,13 @@ def recommendation_from_diagnostics(
     if strongest_spec_df.empty:
         return "B", "No specification survives credibly with sufficient sample and stable benchmark quality; keep Tushare as the baseline diagnostic layer and add stronger external expectation data later."
     top = strongest_spec_df.iloc[0]
-    if float(top.get("p_value", np.nan)) <= 0.10 and int(top.get("regression_nobs", 0)) >= 80 and top.get("event_universe") == "preannouncement_only":
-        return "A", "Continue with Tushare only, but narrow the project headline to the cleaner surviving subset rather than the pooled all-event specification."
+    if (
+        float(top.get("p_value", np.nan)) <= 0.10
+        and int(top.get("regression_nobs", 0)) >= 80
+        and top.get("event_universe") == "preannouncement_only"
+        and top.get("match_tier") == "strict_same_quarter"
+    ):
+        return "A", "Continue with Tushare only, but keep the headline on the preannouncement-only strict-match subset rather than the pooled all-event specification."
     if not failure_df.empty and (failure_df["fixability"] == "external_required").any():
         return "B", "Keep Tushare as the baseline but add stronger external analyst-expectation data for a credible main headline."
     return "C", "Abandon the current pooled headline specification and reframe the project around a narrower question or subset where the diagnostics show cleaner identification."
@@ -785,13 +839,21 @@ def build_failure_analysis(
         {
             "rank": 1,
             "failure_reason": "poor_coverage_of_usable_surprise_rows",
-            "why_it_weakens_signal": "The regression can only use a small subset of the filtered panel once benchmark-matched standardized surprise is required.",
+            "why_it_weakens_signal": "The regression can only use a small subset of the filtered panel once benchmark-matched surprise and strict match tiers are required.",
             "observed_metric": f"usable standardized surprise rows = {usable_signal} / {total_events}",
             "likely_importance": "very_high",
             "fixability": "tushare_only",
         },
         {
             "rank": 2,
+            "failure_reason": "match_tier_relaxation_changes_inference",
+            "why_it_weakens_signal": "Inference depends materially on whether the benchmark uses strict same-quarter matching or looser fallback tiers.",
+            "observed_metric": f"strict tier rows = {int(event_panel_df.get('report_rc_match_tier', pd.Series(index=event_panel_df.index, dtype=object)).eq('strict_same_quarter').sum())} / {total_events}",
+            "likely_importance": "very_high",
+            "fixability": "tushare_only",
+        },
+        {
+            "rank": 3,
             "failure_reason": "insufficient_analyst_coverage_per_event",
             "why_it_weakens_signal": "Thin broker coverage makes the expectation benchmark noisy and unstable across events.",
             "observed_metric": f"strict report_rc matches = {strict_matches} / {total_events}",
@@ -799,7 +861,7 @@ def build_failure_analysis(
             "fixability": "mixed",
         },
         {
-            "rank": 3,
+            "rank": 4,
             "failure_reason": "mixed_event_types",
             "why_it_weakens_signal": "Pooling preannouncements, revisions, express releases, and formal releases can average away economically different responses.",
             "observed_metric": f"event types observed = {', '.join(sorted(event_panel_df['event_type'].dropna().astype(str).unique()))}",
@@ -807,7 +869,7 @@ def build_failure_analysis(
             "fixability": "tushare_only",
         },
         {
-            "rank": 4,
+            "rank": 5,
             "failure_reason": "weak_or_misaligned_expectation_benchmark",
             "why_it_weakens_signal": "report_rc expectations may not line up cleanly with event-level realized NP/EPS fields, especially for formal releases.",
             "observed_metric": f"median benchmark lag days = {event_panel_df['benchmark_lag_days'].median() if event_panel_df['benchmark_lag_days'].notna().any() else np.nan}",
@@ -815,7 +877,7 @@ def build_failure_analysis(
             "fixability": "external_required",
         },
         {
-            "rank": 5,
+            "rank": 6,
             "failure_reason": "standardization_and_filtering_choices",
             "why_it_weakens_signal": "Family-level standardization and restrictive turnover filters may remove or compress valid short-window signal.",
             "observed_metric": f"restrictive funnel terminal count = {int(filter_funnel_df['event_count'].iloc[-1]) if not filter_funnel_df.empty else 0}",

@@ -101,6 +101,7 @@ def run_pipeline() -> None:
             fina_df=normalized["fina_indicator"],
             report_rc_df=normalized["report_rc"],
             config=config,
+            match_tier="strict_same_quarter",
         )
         save_csv(tushare_events, config.data_processed_events_dir / "event_master_tushare_first.csv")
         save_csv(expectation_audit, config.data_processed_expectations_dir / "expectation_match_audit_tushare_first.csv")
@@ -130,8 +131,19 @@ def run_pipeline() -> None:
             config=config,
             profile="restrictive",
         )
+        if filtered_tushare_events.empty or "event_type" not in filtered_tushare_events.columns:
+            headline_tushare_events = pd.DataFrame(columns=filtered_tushare_events.columns)
+        else:
+            headline_tushare_events = filtered_tushare_events[filtered_tushare_events["event_type"].eq("preannouncement")].reset_index(drop=True)
 
         tushare_panel, tushare_paths = build_tushare_event_panel(
+            events_df=headline_tushare_events,
+            prices_df=bundle.prices,
+            market_df=bundle.market,
+            daily_basic_df=normalized["daily_basic"],
+            config=config,
+        )
+        supplementary_panel, supplementary_paths = build_tushare_event_panel(
             events_df=filtered_tushare_events,
             prices_df=bundle.prices,
             market_df=bundle.market,
@@ -140,62 +152,48 @@ def run_pipeline() -> None:
         )
         save_csv(tushare_panel, config.data_processed_panels_dir / "event_panel_tushare_first.csv")
         save_csv(tushare_paths, config.data_processed_panels_dir / "event_paths_tushare_first.csv")
+        save_csv(supplementary_panel, config.data_processed_panels_dir / "event_panel_tushare_first_all_events.csv")
+        save_csv(supplementary_paths, config.data_processed_panels_dir / "event_paths_tushare_first_all_events.csv")
 
-        diagnostic_config_latest_snapshot = replace(config, consensus_method="latest_snapshot")
-        diagnostic_config_latest_per_analyst = replace(config, consensus_method="latest_per_analyst")
+        diagnostic_panels: list[pd.DataFrame] = []
+        for consensus_method in ["latest_snapshot", "latest_per_analyst", "pooled_median"]:
+            diagnostic_config = replace(config, consensus_method=consensus_method)
+            for match_tier in [
+                "strict_same_quarter",
+                "same_fiscal_year_nearest_valid",
+                "latest_valid_pre_event",
+                "multi_report_median",
+            ]:
+                diag_events, _, _ = build_tushare_events(
+                    stocks_df=bundle.stocks,
+                    market_df=bundle.market,
+                    forecast_df=normalized["forecast"],
+                    express_df=normalized["express"],
+                    fina_df=normalized["fina_indicator"],
+                    report_rc_df=normalized["report_rc"],
+                    config=diagnostic_config,
+                    match_tier=match_tier,
+                )
+                diag_events = annotate_event_filters(
+                    events_df=diag_events,
+                    prices_df=bundle.prices,
+                    daily_basic_df=normalized["daily_basic"],
+                    market_df=bundle.market,
+                    config=diagnostic_config,
+                )
+                diagnostic_panel_single, _ = build_tushare_event_panel(
+                    events_df=diag_events,
+                    prices_df=bundle.prices,
+                    market_df=bundle.market,
+                    daily_basic_df=normalized["daily_basic"],
+                    config=diagnostic_config,
+                )
+                if not diagnostic_panel_single.empty:
+                    diagnostic_panel_single["diagnostic_consensus_method"] = consensus_method
+                    diagnostic_panel_single["diagnostic_match_tier"] = match_tier
+                    diagnostic_panels.append(diagnostic_panel_single)
 
-        diag_events_latest_snapshot, _, _ = build_tushare_events(
-            stocks_df=bundle.stocks,
-            market_df=bundle.market,
-            forecast_df=normalized["forecast"],
-            express_df=normalized["express"],
-            fina_df=normalized["fina_indicator"],
-            report_rc_df=normalized["report_rc"],
-            config=diagnostic_config_latest_snapshot,
-        )
-        diag_events_latest_snapshot = annotate_event_filters(
-            events_df=diag_events_latest_snapshot,
-            prices_df=bundle.prices,
-            daily_basic_df=normalized["daily_basic"],
-            market_df=bundle.market,
-            config=diagnostic_config_latest_snapshot,
-        )
-        diagnostic_panel_latest_snapshot, _ = build_tushare_event_panel(
-            events_df=diag_events_latest_snapshot,
-            prices_df=bundle.prices,
-            market_df=bundle.market,
-            daily_basic_df=normalized["daily_basic"],
-            config=diagnostic_config_latest_snapshot,
-        )
-
-        diag_events_latest_per_analyst, _, _ = build_tushare_events(
-            stocks_df=bundle.stocks,
-            market_df=bundle.market,
-            forecast_df=normalized["forecast"],
-            express_df=normalized["express"],
-            fina_df=normalized["fina_indicator"],
-            report_rc_df=normalized["report_rc"],
-            config=diagnostic_config_latest_per_analyst,
-        )
-        diag_events_latest_per_analyst = annotate_event_filters(
-            events_df=diag_events_latest_per_analyst,
-            prices_df=bundle.prices,
-            daily_basic_df=normalized["daily_basic"],
-            market_df=bundle.market,
-            config=diagnostic_config_latest_per_analyst,
-        )
-        diagnostic_panel_latest_per_analyst, _ = build_tushare_event_panel(
-            events_df=diag_events_latest_per_analyst,
-            prices_df=bundle.prices,
-            market_df=bundle.market,
-            daily_basic_df=normalized["daily_basic"],
-            config=diagnostic_config_latest_per_analyst,
-        )
-
-        diagnostic_panel = pd.concat(
-            [diagnostic_panel_latest_snapshot, diagnostic_panel_latest_per_analyst],
-            ignore_index=True,
-        )
+        diagnostic_panel = pd.concat(diagnostic_panels, ignore_index=True) if diagnostic_panels else pd.DataFrame()
         save_csv(diagnostic_panel, config.data_processed_panels_dir / "event_panel_diagnostic_tushare_first.csv")
 
         ablation_catalog_df, ablation_results_df = run_ablation_specs(diagnostic_panel, config)
@@ -207,6 +205,8 @@ def run_pipeline() -> None:
             outputs_audit_dir=config.outputs_audit_dir,
             scenario_name="tushare_first",
             diagnostic_panel_df=diagnostic_panel,
+            supplementary_event_df=supplementary_panel,
+            supplementary_path_df=supplementary_paths,
             filter_funnel_df=filter_funnel_df,
             benchmark_quality_df=benchmark_quality_df,
             timing_alignment_df=timing_alignment_df,
@@ -216,6 +216,58 @@ def run_pipeline() -> None:
             ablation_results_df=ablation_results_df,
             window_availability_df=window_availability_df,
         )
+        save_csv(
+            pd.DataFrame([
+                {"sample_name": "headline_preannouncement_only", "event_count": len(headline_tushare_events)},
+                {"sample_name": "supplementary_all_event_types", "event_count": len(filtered_tushare_events)},
+            ]),
+            config.outputs_tables_dir / "headline_sample_comparison_tushare_first.csv",
+        )
+        save_csv(
+            pd.DataFrame([
+                {"sample_name": "headline_preannouncement_only", "panel_rows": len(tushare_panel)},
+                {"sample_name": "supplementary_all_event_types", "panel_rows": len(supplementary_panel)},
+            ]),
+            config.outputs_audit_dir / "headline_panel_coverage_tushare_first.csv",
+        )
+
+        summary_rows.extend(
+            [
+                {"metric": "tushare_events_all", "value": len(tushare_events)},
+                {"metric": "tushare_events_filtered", "value": len(filtered_tushare_events)},
+                {"metric": "tushare_headline_events", "value": len(headline_tushare_events)},
+                {"metric": "tushare_panel_rows", "value": len(tushare_panel)},
+                {"metric": "tushare_headline_sample", "value": "preannouncement_only"},
+                {"metric": "tushare_headline_coef", "value": tushare_metrics.get("headline_coef")},
+                {"metric": "tushare_headline_p_value", "value": tushare_metrics.get("headline_p_value")},
+                {"metric": "usable_signal_rows", "value": tushare_metrics.get("usable_signal_rows")},
+                {"metric": "strict_match_rows", "value": tushare_metrics.get("strict_match_rows")},
+                {"metric": "headline_signal_scale", "value": tushare_metrics.get("headline_signal_scale")},
+                {"metric": "headline_match_tier", "value": tushare_metrics.get("headline_match_tier")},
+                {"metric": "diagnostic_recommendation", "value": tushare_metrics.get("diagnostic_recommendation")},
+                {"metric": "strongest_spec_id", "value": tushare_metrics.get("strongest_spec_id")},
+                {"metric": "strongest_spec_window", "value": tushare_metrics.get("strongest_spec_window")},
+                {"metric": "strongest_spec_coef", "value": tushare_metrics.get("strongest_spec_coef")},
+                {"metric": "strongest_spec_p_value", "value": tushare_metrics.get("strongest_spec_p_value")},
+                {"metric": "strongest_spec_nobs", "value": tushare_metrics.get("strongest_spec_nobs")},
+            ]
+        )
+
+        save_csv(pd.DataFrame(summary_rows), config.outputs_tables_dir / "run_summary.csv")
+        save_csv(
+            pd.DataFrame(
+                [
+                    {
+                        "note": "Tushare-first repo now treats preannouncement_only as the headline sample and all-event results as supplementary diagnostics.",
+                        "headline_signal_scale": tushare_metrics.get("headline_signal_scale"),
+                        "headline_match_tier": tushare_metrics.get("headline_match_tier"),
+                        "diagnostic_recommendation": tushare_metrics.get("diagnostic_recommendation"),
+                    }
+                ]
+            ),
+            config.outputs_audit_dir / "tushare_first_update_note.csv",
+        )
+
         summary_rows.extend(
             [
                 {"metric": "tushare_events_all", "value": len(tushare_events)},

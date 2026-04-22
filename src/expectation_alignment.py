@@ -15,6 +15,13 @@ BENCHMARK_FIELD_MAP = {
     "np_first": "np",
 }
 
+MATCH_TIERS = (
+    "strict_same_quarter",
+    "same_fiscal_year_nearest_valid",
+    "latest_valid_pre_event",
+    "multi_report_median",
+)
+
 
 def _consensus_column(config: ProjectConfig) -> str:
     return BENCHMARK_FIELD_MAP.get(config.consensus_value_field, "np")
@@ -48,6 +55,20 @@ def _add_entity_key(df: pd.DataFrame) -> pd.DataFrame:
     return out
 
 
+def _normalize_match_tier(tier: str) -> str:
+    normalized = (tier or "").strip().lower()
+    if normalized in MATCH_TIERS:
+        return normalized
+    return "strict_same_quarter"
+
+
+def _tier_group(tier: str) -> str:
+    tier = _normalize_match_tier(tier)
+    if tier == "strict_same_quarter":
+        return "strict"
+    return "relaxed"
+
+
 def build_expectation_panel(report_rc_df: pd.DataFrame, config: ProjectConfig) -> pd.DataFrame:
     if report_rc_df.empty:
         return pd.DataFrame()
@@ -78,13 +99,15 @@ def build_expectation_panel(report_rc_df: pd.DataFrame, config: ProjectConfig) -
     return agg
 
 
-def _prepare_report_groups(report_rc_df: pd.DataFrame) -> dict[tuple[object, object], pd.DataFrame]:
+def _prepare_report_groups(report_rc_df: pd.DataFrame) -> dict[object, pd.DataFrame]:
     if report_rc_df.empty:
         return {}
     df = _add_entity_key(report_rc_df)
-    groups: dict[tuple[object, object], pd.DataFrame] = {}
-    for (ts_code, period_end), grp in df.groupby(["ts_code", "period_end"], dropna=False):
-        groups[(ts_code, period_end)] = grp.sort_values("report_date").reset_index(drop=True)
+    df["period_end"] = pd.to_datetime(df.get("period_end"), errors="coerce")
+    df["report_date"] = pd.to_datetime(df.get("report_date"), errors="coerce")
+    groups: dict[object, pd.DataFrame] = {}
+    for ts_code, grp in df.groupby("ts_code", dropna=False):
+        groups[ts_code] = grp.sort_values(["period_end", "report_date", "analyst_entity"]).reset_index(drop=True)
     return groups
 
 
@@ -103,38 +126,48 @@ def _select_consensus_candidates(candidates: pd.DataFrame, method: str) -> pd.Da
     return ordered.copy()
 
 
+def _default_match_values(config: ProjectConfig, method: str, tier: str) -> dict[str, object]:
+    benchmark_field = _consensus_column(config)
+    normalized_method = _normalize_consensus_method(method)
+    normalized_tier = _normalize_match_tier(tier)
+    return {
+        "benchmark_method": normalized_method,
+        "benchmark_value_field": benchmark_field,
+        "expectation_source": "missing_report_rc",
+        "matched_report_date": pd.NaT,
+        "matched_report_count": 0,
+        "matched_broker_count": 0,
+        "report_rc_match_quality": "missing",
+        "report_rc_match_tier": normalized_tier,
+        "report_rc_match_tier_group": _tier_group(normalized_tier),
+        "benchmark_lag_days": np.nan,
+        "candidate_report_count_total": 0,
+        "candidate_broker_count_total": 0,
+        "selected_candidate_rows": 0,
+        "benchmark_value_count": 0,
+        "expected_np": np.nan,
+        "expected_eps": np.nan,
+        "expected_target_price": np.nan,
+        "expected_rating": np.nan,
+        "text_over_expectation_fraction": np.nan,
+        "benchmark_has_np": 0,
+        "benchmark_has_eps": 0,
+    }
+
+
 def _aggregate_selected_candidates(
     selected: pd.DataFrame,
     event_date: pd.Timestamp,
     config: ProjectConfig,
     method: str,
+    tier: str,
 ) -> dict[str, object]:
-    benchmark_field = _consensus_column(config)
-    method = _normalize_consensus_method(method)
+    defaults = _default_match_values(config=config, method=method, tier=tier)
+    benchmark_field = str(defaults["benchmark_value_field"])
     if selected.empty:
-        return {
-            "benchmark_method": method,
-            "benchmark_value_field": benchmark_field,
-            "expectation_source": "missing_report_rc",
-            "matched_report_date": pd.NaT,
-            "matched_report_count": 0,
-            "matched_broker_count": 0,
-            "report_rc_match_quality": "missing",
-            "benchmark_lag_days": np.nan,
-            "candidate_report_count_total": 0,
-            "candidate_broker_count_total": 0,
-            "selected_candidate_rows": 0,
-            "benchmark_value_count": 0,
-            "expected_np": np.nan,
-            "expected_eps": np.nan,
-            "expected_target_price": np.nan,
-            "expected_rating": np.nan,
-            "text_over_expectation_fraction": np.nan,
-            "benchmark_has_np": 0,
-            "benchmark_has_eps": 0,
-        }
+        return defaults
 
-    agg_fn = "mean" if method == "pooled_mean" else "median"
+    agg_fn = "mean" if defaults["benchmark_method"] == "pooled_mean" else "median"
     if agg_fn == "mean":
         expected_np = selected["np"].mean()
         expected_eps = selected["eps"].mean()
@@ -153,15 +186,14 @@ def _aggregate_selected_candidates(
     lag_days = (event_date - matched_report_date).days if pd.notna(matched_report_date) else np.nan
 
     return {
-        "benchmark_method": method,
-        "benchmark_value_field": benchmark_field,
+        **defaults,
         "expectation_source": "report_rc" if min_count_ok else "report_rc_below_min_count",
         "matched_report_date": matched_report_date,
         "matched_report_count": matched_report_count,
         "matched_broker_count": matched_broker_count,
         "report_rc_match_quality": "strict" if min_count_ok else "weak_count",
         "benchmark_lag_days": lag_days,
-        "candidate_report_count_total": int(selected[benchmark_field].notna().sum()) if benchmark_field in selected.columns else 0,
+        "candidate_report_count_total": matched_report_count,
         "candidate_broker_count_total": int(selected["analyst_entity"].nunique()),
         "selected_candidate_rows": int(len(selected)),
         "benchmark_value_count": matched_report_count,
@@ -175,11 +207,94 @@ def _aggregate_selected_candidates(
     }
 
 
+def _method_for_tier(method: str, tier: str) -> str:
+    if _normalize_match_tier(tier) == "multi_report_median":
+        return "pooled_median"
+    return _normalize_consensus_method(method)
+
+
+def _base_candidates_for_event(
+    group: pd.DataFrame,
+    event_date: pd.Timestamp,
+    freshness_days: int,
+) -> pd.DataFrame:
+    freshness = pd.Timedelta(days=freshness_days)
+    return group[
+        (group["report_date"] < event_date)
+        & (group["report_date"] >= event_date - freshness)
+    ].copy()
+
+
+def _nearest_period_subset(
+    candidates: pd.DataFrame,
+    event_period_end: pd.Timestamp,
+    benchmark_field: str,
+) -> pd.DataFrame:
+    if candidates.empty or pd.isna(event_period_end):
+        return pd.DataFrame(columns=candidates.columns)
+    valid = candidates[candidates[benchmark_field].notna()].copy() if benchmark_field in candidates.columns else candidates.copy()
+    if valid.empty:
+        return pd.DataFrame(columns=candidates.columns)
+    unique_periods = valid["period_end"].dropna().drop_duplicates()
+    if unique_periods.empty:
+        return pd.DataFrame(columns=candidates.columns)
+    distance = (unique_periods - event_period_end).abs()
+    nearest_period = unique_periods.loc[distance.sort_values().index].iloc[0]
+    return candidates[candidates["period_end"] == nearest_period].copy()
+
+
+def _latest_period_subset(candidates: pd.DataFrame, benchmark_field: str) -> pd.DataFrame:
+    if candidates.empty:
+        return pd.DataFrame(columns=candidates.columns)
+    valid = candidates[candidates[benchmark_field].notna()].copy() if benchmark_field in candidates.columns else candidates.copy()
+    if valid.empty:
+        return pd.DataFrame(columns=candidates.columns)
+    latest_period = valid["period_end"].dropna().max()
+    if pd.isna(latest_period):
+        latest_report_date = valid["report_date"].max()
+        return valid[valid["report_date"] == latest_report_date].copy()
+    return candidates[candidates["period_end"] == latest_period].copy()
+
+
+def _candidate_universe_for_tier(
+    event: pd.Series,
+    group: pd.DataFrame,
+    config: ProjectConfig,
+    tier: str,
+) -> pd.DataFrame:
+    benchmark_field = _consensus_column(config)
+    event_date = pd.to_datetime(event.get("event_trade_date"), errors="coerce")
+    event_period_end = pd.to_datetime(event.get("period_end"), errors="coerce")
+    base = _base_candidates_for_event(group=group, event_date=event_date, freshness_days=config.report_freshness_days)
+    if base.empty:
+        return base
+
+    tier = _normalize_match_tier(tier)
+    if tier == "strict_same_quarter":
+        return base[base["period_end"] == event_period_end].copy()
+
+    if tier == "same_fiscal_year_nearest_valid":
+        if pd.isna(event_period_end):
+            return pd.DataFrame(columns=base.columns)
+        event_year = event_period_end.year
+        same_year = base[
+            base.get("fiscal_year", pd.Series(index=base.index, dtype=float)).eq(event_year)
+            & base["period_end"].ne(event_period_end)
+        ].copy()
+        return _nearest_period_subset(same_year, event_period_end=event_period_end, benchmark_field=benchmark_field)
+
+    if tier == "latest_valid_pre_event":
+        return _latest_period_subset(base, benchmark_field=benchmark_field)
+
+    return base[base[benchmark_field].notna()].copy() if benchmark_field in base.columns else base.copy()
+
+
 def _candidate_rows_for_event(
     event: pd.Series,
     candidates: pd.DataFrame,
     selected_index: Iterable[object],
     benchmark_method: str,
+    match_tier: str,
 ) -> pd.DataFrame:
     if candidates.empty:
         return pd.DataFrame()
@@ -189,6 +304,8 @@ def _candidate_rows_for_event(
     out["event_trade_date"] = pd.to_datetime(event.get("event_trade_date"))
     out["period_end"] = pd.to_datetime(event.get("period_end"))
     out["benchmark_method"] = benchmark_method
+    out["report_rc_match_tier"] = _normalize_match_tier(match_tier)
+    out["report_rc_match_tier_group"] = _tier_group(match_tier)
     out["is_selected_for_benchmark"] = out.index.isin(list(selected_index))
     latest_date = out["report_date"].max()
     out["is_latest_snapshot"] = out["report_date"] == latest_date
@@ -202,6 +319,8 @@ def _candidate_rows_for_event(
         "event_trade_date",
         "period_end",
         "benchmark_method",
+        "report_rc_match_tier",
+        "report_rc_match_tier_group",
         "report_date",
         "lag_days",
         "analyst_entity",
@@ -225,82 +344,82 @@ def match_expectations_to_events(
     events_df: pd.DataFrame,
     report_rc_df: pd.DataFrame,
     config: ProjectConfig,
+    selected_tier: str = "strict_same_quarter",
 ) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    selected_tier = _normalize_match_tier(selected_tier)
     if events_df.empty:
         return events_df.copy(), pd.DataFrame(), pd.DataFrame()
+
+    default_method = _normalize_consensus_method(config.consensus_method)
     if report_rc_df.empty:
         out = events_df.copy()
-        defaults = {
-            "benchmark_method": _normalize_consensus_method(config.consensus_method),
-            "benchmark_value_field": _consensus_column(config),
-            "expectation_source": "missing_report_rc",
-            "matched_report_date": pd.NaT,
-            "matched_report_count": 0,
-            "matched_broker_count": 0,
-            "report_rc_match_quality": "missing",
-            "benchmark_lag_days": np.nan,
-            "candidate_report_count_total": 0,
-            "candidate_broker_count_total": 0,
-            "selected_candidate_rows": 0,
-            "benchmark_value_count": 0,
-            "expected_np": np.nan,
-            "expected_eps": np.nan,
-            "expected_target_price": np.nan,
-            "expected_rating": np.nan,
-            "text_over_expectation_fraction": np.nan,
-            "benchmark_has_np": 0,
-            "benchmark_has_eps": 0,
-        }
+        defaults = _default_match_values(config=config, method=default_method, tier=selected_tier)
         for col, value in defaults.items():
             out[col] = value
-        return out, pd.DataFrame([{"event_id": row.get("event_id"), **defaults} for _, row in events_df.iterrows()]), pd.DataFrame()
+        audit_rows = []
+        for _, row in events_df.iterrows():
+            for tier in MATCH_TIERS:
+                audit_rows.append({"event_id": row.get("event_id"), **_default_match_values(config, default_method, tier)})
+        return out, pd.DataFrame(audit_rows), pd.DataFrame()
 
     report_groups = _prepare_report_groups(report_rc_df)
     matched_rows: list[dict[str, object]] = []
     audit_rows: list[dict[str, object]] = []
     candidate_frames: list[pd.DataFrame] = []
-    freshness = pd.Timedelta(days=config.report_freshness_days)
-    benchmark_method = _normalize_consensus_method(config.consensus_method)
 
     for _, event in events_df.iterrows():
-        event_date = pd.to_datetime(event["event_trade_date"])
-        period_end = pd.to_datetime(event["period_end"])
-        group = report_groups.get((event["ts_code"], period_end))
-        if group is None or group.empty:
-            candidates = pd.DataFrame(columns=report_rc_df.columns)
-        else:
-            candidates = group[
-                (group["report_date"] < event_date)
-                & (group["report_date"] >= event_date - freshness)
-            ].copy()
+        event_date = pd.to_datetime(event.get("event_trade_date"), errors="coerce")
+        period_end = pd.to_datetime(event.get("period_end"), errors="coerce")
+        group = report_groups.get(event.get("ts_code"))
+        tier_matches: dict[str, dict[str, object]] = {}
 
-        if candidates.empty:
-            selected = candidates.copy()
-            match = _aggregate_selected_candidates(selected, event_date=event_date, config=config, method=benchmark_method)
-            match["candidate_report_count_total"] = 0
-            match["candidate_broker_count_total"] = 0
-        else:
-            candidates["lag_days"] = (event_date - candidates["report_date"]).dt.days
-            selected = _select_consensus_candidates(candidates, benchmark_method)
-            match = _aggregate_selected_candidates(selected, event_date=event_date, config=config, method=benchmark_method)
-            benchmark_field = _consensus_column(config)
-            match["candidate_report_count_total"] = int(candidates[benchmark_field].notna().sum()) if benchmark_field in candidates.columns else 0
-            match["candidate_broker_count_total"] = int(candidates.loc[candidates[benchmark_field].notna(), "analyst_entity"].nunique()) if benchmark_field in candidates.columns else 0
-            candidate_frames.append(_candidate_rows_for_event(event, candidates, selected.index, benchmark_method))
+        for tier in MATCH_TIERS:
+            method = _method_for_tier(default_method, tier)
+            if group is None or group.empty:
+                candidates = pd.DataFrame(columns=report_rc_df.columns)
+            else:
+                candidates = _candidate_universe_for_tier(event=event, group=group, config=config, tier=tier)
+
+            if candidates.empty:
+                selected = candidates.copy()
+                match = _aggregate_selected_candidates(
+                    selected=selected,
+                    event_date=event_date,
+                    config=config,
+                    method=method,
+                    tier=tier,
+                )
+            else:
+                candidates = candidates.copy()
+                candidates["lag_days"] = (event_date - candidates["report_date"]).dt.days
+                selected = _select_consensus_candidates(candidates, method)
+                match = _aggregate_selected_candidates(
+                    selected=selected,
+                    event_date=event_date,
+                    config=config,
+                    method=method,
+                    tier=tier,
+                )
+                benchmark_field = _consensus_column(config)
+                match["candidate_report_count_total"] = int(candidates[benchmark_field].notna().sum()) if benchmark_field in candidates.columns else 0
+                match["candidate_broker_count_total"] = int(candidates.loc[candidates[benchmark_field].notna(), "analyst_entity"].nunique()) if benchmark_field in candidates.columns else 0
+                candidate_frames.append(_candidate_rows_for_event(event, candidates, selected.index, match["benchmark_method"], tier))
+
+            tier_matches[tier] = match
+            audit_rows.append(
+                {
+                    "event_id": event.get("event_id"),
+                    "ts_code": event.get("ts_code"),
+                    "event_type": event.get("event_type"),
+                    "event_trade_date": event_date,
+                    "period_end": period_end,
+                    **match,
+                }
+            )
 
         row = event.to_dict()
-        row.update(match)
+        row.update(tier_matches[selected_tier])
         matched_rows.append(row)
-        audit_rows.append(
-            {
-                "event_id": event.get("event_id"),
-                "ts_code": event["ts_code"],
-                "event_type": event.get("event_type"),
-                "event_trade_date": event_date,
-                "period_end": period_end,
-                **match,
-            }
-        )
 
     matched_df = pd.DataFrame(matched_rows)
     audit_df = pd.DataFrame(audit_rows)

@@ -17,48 +17,48 @@
 Good afternoon everyone. We are presenting our FIN803 Corporate Finance project on earnings surprise, valuation adjustment, and market efficiency in China A-share stocks.
 
 \section*{Slide 2: Motivation}
-Our motivation is to move away from a weak internal proxy design and toward a more defensible earnings-surprise framework. The key question is whether cleaner earnings-related surprises, measured relative to sell-side expectations, predict short-run abnormal return.
+Our motivation is to move away from a weak internal proxy design and toward a more defensible Tushare-first diagnostic baseline. The key question is not just whether some pooled specification is significant, but how inference changes when expectation measurement becomes cleaner and match quality is made explicit.
 
 \section*{Slide 3: Research Question}
-Our research question is now framed even more carefully. We ask not only whether earnings-related events generate short-run abnormal return relative to stricter pre-event expectations, but also whether Tushare-only expectation data are strong enough to support a credible main headline.
+Our research question is now framed more narrowly. We ask whether earnings-related events generate short-run abnormal return relative to stricter pre-event sell-side expectations, and how much that answer changes across raw, percent, and standardized surprise measures and across explicit matching tiers.
 
-\section*{Slide 4: Diagnostic Result in One Slide}
-The short answer is no, not yet. In the current diagnostic run, the pooled Tushare-first headline specification is CAR5 on main\_surprise\_std. The coefficient is about minus 0.0030 and the p-value is 0.4967. The filtered Tushare-first panel has 4314 rows, but only 583 rows have usable strict standardized surprise. So the main pooled headline does not survive.
+\section*{Slide 4: New Headline Baseline}
+The default headline sample is no longer the pooled all-event standardized specification. The default baseline is now preannouncement-only with strict same-quarter matching. We compare CAR3, CAR5, CAR10, and CAR20, and we compare raw, percent, and standardized surprise in parallel.
 
-\section*{Slide 5: Strongest Surviving Subset}
-We then ran a fixed diagnostic ablation grid rather than searching mechanically for significance. The strongest surviving subset is latest\_per\_analyst plus preannouncement\_only plus raw surprise plus CAR10. But even that subset has only 101 regression observations and a p-value of about 0.181. So it is suggestive, not decisive.
+\section*{Slide 5: Why We Narrowed the Headline}
+We made this change because the broader pooled design mixes economically different event families and can hide how much the conclusion depends on benchmark construction. Preannouncements are cleaner as a default headline sample, and standardization should be a robustness check rather than the only lens.
 
-\section*{Slide 6: Tushare-first Framework}
+\section*{Slide 6: Matching Ladder}
+We also rebuilt the expectation-matching logic into an explicit ladder. The tiers are strict same quarter, same fiscal year nearest valid, latest valid pre-event, and multi-report median. The important point is that we no longer silently mix them. The strict tier is the headline baseline, and the relaxed tiers are supplementary diagnostics.
+
+\section*{Slide 7: Focused Diagnostic Package}
+The repository now produces side-by-side tables for preannouncement-only versus all events, raw versus percent versus standardized surprise, CAR3 through CAR20, strict versus relaxed matching, and minimum analyst coverage thresholds. That package is meant to show how inference moves when identification becomes cleaner or looser.
+
+\section*{Slide 8: Tushare-first Framework}
 The framework itself is still Tushare-first. We use report\_rc for sell-side expectations, forecast and forecast\_vip for management preannouncements, express and express\_vip for earnings express releases, fina\_indicator for formal realized data, and daily\_basic for market controls and liquidity filters.
 
-\section*{Slide 7: Why the Old Proxy Was Weak}
-The older guidance-only design inferred expectations from prior guidance, firm history, and industry heuristics. That is weaker than a direct sell-side benchmark and much harder to interpret as a clean expectation measure. So the old path is now retained only as legacy fallback, not as the headline design.
+\section*{Slide 9: Why the Old Proxy Was Weak}
+The older guidance-only design inferred expectations from prior guidance, firm history, and industry heuristics. That is weaker than a direct sell-side benchmark and much harder to interpret cleanly. So the old path remains only as a legacy comparison, not as the default headline design.
 
-\section*{Slide 8: Ranked Failure Diagnosis}
-The diagnostics point to four major failure channels. First, usable strict signal coverage collapses relative to the full event universe. Second, analyst coverage is often too thin, so the benchmark itself is noisy. Third, pooling preannouncements, revisions, express releases, and formal releases washes out heterogeneous responses. Fourth, report\_rc does not always map cleanly into realized outcome fields, especially for formal releases.
+\section*{Slide 10: How to Read the Current Repo}
+The current repository should be read as a diagnostic baseline, not as a strong positive result. Its main value is showing how event definition, surprise scaling, matching quality, and analyst coverage jointly shape the empirical conclusion.
 
-\section*{Slide 9: Controls and Filters}
-We still upgraded the control module substantially. From daily\_basic we collect total market value, float market value, turnover, PE, PB, and PS. We also audit tradability filters such as ST exclusion, minimum listing history, valid event-day return, and positive event-day volume. These filters matter, but they do not rescue the pooled headline.
+\section*{Slide 11: What Still Survives}
+What still survives is narrow. The cleanest default sample is preannouncement-only. The cleanest default match tier is strict same-quarter. Raw surprise may still be the best main display specification if it remains the strongest surviving Tushare-only signal, while percent and standardized surprise provide parallel checks.
 
-\section*{Slide 10: Regression Design}
-Our preferred regression still explains CAR over multiple windows using surprise, valuation and liquidity controls, industry fixed effects, year-quarter fixed effects, and event-type fixed effects, with firm-clustered standard errors. But after the diagnostic run, CAR5 on pooled standardized surprise is no longer treated as a successful headline result. It is now treated as the benchmark null we need to explain.
-
-\section*{Slide 11: What Changed in the Code}
-On the code side, we added explicit diagnostic outputs: benchmark-quality summaries, timing-alignment summaries, coverage funnels, ablation tables, strongest-surviving-spec outputs, and a final recommendation note. So the codebase now supports not only estimation, but also disciplined diagnosis of why the pooled result is weak.
-
-\section*{Slide 12: What Still Survives}
-The main pattern that still survives is narrow. Preannouncements look cleaner than the pooled all-event sample. Latest-per-analyst benchmark construction looks cleaner than the latest-snapshot benchmark. Raw surprise also performs better than the current pooled standardized headline in the surviving subset. But again, the surviving evidence is still too weak to support a strong claim.
+\section*{Slide 12: Why We Stay Cautious}
+That surviving evidence should still be described as diagnostic rather than decisive. The current Tushare-only sample can be informative, but it does not justify a strong headline claim on its own. We should not overstate what the data can currently support.
 
 \section*{Slide 13: Recommendation}
-So our recommendation is B. Keep Tushare as the baseline research framework, but add stronger external analyst-expectation data later if the goal is a credible main empirical headline. In other words, the architecture is good enough to keep, but the expectation data are not yet strong enough to carry the headline by themselves.
+So our recommendation remains cautious. Keep Tushare as the baseline framework and use the repository to diagnose how inference changes with signal scaling and match quality. If the goal is a stronger final empirical headline, stronger external analyst-expectation data are still the credible next step.
 
 \section*{Slide 14: Legacy Path as Comparison}
 The old guidance-only path is still useful as a comparison benchmark and for reproducibility. But it should not be presented as the main contribution anymore, because the expectation measurement is weaker and the interpretation is less clean.
 
 \section*{Slide 15: Final Conclusion}
-Our final conclusion is therefore narrower and more honest. A Tushare-first earnings-surprise framework is clearly more credible than the previous guidance-only proxy design. But the current Tushare-only matched sample is too thin for a strong main conclusion. The repository’s main contribution is now a cleaner and auditable research baseline plus a credible diagnostic map of what is failing.
+Our final conclusion is narrower and more honest. A Tushare-first earnings-surprise framework is more credible than the previous weak-proxy design. But the main contribution of the repository right now is a cleaner and auditable diagnostic baseline showing how expectation measurement and match quality affect inference.
 
 \section*{Slide 16: Next Step}
-The next step is not cosmetic tuning. The next step is to keep the Tushare event architecture, preserve the diagnostic outputs, and add stronger external analyst-expectation data if we want a headline result that is both stronger and still credible.
+The next step is not to redesign the framework again. The next step is to keep the Tushare event architecture, preserve the focused diagnostic outputs, and only add stronger external expectation data if we want a stronger final headline.
 
 \end{document}
