@@ -1,2 +1,1 @@
-﻿spec_id,benchmark_method,event_universe,signal_scale,analyst_min,filter_profile,car_window,signal_col,event_count,usable_signal_count,strict_match_share,median_broker_count,median_benchmark_lag_days,event_type_composition,coef,t_stat,p_value,regression_nobs,r2,usable,benchmark_rank,event_rank
-spec_049,latest_per_analyst,preannouncement_only,raw,1,restrictive,CAR10,main_surprise_raw,155,155,1.0,3.0,56.0,preannouncement:155,-1.652922510901637e-07,-1.3369152143913323,0.1812503139720767,101,0.4644991718103739,True,0,0
+﻿

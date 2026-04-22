@@ -1,6 +1,1 @@
-﻿rank,failure_reason,why_it_weakens_signal,observed_metric,likely_importance,fixability
-1,poor_coverage_of_usable_surprise_rows,The regression can only use a small subset of the filtered panel once benchmark-matched standardized surprise is required.,usable standardized surprise rows = 1205 / 9354,very_high,tushare_only
-2,insufficient_analyst_coverage_per_event,Thin broker coverage makes the expectation benchmark noisy and unstable across events.,strict report_rc matches = 1207 / 9354,high,mixed
-3,mixed_event_types,"Pooling preannouncements, revisions, express releases, and formal releases can average away economically different responses.","event types observed = express, formal_release, preannouncement, revision",high,tushare_only
-4,weak_or_misaligned_expectation_benchmark,"report_rc expectations may not line up cleanly with event-level realized NP/EPS fields, especially for formal releases.",median benchmark lag days = 75.0,high,external_required
-5,standardization_and_filtering_choices,Family-level standardization and restrictive turnover filters may remove or compress valid short-window signal.,restrictive funnel terminal count = 583,medium,tushare_only
+﻿

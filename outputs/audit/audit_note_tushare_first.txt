@@ -1,9 +1,1 @@
-Tushare-first audit note (tushare_first)
-Sample size: 4314
-Diagnostic base panel size: 9354
-Event types: express, formal_release, preannouncement, revision
-Strict report_rc matches: 583 / 4314
-Usable standardized surprise rows: 583 / 4314
-Headline specification: CAR5 on standardized surprise with controls, industry FE, year-quarter FE, event-type FE, and firm-clustered SE.
-Diagnostic recommendation: B
-Keep Tushare as the baseline but add stronger external analyst-expectation data for a credible main headline.
+No valid headline events after filters.

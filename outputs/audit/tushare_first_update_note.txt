@@ -1,4 +1,4 @@
 Tushare-first pipeline update note
-Framework mode: both
+Framework mode: tushare_first
 The preferred path now uses report_rc for sell-side expectations, forecast/express/fina_indicator for event types, and daily_basic for controls.
 Legacy guidance-only outputs remain runnable as fallback and comparison.
