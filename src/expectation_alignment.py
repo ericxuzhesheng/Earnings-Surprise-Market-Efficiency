@@ -168,18 +168,32 @@ def _prepare_expectation_source(
     for col in ["org_name", "author_name", "rating"]:
         if col not in out.columns:
             out[col] = np.nan
-    out["source_name"] = out.get("source_name", source_name).fillna(source_name)
-    out["source_tier"] = out.get("source_tier", source_tier).fillna(source_tier)
-    out["expectation_tier"] = out.get("expectation_tier", source_tier).fillna(source_tier)
-    out["is_official_source"] = pd.to_numeric(
-        out.get("is_official_source", is_official_source), errors="coerce"
-    ).fillna(is_official_source).astype(int)
-    out["is_aggregated_source"] = pd.to_numeric(
-        out.get("is_aggregated_source", is_aggregated_source), errors="coerce"
-    ).fillna(is_aggregated_source).astype(int)
-    out["is_text_proxy"] = pd.to_numeric(
-        out.get("is_text_proxy", is_text_proxy), errors="coerce"
-    ).fillna(is_text_proxy).astype(int)
+    
+    # Handle potentially missing source columns using Series instead of scalars to avoid 'str' object has no attribute 'fillna'
+    if "source_name" not in out.columns:
+        out["source_name"] = source_name
+    else:
+        out["source_name"] = out["source_name"].fillna(source_name)
+        
+    if "source_tier" not in out.columns:
+        out["source_tier"] = source_tier
+    else:
+        out["source_tier"] = out["source_tier"].fillna(source_tier)
+        
+    if "expectation_tier" not in out.columns:
+        out["expectation_tier"] = source_tier
+    else:
+        out["expectation_tier"] = out["expectation_tier"].fillna(source_tier)
+
+    # Handle numeric/boolean flags safely
+    def _get_flag_series(col_name, default_val):
+        if col_name in out.columns:
+            return pd.to_numeric(out[col_name], errors="coerce").fillna(default_val).astype(int)
+        return pd.Series(default_val, index=out.index).astype(int)
+
+    out["is_official_source"] = _get_flag_series("is_official_source", is_official_source)
+    out["is_aggregated_source"] = _get_flag_series("is_aggregated_source", is_aggregated_source)
+    out["is_text_proxy"] = _get_flag_series("is_text_proxy", is_text_proxy)
     return out[EXPECTED_SCHEMA_COLUMNS].copy()
 
 

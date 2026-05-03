@@ -32,9 +32,14 @@
 
 ### 如何复现 (How to Reproduce)
 1. **安装依赖**: `pip install -r requirements.txt`
-2. **设置 Token**: `export TUSHARE_TOKEN="your_token_here"`
-3. **运行冒烟测试**: `python scripts/run_smoke_test.py`
-4. **运行全量流程**: `python main.py`
+2. **设置 Token**: 
+   - 复制模板: `cp .env.example .env`
+   - 在 `.env` 中填写您的 `TUSHARE_TOKEN`
+3. **运行验证流程**:
+   - 冒烟测试: `python scripts/run_smoke_test.py`
+   - 全量实证流程: `python scripts/run_full_validation.py`
+   - 更新 README 结果: `python scripts/update_readme_results.py`
+4. **运行测试**: `pytest`
 
 ### 数据与研究局限
 - **Tushare 权限**: 数据的深度和广度受账户积分限制。
@@ -71,9 +76,14 @@ This project provides a **diagnostic framework** for China A-share earnings surp
 
 ### How to Reproduce
 1. **Dependencies**: `pip install -r requirements.txt`
-2. **Token**: `export TUSHARE_TOKEN="your_token_here"`
-3. **Smoke Test**: `python scripts/run_smoke_test.py`
-4. **Full Pipeline**: `python main.py`
+2. **Token Setup**:
+   - Copy template: `cp .env.example .env`
+   - Fill in your `TUSHARE_TOKEN` in `.env`
+3. **Validation Workflow**:
+   - Smoke Test: `python scripts/run_smoke_test.py`
+   - Full Empirical Pipeline: `python scripts/run_full_validation.py`
+   - Update README Results: `python scripts/update_readme_results.py`
+4. **Run Tests**: `pytest`
 
 ### Limitations
 - **Data Access**: Coverage depends on Tushare Pro permission tiers.

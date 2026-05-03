@@ -28,3 +28,19 @@ def test_config_creation():
     from src.config import ProjectConfig
     config = ProjectConfig()
     assert config is not None
+
+def test_run_full_validation_no_token(monkeypatch):
+    from scripts.run_full_validation import run_full_validation
+    import pytest
+    monkeypatch.setenv("TUSHARE_TOKEN", "")
+    with pytest.raises(SystemExit) as e:
+        run_full_validation()
+    assert e.value.code == 1
+
+def test_update_readme_no_files(tmp_path, monkeypatch):
+    from scripts.update_readme_results import update_readme_results
+    # Mock project root to a temp directory
+    monkeypatch.setattr("scripts.update_readme_results.Path.parent", tmp_path)
+    # Should exit silently if files missing
+    update_readme_results()
+    assert True

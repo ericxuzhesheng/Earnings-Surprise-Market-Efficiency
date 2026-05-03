@@ -9,6 +9,8 @@ data_processed/
 logs/
 .claude/
 .env
+*.env
+.env.local
 tokens/
 TUSHARE_TOKEN*
 
