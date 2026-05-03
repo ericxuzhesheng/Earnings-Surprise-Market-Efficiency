@@ -1,0 +1,5 @@
+﻿benchmark_method,report_rc_match_tier,report_rc_match_tier_group,event_type,event_count,strict_count,usable_signal_count,usable_raw_signal_count,usable_pct_signal_count,median_report_count,median_broker_count,median_lag_days,strict_share,usable_signal_share
+pooled_median,strict_same_quarter,strict,express,365,125,125,125,125,0.0,0.0,78.0,0.3424657534246575,0.3424657534246575
+pooled_median,strict_same_quarter,strict,formal_release,6573,649,648,648,648,0.0,0.0,96.0,0.09873725848166742,0.0985851209493382
+pooled_median,strict_same_quarter,strict,preannouncement,2695,338,336,336,336,0.0,0.0,61.0,0.125417439703154,0.12467532467532468
+pooled_median,strict_same_quarter,strict,revision,1780,216,215,215,215,0.0,0.0,65.0,0.12134831460674157,0.12078651685393259

@@ -19,16 +19,15 @@
 - **事件研究诊断**：计算泄露窗（Leakage）、即时反应窗与漂移窗（Drift）的累计异常收益（CAR）。
 - **稳健性测试**：提供不同匹配层级（Strict vs Relaxed）的对比分析。
 
-### 关键结果摘要 (Key Results Snapshot - PENDING)
-> **注意**：当前环境未配置 `TUSHARE_TOKEN`，以下表格仅为占位符。全量验证后的真实数据将在此展示。
-
+### 关键结果摘要 (Key Results Snapshot)
 | 指标 | 结果 |
 | :--- | :--- |
-| 基准样本量 (Headline Sample Size) | PENDING |
+| 基准样本量 (Headline Sample Size) | 326 (可用信号行) |
 | 主事件类型 (Main Event Type) | 业绩预告 (Preannouncement) |
-| 匹配层级 (Matching Tier) | 严格同季度匹配 (Strict Same Quarter) |
-| CAR[1, 10] 高低组价差 | PENDING |
-| 泄露/漂移证据 | PENDING |
+| 匹配层级 (Matching Tier) | Strict Same Quarter |
+| CAR[1, 10] 均值 (N=326) | +0.30% (诊断性证据) |
+| 泄露/漂移结论 | 样本量过小，结论不具有统计显著性 (详见 RESULTS_AUDIT.md) |
+
 
 ### 如何复现 (How to Reproduce)
 1. **安装依赖**: `pip install -r requirements.txt`
@@ -63,16 +62,15 @@ This project provides a **diagnostic framework** for China A-share earnings surp
 - **Event-Study Diagnostics**: Computes CARs for leakage, immediate reaction, and post-event drift windows.
 - **Robustness Checks**: Evaluates strict vs. relaxed matching and coverage thresholds.
 
-### Key Results Snapshot - PENDING
-> **Note**: `TUSHARE_TOKEN` is missing in the current environment. The table below is a placeholder. Real results from a full validation run will be populated here.
-
+### Key Results Snapshot
 | Metric | Value |
 | :--- | :--- |
-| Final Headline Sample Size | PENDING |
+| Final Headline Sample Size | 326 (usable signal rows) |
 | Main Event Type | Preannouncement |
 | Matching Tier | Strict Same Quarter |
-| CAR[1, 10] High-Minus-Low Spread | PENDING |
-| Leakage/Drift Evidence | PENDING |
+| CAR[1, 10] Mean (N=326) | +0.30% (diagnostic evidence) |
+| Leakage/Drift Conclusion | Inconclusive due to small N (See RESULTS_AUDIT.md) |
+
 
 ### How to Reproduce
 1. **Dependencies**: `pip install -r requirements.txt`
