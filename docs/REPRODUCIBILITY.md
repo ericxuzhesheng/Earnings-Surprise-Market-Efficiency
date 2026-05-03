@@ -14,10 +14,15 @@
    export TUSHARE_TOKEN="your_token_here" # Windows: set TUSHARE_TOKEN=your_token_here
    ```
 
-## Running the Pipeline
-- **Full Run**: `python main.py`
-- **Smoke Test**: `python scripts/run_smoke_test.py` (No token required, uses fixtures).
-- **Unit Tests**: `pytest` (If installed).
+## Validation Status
+- **Last Validation Run**: 2026-05-03
+- **Environment**: win32
+- **Tushare Token**: Missing (Validation run used fixture data only).
+- **Status**: 
+    - `py_compile`: PASSED
+    - `scripts/run_smoke_test.py`: PASSED (Fixture data)
+    - `pytest`: PASSED (2 tests)
+    - `main.py`: NOT RUN (Requires TUSHARE_TOKEN)
 
 ## Expected Outputs
 - CSV tables in `outputs/tables/`.
