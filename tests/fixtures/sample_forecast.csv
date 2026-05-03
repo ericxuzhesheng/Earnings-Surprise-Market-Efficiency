@@ -1,0 +1,4 @@
+ts_code,ann_date,end_date,p_change_min,p_change_max,net_profit_min,net_profit_max,update_flag
+000001.SZ,20230105,20221231,10,20,950,1050,0
+000001.SZ,20230405,20230331,5,15,1050,1150,0
+600000.SH,20230110,20221231,-5,5,1900,2100,0

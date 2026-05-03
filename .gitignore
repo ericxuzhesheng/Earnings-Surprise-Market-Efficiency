@@ -1,15 +1,33 @@
-data_processed/event_abnormal_return_paths.csv
-src/__pycache__/
-*.pyc
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Data and Cache
+data_raw/
+data_processed/
+logs/
+.claude/
+.env
+tokens/
+TUSHARE_TOKEN*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# TeX
 *.aux
 *.log
 *.nav
 *.out
 *.snm
 *.toc
-presentation.aux
-presentation.log
-presentation.nav
-presentation.out
-presentation.snm
-presentation.toc
+*.pdf
+*.tex
+!abstract.tex
+!presentation.tex
+!presentation_speech_script.tex
+!abstract.pdf
+!presentation.pdf
+!presentation_speech_script.pdf

@@ -30,6 +30,11 @@ class ProjectConfig:
             if x.strip()
         )
     )
+    # New diagnostic windows
+    leakage_windows: tuple[tuple[int, int], ...] = (( -10, -1), (-5, -1))
+    immediate_windows: tuple[tuple[int, int], ...] = ((0, 1), (0, 3), (0, 5))
+    drift_windows: tuple[tuple[int, int], ...] = ((1, 10), (1, 20), (1, 60))
+
     quantile_groups: int = int(os.getenv("QUANTILE_GROUPS", "5"))
     min_obs_regression: int = int(os.getenv("MIN_OBS_REGRESSION", "30"))
     winsor_lower: float = float(os.getenv("WINSOR_LOWER", "0.01"))

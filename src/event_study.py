@@ -37,6 +37,8 @@ def _get_event_window_abnormal_returns(
     stock_df: pd.DataFrame,
     market_df: pd.DataFrame,
     event_date: pd.Timestamp,
+    pre_window: int = 10,
+    post_window: int = 60,
 ) -> pd.DataFrame:
     merged = stock_df[["trade_date", "ret"]].merge(
         market_df[["trade_date", "mkt_ret"]], on="trade_date", how="inner"
@@ -44,12 +46,25 @@ def _get_event_window_abnormal_returns(
     merged = merged.sort_values("trade_date").dropna(subset=["ret", "mkt_ret"])
     merged["abret"] = merged["ret"] - merged["mkt_ret"]
 
-    # Post-announcement window starts at the next trading day after ann_date.
-    post = merged[merged["trade_date"] > event_date].copy().reset_index(drop=True)
-    if post.empty:
-        return post
-    post["event_day"] = np.arange(1, len(post) + 1)
-    return post
+    # Identify the event trading day (the day of announcement or the next available trading day)
+    event_trading_days = merged[merged["trade_date"] >= event_date]
+    if event_trading_days.empty:
+        return pd.DataFrame()
+    
+    event_idx = event_trading_days.index[0]
+    
+    # Get relative position
+    # Find numeric index in the full sorted merged dataframe
+    merged_reset = merged.reset_index(drop=True)
+    numeric_event_idx = merged_reset[merged_reset["trade_date"] >= event_date].index[0]
+    
+    start_idx = max(0, numeric_event_idx - pre_window)
+    end_idx = min(len(merged_reset), numeric_event_idx + post_window + 1)
+    
+    window_df = merged_reset.iloc[start_idx:end_idx].copy()
+    window_df["event_day"] = np.arange(start_idx, end_idx) - numeric_event_idx
+    
+    return window_df
 
 
 def build_event_level_dataset(
@@ -77,8 +92,8 @@ def build_event_level_dataset(
             continue
         stock_df = stock_df.dropna(subset=["trade_date", "ret"]).sort_values("trade_date")
 
-        post = _get_event_window_abnormal_returns(stock_df, market, ann_date)
-        if post.empty or post["event_day"].max() < max(config.event_windows):
+        post = _get_event_window_abnormal_returns(stock_df, market, ann_date, pre_window=10, post_window=60)
+        if post.empty:
             continue
 
         beta = _compute_beta(
@@ -90,8 +105,20 @@ def build_event_level_dataset(
         )
 
         car_values = {}
+        # 1. Legacy windows (CAR1..CAR60) - mapped to CAR[1, w]
         for w in config.event_windows:
-            car_values[f"CAR{w}"] = post.loc[post["event_day"] <= w, "abret"].sum()
+            car_values[f"CAR{w}"] = post.loc[(post["event_day"] >= 1) & (post["event_day"] <= w), "abret"].sum()
+
+        # 2. New diagnostic windows
+        for start, end in config.leakage_windows:
+            car_values[f"CAR_{start}_{end}"] = post.loc[(post["event_day"] >= start) & (post["event_day"] <= end), "abret"].sum()
+        for start, end in config.immediate_windows:
+            car_values[f"CAR_{start}_{end}"] = post.loc[(post["event_day"] >= start) & (post["event_day"] <= end), "abret"].sum()
+        for start, end in config.drift_windows:
+            car_values[f"CAR_{start}_{end}"] = post.loc[(post["event_day"] >= start) & (post["event_day"] <= end), "abret"].sum()
+
+        # TODO: Add industry-adjusted return model if industry benchmark data is available
+        # if industry_market_df is not None: ...
 
         # Event-date characteristic proxy: nearest prior trading day from daily_basic.
         size = np.nan

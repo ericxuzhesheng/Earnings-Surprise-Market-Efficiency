@@ -448,6 +448,47 @@ def save_tushare_outputs(
     failure_path = outputs_audit_dir / f"failure_analysis_{scenario_name}.csv"
     ablation_catalog_path = outputs_tables_dir / f"ablation_catalog_{scenario_name}.csv"
     ablation_results_path = outputs_tables_dir / f"ablation_results_{scenario_name}.csv"
+
+    # New standardized diagnostic filenames (Task D)
+    sample_construction_path = outputs_tables_dir / "sample_construction.csv"
+    headline_signal_comparison_path = outputs_tables_dir / "headline_signal_comparison.csv"
+    event_window_car_summary_path = outputs_tables_dir / "event_window_car_summary.csv"
+    leakage_drift_diagnostics_path = outputs_tables_dir / "leakage_drift_diagnostics.csv"
+    matching_quality_diagnostics_path = outputs_tables_dir / "matching_quality_diagnostics.csv"
+    surprise_distribution_summary_path = outputs_tables_dir / "surprise_distribution_summary.csv"
+    placebo_test_summary_path = outputs_tables_dir / "placebo_test_summary.csv"
+    robustness_by_subsample_path = outputs_tables_dir / "robustness_by_subsample.csv"
+    regression_headline_summary_path = outputs_tables_dir / "regression_headline_summary.csv"
+
+    # 1. Sample Construction (mapped from funnel_df)
+    if filter_funnel_df is not None:
+        save_csv(filter_funnel_df, sample_construction_path)
+
+    # 2. Matching Quality
+    if benchmark_quality_df is not None:
+        save_csv(benchmark_quality_df, matching_quality_diagnostics_path)
+
+    # 3. Surprise Distribution
+    if event_df is not None and not event_df.empty:
+        surprise_cols = [c for c in ["main_surprise_raw", "main_surprise_pct", "main_surprise_std"] if c in event_df.columns]
+        if surprise_cols:
+            save_csv(event_df[surprise_cols].describe(), surprise_distribution_summary_path)
+
+    # 4. Event Window Summary (CAR averages)
+    if event_df is not None and not event_df.empty:
+        car_cols = [c for c in event_df.columns if c.startswith("CAR")]
+        if car_cols:
+            save_csv(event_df[car_cols].mean().to_frame("mean_car"), event_window_car_summary_path)
+            
+            leakage_cols = [c for c in car_cols if "_-" in c or c.endswith("_-1")]
+            drift_cols = [c for c in car_cols if c.startswith("CAR_1_") or (c.startswith("CAR") and not c.startswith("CAR_") and int(c.replace("CAR", "")) > 1)]
+            diag_df = event_df[leakage_cols + drift_cols].mean().to_frame("mean_car")
+            save_csv(diag_df, leakage_drift_diagnostics_path)
+
+    # 5. Headline Signal Comparison
+    if ablation_results_df is not None:
+        save_csv(ablation_results_df, headline_signal_comparison_path)
+        save_csv(ablation_results_df, regression_headline_summary_path)
     strongest_spec_path = outputs_tables_dir / f"strongest_surviving_spec_{scenario_name}.csv"
     headline_compare_path = outputs_tables_dir / f"headline_signal_comparison_{scenario_name}.csv"
     match_regression_path = outputs_tables_dir / f"regression_results_by_match_tier_{scenario_name}.csv"
@@ -966,6 +1007,47 @@ def save_tushare_outputs(
     failure_path = outputs_audit_dir / f"failure_analysis_{scenario_name}.csv"
     ablation_catalog_path = outputs_tables_dir / f"ablation_catalog_{scenario_name}.csv"
     ablation_results_path = outputs_tables_dir / f"ablation_results_{scenario_name}.csv"
+
+    # New standardized diagnostic filenames (Task D)
+    sample_construction_path = outputs_tables_dir / "sample_construction.csv"
+    headline_signal_comparison_path = outputs_tables_dir / "headline_signal_comparison.csv"
+    event_window_car_summary_path = outputs_tables_dir / "event_window_car_summary.csv"
+    leakage_drift_diagnostics_path = outputs_tables_dir / "leakage_drift_diagnostics.csv"
+    matching_quality_diagnostics_path = outputs_tables_dir / "matching_quality_diagnostics.csv"
+    surprise_distribution_summary_path = outputs_tables_dir / "surprise_distribution_summary.csv"
+    placebo_test_summary_path = outputs_tables_dir / "placebo_test_summary.csv"
+    robustness_by_subsample_path = outputs_tables_dir / "robustness_by_subsample.csv"
+    regression_headline_summary_path = outputs_tables_dir / "regression_headline_summary.csv"
+
+    # 1. Sample Construction (mapped from funnel_df)
+    if filter_funnel_df is not None:
+        save_csv(filter_funnel_df, sample_construction_path)
+
+    # 2. Matching Quality
+    if benchmark_quality_df is not None:
+        save_csv(benchmark_quality_df, matching_quality_diagnostics_path)
+
+    # 3. Surprise Distribution
+    if event_df is not None and not event_df.empty:
+        surprise_cols = [c for c in ["main_surprise_raw", "main_surprise_pct", "main_surprise_std"] if c in event_df.columns]
+        if surprise_cols:
+            save_csv(event_df[surprise_cols].describe(), surprise_distribution_summary_path)
+
+    # 4. Event Window Summary (CAR averages)
+    if event_df is not None and not event_df.empty:
+        car_cols = [c for c in event_df.columns if c.startswith("CAR")]
+        if car_cols:
+            save_csv(event_df[car_cols].mean().to_frame("mean_car"), event_window_car_summary_path)
+            
+            leakage_cols = [c for c in car_cols if "_-" in c or c.endswith("_-1")]
+            drift_cols = [c for c in car_cols if c.startswith("CAR_1_") or (c.startswith("CAR") and not c.startswith("CAR_") and int(c.replace("CAR", "")) > 1)]
+            diag_df = event_df[leakage_cols + drift_cols].mean().to_frame("mean_car")
+            save_csv(diag_df, leakage_drift_diagnostics_path)
+
+    # 5. Headline Signal Comparison
+    if ablation_results_df is not None:
+        save_csv(ablation_results_df, headline_signal_comparison_path)
+        save_csv(ablation_results_df, regression_headline_summary_path)
     strongest_spec_path = outputs_tables_dir / f"strongest_surviving_spec_{scenario_name}.csv"
     headline_compare_path = outputs_tables_dir / f"headline_signal_comparison_{scenario_name}.csv"
     match_regression_path = outputs_tables_dir / f"regression_results_by_match_tier_{scenario_name}.csv"

@@ -32,11 +32,15 @@ def normalize_report_rc(report_rc_df: pd.DataFrame) -> pd.DataFrame:
     for col in numeric_cols:
         if col in df.columns:
             df[col] = pd.to_numeric(df[col], errors="coerce")
-    df["target_price_mid"] = np.where(
-        df["max_price"].notna() & df["min_price"].notna(),
-        (df["max_price"] + df["min_price"]) / 2.0,
-        df["tp"],
-    )
+    # Use tp if max/min price columns are missing
+    if "max_price" in df.columns and "min_price" in df.columns:
+        df["target_price_mid"] = np.where(
+            df["max_price"].notna() & df["min_price"].notna(),
+            (df["max_price"] + df["min_price"]) / 2.0,
+            df.get("tp", np.nan),
+        )
+    else:
+        df["target_price_mid"] = df.get("tp", np.nan)
     df["report_title"] = df.get("report_title", "").fillna("").astype(str)
     df["title_over_expectation_flag"] = df["report_title"].str.contains(
         "超预期|业绩超预期|利润超预期|盈利超预期", regex=True

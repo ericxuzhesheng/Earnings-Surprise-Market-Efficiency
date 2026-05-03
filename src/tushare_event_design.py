@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 
 from src.config import ProjectConfig
+from src.earnings_surprise import winsorize_series
 from src.expectation_alignment import build_sell_side_revision_panel, match_expectations_to_events
 from src.guidance_design import _estimate_beta, _first_trade_idx_after, _next_trade_day, build_guidance_events
 from src.tushare_normalization import parse_date_series
@@ -238,6 +239,19 @@ def build_tushare_events(
         .fillna(matched_events["express_surprise_pct"])
         .fillna(matched_events["final_surprise_pct"])
     )
+
+    # Standardized and Winsorized versions
+    w_lower = config.winsor_lower
+    w_upper = config.winsor_upper
+    
+    matched_events["main_surprise_pct_w"] = winsorize_series(matched_events["main_surprise_pct"], lower=w_lower, upper=w_upper)
+    
+    # Calculate cross-sectional SD of winsorized pct surprise to standardize
+    std_val = matched_events["main_surprise_pct_w"].std()
+    matched_events["main_surprise_std"] = matched_events["main_surprise_pct_w"] / (std_val if std_val > 0 else 1.0)
+
+    # Legacy compatibility
+    matched_events["earnings_surprise"] = matched_events["main_surprise_pct_w"]
 
     matched_events["surprise_family"] = np.select(
         [
