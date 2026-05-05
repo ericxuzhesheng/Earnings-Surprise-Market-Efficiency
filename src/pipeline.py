@@ -9,7 +9,7 @@ from src.data_collection import DataCollector
 from src.guidance_design import save_core_outputs
 from src.io_utils import ensure_directories, save_csv, save_text
 from src.logger_utils import setup_logger
-from src.panel_outputs import save_tushare_outputs
+from src.panel_outputs import save_data_freshness_audit, save_tushare_outputs
 from src.tushare_event_design import (
     annotate_event_filters,
     apply_event_filters,
@@ -18,6 +18,8 @@ from src.tushare_event_design import (
     build_expectation_coverage_summary,
     build_filter_funnel,
     build_legacy_guidance_panel,
+    build_placebo_test,
+    build_subsample_robustness,
     build_tushare_event_panel,
     build_tushare_events,
     build_timing_alignment_summary,
@@ -302,6 +304,22 @@ def run_pipeline() -> None:
             ablation_results_df=ablation_results_df,
             window_availability_df=window_availability_df,
         )
+        save_data_freshness_audit(
+            config=config,
+            bundle=bundle,
+            event_df=tushare_events,
+            outputs_audit_dir=config.outputs_audit_dir,
+        )
+        build_placebo_test(
+            event_df=tushare_panel,
+            prices_df=bundle.prices,
+            market_df=bundle.market,
+            outputs_tables_dir=config.outputs_tables_dir,
+        )
+        build_subsample_robustness(
+            event_df=tushare_panel,
+            outputs_tables_dir=config.outputs_tables_dir,
+        )
         save_csv(
             pd.DataFrame([
                 {"sample_name": "headline_preannouncement_only", "event_count": len(headline_tushare_events)},
@@ -354,24 +372,6 @@ def run_pipeline() -> None:
             config.outputs_audit_dir / "tushare_first_update_note.csv",
         )
 
-        summary_rows.extend(
-            [
-                {"metric": "tushare_events_all", "value": len(tushare_events)},
-                {"metric": "tushare_events_filtered", "value": len(filtered_tushare_events)},
-                {"metric": "tushare_panel_rows", "value": len(tushare_panel)},
-                {"metric": "tushare_headline_coef", "value": tushare_metrics.get("headline_coef")},
-                {"metric": "tushare_headline_p_value", "value": tushare_metrics.get("headline_p_value")},
-                {"metric": "usable_signal_rows", "value": tushare_metrics.get("usable_signal_rows")},
-                {"metric": "strict_match_rows", "value": tushare_metrics.get("strict_match_rows")},
-                {"metric": "diagnostic_recommendation", "value": tushare_metrics.get("diagnostic_recommendation")},
-                {"metric": "strongest_spec_id", "value": tushare_metrics.get("strongest_spec_id")},
-                {"metric": "strongest_spec_window", "value": tushare_metrics.get("strongest_spec_window")},
-                {"metric": "strongest_spec_coef", "value": tushare_metrics.get("strongest_spec_coef")},
-                {"metric": "strongest_spec_p_value", "value": tushare_metrics.get("strongest_spec_p_value")},
-                {"metric": "strongest_spec_nobs", "value": tushare_metrics.get("strongest_spec_nobs")},
-            ]
-        )
-
     if config.run_legacy_guidance:
         legacy_events, legacy_dataset, legacy_paths = build_legacy_guidance_panel(
             guidance_df=normalized["forecast"],
@@ -412,7 +412,7 @@ def run_pipeline() -> None:
         "Tushare-first pipeline update note",
         f"Framework mode: {config.framework_mode}",
         "The preferred path now uses report_rc for sell-side expectations, forecast/express/fina_indicator for event types, and daily_basic for controls.",
-        "Legacy guidance-only outputs remain runnable as fallback and comparison.",
+        "Legacy guidance-only outputs remain optional for side-by-side comparison when explicitly enabled.",
     ]
     save_text("\n".join(note_lines) + "\n", config.outputs_audit_dir / "tushare_first_update_note.txt")
     logger.info("Pipeline complete.")

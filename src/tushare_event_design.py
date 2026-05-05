@@ -568,11 +568,19 @@ def build_tushare_event_panel(
     m["trade_date"] = pd.to_datetime(m["trade_date"], errors="coerce")
     m["mkt_ret"] = pd.to_numeric(m["mkt_ret"], errors="coerce")
     m = m.dropna(subset=["trade_date", "mkt_ret"]).sort_values("trade_date")
+    market_returns = m[["trade_date", "mkt_ret"]]
+
+    price_map: dict[str, pd.DataFrame] = {}
+    for ts_code, subset in p.groupby("ts_code", sort=False):
+        price_map[str(ts_code)] = subset[["trade_date", "ret"]].dropna().reset_index(drop=True)
 
     db = daily_basic_df.copy()
+    daily_basic_map: dict[str, pd.DataFrame] = {}
     if not db.empty:
         db["trade_date"] = pd.to_datetime(db["trade_date"], errors="coerce")
         db = db.sort_values(["ts_code", "trade_date"])
+        for ts_code, subset in db.groupby("ts_code", sort=False):
+            daily_basic_map[str(ts_code)] = subset.reset_index(drop=True)
 
     rows = []
     path_rows = []
@@ -580,13 +588,13 @@ def build_tushare_event_panel(
     windows = tuple(sorted(config.event_windows))
 
     for _, ev in events_df.iterrows():
-        ts_code = ev["ts_code"]
+        ts_code = str(ev["ts_code"])
         event_date = pd.to_datetime(ev["event_trade_date"], errors="coerce")
-        sp = p[p["ts_code"] == ts_code][["trade_date", "ret"]].dropna()
-        if sp.empty or pd.isna(event_date):
+        sp = price_map.get(ts_code)
+        if sp is None or sp.empty or pd.isna(event_date):
             continue
 
-        mm = sp.merge(m[["trade_date", "mkt_ret"]], on="trade_date", how="inner")
+        mm = sp.merge(market_returns, on="trade_date", how="inner")
         mm = mm.sort_values("trade_date")
         mm["abret"] = mm["ret"] - mm["mkt_ret"]
         post = mm[mm["trade_date"] >= event_date].copy().reset_index(drop=True)
@@ -601,8 +609,9 @@ def build_tushare_event_panel(
         }
         beta = _estimate_beta(mm, event_date, est_window=config.beta_estimation_window)
 
-        if not db.empty:
-            d = db[(db["ts_code"] == ts_code) & (db["trade_date"] <= event_date)].tail(1)
+        if daily_basic_map:
+            db_subset = daily_basic_map.get(ts_code)
+            d = db_subset[db_subset["trade_date"] <= event_date].tail(1) if db_subset is not None else pd.DataFrame()
             if not d.empty:
                 control = {
                     "total_mv": d.get("total_mv", pd.Series([np.nan])).iloc[0],
@@ -1080,3 +1089,203 @@ def _robust_zscore(series: pd.Series) -> pd.Series:
     scale = 1.4826 * mad if pd.notna(mad) and mad > 0 else clean.std(ddof=0)
     scale = scale if pd.notna(scale) and scale > 0 else 1.0
     return (clean - median) / scale
+
+
+def build_placebo_test(
+    event_df: pd.DataFrame,
+    prices_df: pd.DataFrame,
+    market_df: pd.DataFrame,
+    outputs_tables_dir,
+    n_placebo_samples: int = 500,
+    random_seed: int = 42,
+) -> pd.DataFrame:
+    """Generate placebo events and compare CAR distributions.
+
+    For each real event, picks a random non-event trading day from the same
+    stock within a buffer zone avoiding the actual event window, then computes
+    CAR3 / CAR5 / CAR10 for the placebo date using market-adjusted returns.
+    """
+    windows = [3, 5, 10]
+    if event_df.empty or prices_df.empty or market_df.empty:
+        _save_placebo_unavailable_note(outputs_tables_dir, "Missing input data for placebo test.")
+        return pd.DataFrame()
+
+    needed = ["ts_code", "event_trade_date"]
+    missing = [c for c in needed if c not in event_df.columns]
+    if missing:
+        _save_placebo_unavailable_note(outputs_tables_dir, f"Event df missing columns: {missing}")
+        return pd.DataFrame()
+
+    rng = np.random.default_rng(random_seed)
+
+    p = prices_df.copy()
+    p["trade_date"] = pd.to_datetime(p["trade_date"], errors="coerce")
+    p["ret"] = pd.to_numeric(p["ret"], errors="coerce")
+    p = p.dropna(subset=["trade_date", "ret"]).sort_values(["ts_code", "trade_date"])
+
+    m = market_df.copy()
+    m["trade_date"] = pd.to_datetime(m["trade_date"], errors="coerce")
+    m["mkt_ret"] = pd.to_numeric(m["mkt_ret"], errors="coerce")
+    m = m.dropna(subset=["trade_date", "mkt_ret"]).sort_values("trade_date")
+
+    price_map = {}
+    for ts_code, subset in p.groupby("ts_code", sort=False):
+        price_map[str(ts_code)] = subset[["trade_date", "ret"]].reset_index(drop=True)
+
+    real_cars = {}
+    for w in windows:
+        col = f"CAR{w}"
+        if col in event_df.columns:
+            real_cars[w] = event_df[col].dropna().mean()
+
+    car_cols = [f"CAR{w}" for w in windows]
+    available_car_cols = [c for c in car_cols if c in event_df.columns]
+    real_n = len(event_df.dropna(subset=available_car_cols)) if available_car_cols else 0
+
+    placebo_cars = {w: [] for w in windows}
+    events_with_dates = event_df.dropna(subset=["event_trade_date"]).copy()
+    events_with_dates["event_trade_date"] = pd.to_datetime(
+        events_with_dates["event_trade_date"], errors="coerce"
+    )
+
+    if events_with_dates.empty:
+        _save_placebo_unavailable_note(outputs_tables_dir, "No events with valid event_trade_date.")
+        return pd.DataFrame()
+
+    eligible_events = events_with_dates.head(n_placebo_samples)
+    max_window = max(windows)
+
+    for _, ev in eligible_events.iterrows():
+        ts_code = str(ev["ts_code"])
+        event_date = ev["event_trade_date"]
+        sp = price_map.get(ts_code)
+        if sp is None or sp.empty:
+            continue
+
+        sp_dates = sp["trade_date"].values
+        buffer_start = event_date - pd.Timedelta(days=max_window + 10)
+        buffer_end_inner = event_date + pd.Timedelta(days=max_window)
+        eligible_mask = (sp_dates < buffer_start) | (sp_dates > buffer_end_inner)
+
+        if not eligible_mask.any():
+            eligible_mask = sp_dates < buffer_start
+
+        eligible_dates = sp_dates[eligible_mask]
+        if len(eligible_dates) == 0:
+            continue
+
+        placebo_date = rng.choice(eligible_dates)
+        merged = sp.merge(m[["trade_date", "mkt_ret"]], on="trade_date", how="inner")
+        merged["abret"] = merged["ret"] - merged["mkt_ret"]
+        post = merged[merged["trade_date"] >= pd.Timestamp(placebo_date)].reset_index(drop=True)
+
+        if post.empty:
+            continue
+        post["event_day"] = np.arange(1, len(post) + 1)
+
+        for w in windows:
+            if len(post) >= w:
+                placebo_cars[w].append(post.loc[post["event_day"] <= w, "abret"].sum())
+
+    rows = []
+    for w in windows:
+        vals = placebo_cars[w]
+        if vals:
+            rows.append({
+                "window": f"CAR{w}",
+                "real_mean_car": round(real_cars.get(w, np.nan), 6),
+                "placebo_mean_car": round(np.mean(vals), 6),
+                "real_n": real_n,
+                "placebo_n": len(vals),
+                "diff": round(real_cars.get(w, np.nan) - np.mean(vals), 6),
+                "t_stat": round(
+                    (real_cars.get(w, np.nan) - np.mean(vals)) / (np.std(vals, ddof=1) / max(np.sqrt(len(vals)), 1))
+                    if len(vals) > 1 else np.nan,
+                    4,
+                ),
+            })
+
+    result = pd.DataFrame(rows)
+    from src.io_utils import save_csv
+
+    save_csv(result, outputs_tables_dir / "placebo_test_summary.csv")
+    return result
+
+
+def _save_placebo_unavailable_note(outputs_tables_dir, reason: str) -> None:
+    from src.io_utils import save_text
+
+    outputs_tables_dir.mkdir(parents=True, exist_ok=True)
+    save_text(
+        f"Placebo test unavailable: {reason}\n",
+        outputs_tables_dir / "placebo_test_summary.csv",
+    )
+
+
+def build_subsample_robustness(
+    event_df: pd.DataFrame,
+    outputs_tables_dir,
+) -> pd.DataFrame:
+    """Compute mean CARs across subsample splits.
+
+    Splits by year, market-cap tercile, and event type where data is available.
+    """
+    windows = [3, 5, 10]
+    car_cols = [f"CAR{w}" for w in windows]
+    available_cars = [c for c in car_cols if c in event_df.columns]
+
+    if event_df.empty or not available_cars:
+        from src.io_utils import save_text
+
+        outputs_tables_dir.mkdir(parents=True, exist_ok=True)
+        save_text(
+            "Subsample robustness unavailable: event_df empty or missing CAR columns.\n",
+            outputs_tables_dir / "robustness_by_subsample.csv",
+        )
+        return pd.DataFrame()
+
+    df = event_df.copy()
+    if "ann_date" in df.columns:
+        df["ann_date"] = pd.to_datetime(df["ann_date"], errors="coerce")
+        df["year"] = df["ann_date"].dt.year
+    elif "event_trade_date" in df.columns:
+        df["event_trade_date"] = pd.to_datetime(df["event_trade_date"], errors="coerce")
+        df["year"] = df["event_trade_date"].dt.year
+
+    rows = []
+
+    # By year
+    if "year" in df.columns:
+        for year_val in sorted(df["year"].dropna().unique()):
+            subset = df[df["year"] == year_val]
+            row = {"subsample_dimension": "year", "subgroup": str(int(year_val)), "n": len(subset)}
+            for w, car_col in zip(windows, available_cars):
+                row[f"mean_car{w}"] = round(subset[car_col].mean(), 6)
+            rows.append(row)
+
+    # By market-cap tercile
+    if "log_total_mv" in df.columns:
+        valid = df.dropna(subset=["log_total_mv"])
+        if len(valid) >= 30:
+            valid["mv_tercile"] = pd.qcut(valid["log_total_mv"], 3, labels=["small", "mid", "large"], duplicates="drop")
+            for label in sorted(valid["mv_tercile"].dropna().unique()):
+                subset = valid[valid["mv_tercile"] == label]
+                row = {"subsample_dimension": "market_cap_tercile", "subgroup": str(label), "n": len(subset)}
+                for w, car_col in zip(windows, available_cars):
+                    row[f"mean_car{w}"] = round(subset[car_col].mean(), 6)
+                rows.append(row)
+
+    # By event type
+    if "event_type" in df.columns:
+        for etype in sorted(df["event_type"].dropna().unique()):
+            subset = df[df["event_type"] == etype]
+            row = {"subsample_dimension": "event_type", "subgroup": str(etype), "n": len(subset)}
+            for w, car_col in zip(windows, available_cars):
+                row[f"mean_car{w}"] = round(subset[car_col].mean(), 6)
+            rows.append(row)
+
+    result = pd.DataFrame(rows)
+    from src.io_utils import save_csv
+
+    save_csv(result, outputs_tables_dir / "robustness_by_subsample.csv")
+    return result

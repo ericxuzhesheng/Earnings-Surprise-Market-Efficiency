@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import datetime, timezone
 from pathlib import Path
 
 import numpy as np
@@ -1339,3 +1340,51 @@ def run_tushare_regressions(df: pd.DataFrame) -> pd.DataFrame:
                     }
                 )
     return pd.DataFrame(rows)
+
+
+def save_data_freshness_audit(
+    config,
+    bundle,
+    event_df: pd.DataFrame | None,
+    outputs_audit_dir: Path,
+) -> None:
+    """Write data_freshness_audit.csv recording run parameters and data coverage."""
+    outputs_audit_dir.mkdir(parents=True, exist_ok=True)
+    now = datetime.now(timezone.utc).isoformat()
+
+    row_counts = {
+        "prices": len(bundle.prices) if bundle.prices is not None else 0,
+        "daily_basic": len(bundle.daily_basic) if bundle.daily_basic is not None else 0,
+        "fina_indicator": len(bundle.fina_indicator) if bundle.fina_indicator is not None else 0,
+        "forecast": len(bundle.forecast) if bundle.forecast is not None else 0,
+        "express": len(bundle.express) if bundle.express is not None else 0,
+        "report_rc": len(bundle.report_rc) if bundle.report_rc is not None else 0,
+    }
+
+    max_trade_date = ""
+    if bundle.prices is not None and not bundle.prices.empty and "trade_date" in bundle.prices.columns:
+        max_trade_date = str(bundle.prices["trade_date"].max())
+
+    max_ann_date = ""
+    if event_df is not None and not event_df.empty and "ann_date" in event_df.columns:
+        max_ann_date = str(event_df["ann_date"].max())
+
+    rows = [
+        {"metric": "run_mode", "value": config.run_mode},
+        {"metric": "framework_mode", "value": config.framework_mode},
+        {"metric": "period_start", "value": config.start_date},
+        {"metric": "period_end", "value": config.end_date},
+        {"metric": "sample_stock_count", "value": config.sample_stock_count or 0},
+        {"metric": "use_cache", "value": int(config.use_cache)},
+        {"metric": "force_refresh", "value": int(config.force_refresh)},
+        {"metric": "row_count_prices", "value": row_counts["prices"]},
+        {"metric": "row_count_daily_basic", "value": row_counts["daily_basic"]},
+        {"metric": "row_count_fina_indicator", "value": row_counts["fina_indicator"]},
+        {"metric": "row_count_forecast", "value": row_counts["forecast"]},
+        {"metric": "row_count_express", "value": row_counts["express"]},
+        {"metric": "row_count_report_rc", "value": row_counts["report_rc"]},
+        {"metric": "max_trade_date_prices", "value": max_trade_date},
+        {"metric": "max_ann_date_events", "value": max_ann_date},
+        {"metric": "run_timestamp", "value": now},
+    ]
+    save_csv(pd.DataFrame(rows), outputs_audit_dir / "data_freshness_audit.csv")

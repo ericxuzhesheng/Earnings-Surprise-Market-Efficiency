@@ -137,6 +137,9 @@ class DataCollector:
             free_source_capabilities=free_source_capabilities,
         )
 
+    def _date_range_cache_key(self, identifier: str) -> str:
+        return f"{identifier}_{self.config.start_date}_{self.config.end_date}"
+
     def _cache_path(self, folder: str, key: str) -> Path:
         safe_key = key.replace("/", "_").replace("\\", "_").replace(".", "_")
         return self.cache_root / folder / f"{safe_key}.csv"
@@ -322,7 +325,7 @@ class DataCollector:
             return pd.DataFrame()
         if stocks.empty or self.ak is None:
             return pd.DataFrame()
-        cache_key = "all_symbols"
+        cache_key = self._date_range_cache_key("all_symbols")
         cached = self._load_cache("eastmoney_profit_forecast", cache_key)
         if cached is not None and not cached.empty:
             cached["ts_code"] = cached.get("ts_code", pd.Series(dtype=object)).astype(str)
@@ -361,7 +364,8 @@ class DataCollector:
         codes = list(stocks["ts_code"].dropna().astype(str).unique())[: self.config.eastmoney_report_limit]
         for ts_code in codes:
             symbol = self._to_symbol(ts_code)
-            cached = self._load_cache("eastmoney_research_report", symbol)
+            cache_key = self._date_range_cache_key(symbol)
+            cached = self._load_cache("eastmoney_research_report", cache_key)
             if cached is not None:
                 if not cached.empty:
                     rows.append(cached)
@@ -379,7 +383,7 @@ class DataCollector:
                 df["is_official_source"] = 0
                 df["is_aggregated_source"] = 0
                 df["is_text_proxy"] = 1
-                self._save_cache(df, "eastmoney_research_report", symbol)
+                self._save_cache(df, "eastmoney_research_report", cache_key)
                 rows.append(df)
             time.sleep(max(self.config.request_pause_sec, 0.12))
         out = self._safe_concat(rows)
@@ -467,7 +471,8 @@ class DataCollector:
         else:
             iterator = codes if self.config.run_mode == "test" else codes
             for code in iterator:
-                cached = self._load_cache(folder, code)
+                cache_key = self._date_range_cache_key(code)
+                cached = self._load_cache(folder, cache_key)
                 if cached is not None:
                     if not cached.empty:
                         rows.append(cached)
@@ -479,7 +484,7 @@ class DataCollector:
                 )
                 df = self._retry(fn, f"forecast {code}")
                 if df is not None:
-                    self._save_cache(df, folder, code)
+                    self._save_cache(df, folder, cache_key)
                     if not df.empty:
                         rows.append(df)
                 time.sleep(max(self.config.request_pause_sec, 0.15))
@@ -524,7 +529,8 @@ class DataCollector:
                 time.sleep(max(self.config.request_pause_sec, 0.12))
         else:
             for code in codes:
-                cached = self._load_cache(folder, code)
+                cache_key = self._date_range_cache_key(code)
+                cached = self._load_cache(folder, cache_key)
                 if cached is not None:
                     if not cached.empty:
                         rows.append(cached)
@@ -536,7 +542,7 @@ class DataCollector:
                 )
                 df = self._retry(fn, f"express {code}")
                 if df is not None:
-                    self._save_cache(df, folder, code)
+                    self._save_cache(df, folder, cache_key)
                     if not df.empty:
                         rows.append(df)
                 time.sleep(max(self.config.request_pause_sec, 0.12))
@@ -575,7 +581,8 @@ class DataCollector:
         return out
 
     def _get_fina_indicator_single(self, ts_code: str) -> pd.DataFrame | None:
-        cached = self._load_cache("fina_indicator", ts_code)
+        cache_key = self._date_range_cache_key(ts_code)
+        cached = self._load_cache("fina_indicator", cache_key)
         if cached is not None and not cached.empty:
             return cached
         if self.ts is None:
@@ -590,7 +597,7 @@ class DataCollector:
             if df is None:
                 return None
             if not df.empty:
-                self._save_cache(df, "fina_indicator", ts_code)
+                self._save_cache(df, "fina_indicator", cache_key)
             return df
         except Exception as exc:
             self.logger.warning("fina_indicator failed for %s: %s", ts_code, exc)
@@ -656,9 +663,12 @@ class DataCollector:
         return prices
 
     def _get_single_stock_price(self, ts_code: str, symbol: str) -> pd.DataFrame | None:
-        cached = self._load_cache("prices", ts_code)
+        cache_key = self._date_range_cache_key(ts_code)
+        cached = self._load_cache("prices", cache_key)
         if cached is not None and not cached.empty:
+            self.logger.debug("Cache hit prices %s", cache_key)
             return cached
+        self.logger.debug("Cache miss prices %s", cache_key)
         if self.ts is not None:
             try:
                 fn = lambda: self.ts.daily(
@@ -671,7 +681,7 @@ class DataCollector:
                 if df is None:
                     df = pd.DataFrame()
                 if not df.empty:
-                    self._save_cache(df, "prices", ts_code)
+                    self._save_cache(df, "prices", cache_key)
                     return df
             except Exception as exc:
                 self.logger.warning("Tushare daily failed for %s: %s", ts_code, exc)
@@ -700,7 +710,7 @@ class DataCollector:
                     return None
                 df = df[needed].copy()
                 df["ts_code"] = ts_code
-                self._save_cache(df, "prices", ts_code)
+                self._save_cache(df, "prices", cache_key)
                 return df
             except Exception as exc:
                 self.logger.warning("Akshare daily fallback failed for %s: %s", ts_code, exc)
@@ -789,7 +799,8 @@ class DataCollector:
         return out
 
     def _get_daily_basic_single(self, ts_code: str) -> pd.DataFrame | None:
-        cached = self._load_cache("daily_basic", ts_code)
+        cache_key = self._date_range_cache_key(ts_code)
+        cached = self._load_cache("daily_basic", cache_key)
         required_cols = {"turnover_rate", "turnover_rate_f", "ps_ttm", "circ_mv"}
         if cached is not None and not cached.empty and required_cols.issubset(set(cached.columns)):
             return cached
@@ -809,7 +820,7 @@ class DataCollector:
             if df is None:
                 return None
             if not df.empty:
-                self._save_cache(df, "daily_basic", ts_code)
+                self._save_cache(df, "daily_basic", cache_key)
             return df
         except Exception as exc:
             self.logger.warning("daily_basic failed for %s: %s", ts_code, exc)
