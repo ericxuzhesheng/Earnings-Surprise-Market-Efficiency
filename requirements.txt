@@ -4,3 +4,4 @@ matplotlib>=3.7.0
 statsmodels>=0.14.0
 tushare>=1.4.0
 akshare>=1.13.0
+python-dotenv>=1.0.0

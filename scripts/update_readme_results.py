@@ -39,7 +39,9 @@ def update_readme_results() -> None:
 
     required = [run_summary_path, car_summary_path, drift_summary_path]
     if not all(path.exists() for path in required):
-        raise FileNotFoundError("Required CSVs missing.")
+        missing = [p.name for p in required if not p.exists()]
+        print(f"Required CSVs not found ({', '.join(missing)}); skipping README update.")
+        return
 
     run_summary = pd.read_csv(run_summary_path)
     car_summary = pd.read_csv(car_summary_path, index_col=0)

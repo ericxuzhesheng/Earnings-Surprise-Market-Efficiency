@@ -21,7 +21,7 @@ All surprise metrics are winsorized at the 1% and 99% levels to handle outliers 
 
 ## 3. Abnormal Return (AR) Models
 - **Market-Adjusted (Baseline)**: $AR_{it} = R_{it} - R_{mt}$, where $R_{mt}$ is the CSI 300 index return.
-- **Industry-Adjusted (Hook)**: $AR_{it} = R_{it} - R_{industry,t}$ (To be implemented).
+- **Industry-Adjusted**: $AR_{it} = R_{it} - R_{industry,t}$, where $R_{industry,t}$ is the equal-weighted mean return of all sampled stocks in the same CSRC industry on day $t$. Falls back to market return when industry data is unavailable. Produces `IAR{w}` columns alongside `CAR{w}`.
 - **Market Model Residual (Hook)**: $AR_{it} = R_{it} - (\hat{\alpha}_i + \hat{\beta}_i R_{mt})$.
 
 ## 4. Event Windows (CAR)

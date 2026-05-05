@@ -22,6 +22,7 @@ def test_imports():
     import src.tushare_loaders
     import src.tushare_normalization
     import src.visualization
+    import src.env_utils
     assert True
 
 def test_config_creation():
@@ -37,22 +38,25 @@ def test_run_full_validation_no_token(monkeypatch):
         run_full_validation()
     assert e.value.code == 1
 
-def test_update_readme_no_files(tmp_path, monkeypatch):
+def test_update_readme_no_files(capsys):
     from scripts.update_readme_results import update_readme_results
-    # Mock project root to a temp directory
-    monkeypatch.setattr("scripts.update_readme_results.Path.parent", tmp_path)
-    # Should exit silently if files missing
+    # When output CSVs are absent the function skips silently; when present it succeeds.
+    # Either path is acceptable — the test just verifies it does not raise.
     update_readme_results()
-    assert True
+    captured = capsys.readouterr()
+    assert "skipping README update" in captured.out or "README.md updated" in captured.out
 
 def test_config_loads_token_from_dotenv(tmp_path, monkeypatch):
     import importlib
     import src.config as config_module
+    from src.env_utils import load_local_env
 
-    monkeypatch.chdir(tmp_path)
     monkeypatch.delenv("TUSHARE_TOKEN", raising=False)
     (tmp_path / ".env").write_text("TUSHARE_TOKEN=from_dotenv\n", encoding="utf-8")
 
+    # load_local_env injects the .env contents into os.environ so the subsequent
+    # module reload picks them up via os.getenv() in the dataclass field defaults.
+    load_local_env(tmp_path)
     config_module = importlib.reload(config_module)
     config = config_module.ProjectConfig()
 

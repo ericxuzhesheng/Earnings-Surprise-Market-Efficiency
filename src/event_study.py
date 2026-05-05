@@ -33,6 +33,29 @@ def _compute_beta(
     return float(beta)
 
 
+def _compute_industry_returns(
+    prices_df: pd.DataFrame,
+    stocks_df: pd.DataFrame,
+) -> pd.DataFrame:
+    """Equal-weighted mean daily return per industry per trading date."""
+    if stocks_df.empty or "industry" not in stocks_df.columns:
+        return pd.DataFrame()
+
+    industry_map = stocks_df.set_index("ts_code")["industry"].dropna().to_dict()
+    prices = prices_df[["ts_code", "trade_date", "ret"]].copy()
+    prices["industry"] = prices["ts_code"].map(industry_map)
+    prices = prices.dropna(subset=["industry", "ret"])
+    if prices.empty:
+        return pd.DataFrame()
+
+    return (
+        prices.groupby(["trade_date", "industry"])["ret"]
+        .mean()
+        .reset_index()
+        .rename(columns={"ret": "industry_ret"})
+    )
+
+
 def _get_event_window_abnormal_returns(
     stock_df: pd.DataFrame,
     market_df: pd.DataFrame,
@@ -84,6 +107,10 @@ def build_event_level_dataset(
     market = market_df.copy()
     market = market.dropna(subset=["trade_date", "mkt_ret"]).sort_values("trade_date")
 
+    # Pre-compute industry-level daily returns for the industry-adjusted model.
+    industry_returns_df = _compute_industry_returns(prices_df, stocks_df)
+    has_industry_model = not industry_returns_df.empty
+
     for _, event in events_df.iterrows():
         ts_code = event["ts_code"]
         ann_date = pd.to_datetime(event["ann_date"])
@@ -104,6 +131,10 @@ def build_event_level_dataset(
             buffer_days=config.beta_buffer_days,
         )
 
+        stock_meta = stocks_df.loc[stocks_df["ts_code"] == ts_code].head(1)
+        stock_name = stock_meta["name"].iloc[0] if not stock_meta.empty else np.nan
+        industry = stock_meta["industry"].iloc[0] if not stock_meta.empty else np.nan
+
         car_values = {}
         # 1. Legacy windows (CAR1..CAR60) - mapped to CAR[1, w]
         for w in config.event_windows:
@@ -117,8 +148,22 @@ def build_event_level_dataset(
         for start, end in config.drift_windows:
             car_values[f"CAR_{start}_{end}"] = post.loc[(post["event_day"] >= start) & (post["event_day"] <= end), "abret"].sum()
 
-        # TODO: Add industry-adjusted return model if industry benchmark data is available
-        # if industry_market_df is not None: ...
+        # 3. Industry-adjusted return model: AR = R_it - R_industry,t (equal-weighted).
+        if has_industry_model and pd.notna(industry) and industry in industry_returns_df["industry"].values:
+            ind_ret_series = (
+                industry_returns_df[industry_returns_df["industry"] == industry]
+                .set_index("trade_date")["industry_ret"]
+            )
+            post_ind = post.copy()
+            post_ind["ia_abret"] = post_ind["ret"] - post_ind["trade_date"].map(ind_ret_series).fillna(post_ind["mkt_ret"])
+            for w in config.event_windows:
+                car_values[f"IAR{w}"] = post_ind.loc[
+                    (post_ind["event_day"] >= 1) & (post_ind["event_day"] <= w), "ia_abret"
+                ].sum()
+            for start, end in (*config.immediate_windows, *config.drift_windows):
+                car_values[f"IAR_{start}_{end}"] = post_ind.loc[
+                    (post_ind["event_day"] >= start) & (post_ind["event_day"] <= end), "ia_abret"
+                ].sum()
 
         # Event-date characteristic proxy: nearest prior trading day from daily_basic.
         size = np.nan
@@ -131,10 +176,6 @@ def build_event_level_dataset(
                 size = last_row.get("total_mv", np.nan)
                 pb = last_row.get("pb", np.nan)
                 bm = np.nan if pd.isna(pb) or pb == 0 else 1.0 / pb
-
-        stock_meta = stocks_df.loc[stocks_df["ts_code"] == ts_code].head(1)
-        stock_name = stock_meta["name"].iloc[0] if not stock_meta.empty else np.nan
-        industry = stock_meta["industry"].iloc[0] if not stock_meta.empty else np.nan
 
         row = {
             "ts_code": ts_code,
