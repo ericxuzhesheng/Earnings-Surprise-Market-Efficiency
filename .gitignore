@@ -13,6 +13,7 @@ logs/
 .env.local
 tokens/
 TUSHARE_TOKEN*
+outputs/event_validation/source_*/
 
 # OS
 .DS_Store

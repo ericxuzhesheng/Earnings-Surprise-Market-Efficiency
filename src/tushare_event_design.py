@@ -96,7 +96,8 @@ def build_tushare_events(
         e["period_end"] = pd.to_datetime(e["end_date"])
         e["event_type"] = "express"
         e["event_subtype"] = "release"
-        e["event_value_np"] = e.get("n_income", np.nan)
+        # express is CNY; forecast/report_rc net profit are CNY 10,000.
+        e["event_value_np"] = e.get("n_income", np.nan) / 10000.0
         e["event_value_eps"] = e.get("diluted_eps", np.nan)
         e["event_value_yoy"] = e.get("yoy_net_profit", np.nan)
         e["event_source"] = e.get("source_endpoint", "express")

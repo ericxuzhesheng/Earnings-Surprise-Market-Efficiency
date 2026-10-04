@@ -46,6 +46,7 @@ class DataCollector:
             "express_vip",
             "fina_indicator",
             "report_rc",
+            "report_rc_complete",
             "cninfo_preannouncement",
             "eastmoney_profit_forecast",
             "eastmoney_research_report",
@@ -94,6 +95,9 @@ class DataCollector:
             eastmoney_profit_forecast=eastmoney_profit_forecast,
             eastmoney_research_report=eastmoney_research_report,
         )
+
+        if self.config.run_tushare_first and (forecast.empty or report_rc.empty):
+            raise RuntimeError("Required earnings/expectation data missing; refusing to overwrite prior research inputs")
 
         save_csv(stocks, self.config.data_raw_dir / "stock_universe.csv")
         save_csv(prices, self.config.data_raw_dir / "stock_prices_raw.csv")
@@ -609,15 +613,16 @@ class DataCollector:
             start = month.start_time.strftime("%Y%m%d")
             end = month.end_time.strftime("%Y%m%d")
             cache_key = f"{start}_{end}"
-            cached = self._load_cache("report_rc", cache_key)
+            # Older report_rc monthly caches contain only the first API page.
+            # A separate namespace certifies that pagination reached exhaustion.
+            cached = self._load_cache("report_rc_complete", cache_key)
             if cached is not None:
                 if not cached.empty:
                     rows.append(cached)
                 continue
-            fn = lambda s=start, e=end: self.ts.report_rc(start_date=s, end_date=e)
-            df = self._retry(fn, f"report_rc {cache_key}")
+            df = self._get_complete_report_month(start, end)
             if df is not None:
-                self._save_cache(df, "report_rc", cache_key)
+                self._save_cache(df, "report_rc_complete", cache_key)
                 if not df.empty:
                     rows.append(df)
             time.sleep(max(self.config.request_pause_sec, 0.12))
@@ -630,6 +635,27 @@ class DataCollector:
         out = out.sort_values([c for c in ["ts_code", "quarter", "report_date"] if c in out.columns]).reset_index(drop=True)
         self.logger.info("report_rc rows collected: %s", len(out))
         return out
+
+    def _get_complete_report_month(self, start: str, end: str) -> pd.DataFrame | None:
+        pages = []
+        offset = 0
+        previous = None
+        while True:
+            page = self._retry(
+                lambda: self.ts.report_rc(start_date=start, end_date=end, limit=3000, offset=offset),
+                f"report_rc {start} offset={offset}",
+            )
+            if page is None:
+                return None  # Never certify a partially fetched month.
+            if page.empty:
+                break
+            if previous is not None and page.equals(previous):
+                raise ValueError("report_rc pagination repeated a page; refusing incomplete cache")
+            pages.append(page)
+            previous = page
+            offset += len(page)
+            time.sleep(max(self.config.request_pause_sec, 0.12))
+        return pd.concat(pages, ignore_index=True).drop_duplicates() if pages else pd.DataFrame()
 
     def get_stock_prices(self, stocks: pd.DataFrame) -> pd.DataFrame:
         rows: list[pd.DataFrame] = []

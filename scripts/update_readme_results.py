@@ -30,6 +30,9 @@ def update_readme_results() -> None:
     print("Updating README results from generated CSVs...")
 
     project_root = Path(__file__).parent.parent
+    if (project_root / "outputs/event_validation/report.md").exists():
+        print("Current event-validation report exists; refusing to restore withdrawn legacy headline tables.")
+        return
     readme_path = project_root / "README.md"
     tables_dir = project_root / "outputs" / "tables"
 

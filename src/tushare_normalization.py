@@ -32,15 +32,15 @@ def normalize_report_rc(report_rc_df: pd.DataFrame) -> pd.DataFrame:
     for col in numeric_cols:
         if col in df.columns:
             df[col] = pd.to_numeric(df[col], errors="coerce")
-    # Use tp if max/min price columns are missing
+    # report_rc.tp is total profit (CNY 10,000), never a target share price.
     if "max_price" in df.columns and "min_price" in df.columns:
         df["target_price_mid"] = np.where(
             df["max_price"].notna() & df["min_price"].notna(),
             (df["max_price"] + df["min_price"]) / 2.0,
-            df.get("tp", np.nan),
+            df["max_price"].combine_first(df["min_price"]),
         )
     else:
-        df["target_price_mid"] = df.get("tp", np.nan)
+        df["target_price_mid"] = np.nan
     df["report_title"] = df.get("report_title", "").fillna("").astype(str)
     df["title_over_expectation_flag"] = df["report_title"].str.contains(
         "超预期|业绩超预期|利润超预期|盈利超预期", regex=True
@@ -82,6 +82,9 @@ def normalize_forecast(forecast_df: pd.DataFrame) -> pd.DataFrame:
     df["prior_yoy_midpoint"] = df.groupby(["ts_code", "end_date"])["guidance_yoy_midpoint"].shift(1)
     df["revision_magnitude"] = df["forecast_profit_mid"] - df["prior_forecast_profit_mid"]
     df["is_revision"] = df.groupby(["ts_code", "end_date"]).cumcount() > 0
+    if "first_ann_date" in df.columns:
+        # The first cached row may already be a revision of an earlier release.
+        df["is_revision"] |= df["first_ann_date"].notna() & df["first_ann_date"].lt(df["ann_date"])
     df["revision_direction"] = np.select(
         [df["revision_magnitude"] > 0, df["revision_magnitude"] < 0],
         ["up", "down"],
@@ -126,7 +129,9 @@ def normalize_fina_indicator(fina_df: pd.DataFrame) -> pd.DataFrame:
     for col in ["eps", "dt_eps", "profit_dedt", "q_dt_roe", "q_npta", "netprofit_yoy", "dt_netprofit_yoy"]:
         if col in df.columns:
             df[col] = pd.to_numeric(df[col], errors="coerce")
-    df["actual_np"] = df["profit_dedt"] if "profit_dedt" in df.columns else np.nan
+    # Deducted/nonrecurring-item profit is not comparable with report_rc.np.
+    # A matching income statement field is required for net-profit surprise.
+    df["actual_np"] = np.nan
     df["actual_eps"] = df["dt_eps"].fillna(df["eps"]) if "dt_eps" in df.columns else df.get("eps")
     df = df.sort_values(["ts_code", "end_date", "ann_date"]).drop_duplicates(
         subset=["ts_code", "end_date", "ann_date"], keep="last"

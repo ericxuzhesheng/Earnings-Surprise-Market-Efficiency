@@ -1,0 +1,35 @@
+{
+  "validation_date": "2026-10-04",
+  "price_start": "2019-01-02",
+  "price_end": "2026-09-30",
+  "universe": "All available CNY listed, delisted and suspended stocks; historic identifiers may remain incomplete",
+  "forecast_unit": "CNY 10,000",
+  "expected_np_unit": "CNY 10,000",
+  "freshness_days": 365,
+  "day_zero": "first exchange session strictly after date-only announcement",
+  "primary_test": "positive minus negative CAR[1,10], no other earnings event in [-10,+10]",
+  "inference": "OLS two-way firm/month cluster covariance; t df=min(clusters)-1; minimum 10 clusters",
+  "report_months_possibly_capped": 75,
+  "complete_report_refresh": false,
+  "market_data_refresh_complete": true,
+  "unresolved": [
+    "Historical report_rc coverage remains capped/incomplete",
+    "Delisted names included, but historical code changes and source coverage are not certified complete",
+    "No intraday release timestamps or original vintage snapshots",
+    "Market benchmark is a price index; no executable trading claim"
+  ],
+  "universe_size": 5911,
+  "event_start": "2020-01-01",
+  "normalized_report_rows": 379206,
+  "source_forecast_rows": 41790,
+  "matched_stocks": 2896,
+  "matched_stocks_with_formal_income_records": 2896,
+  "market_source_rows": {
+    "daily": 4847159,
+    "daily_basic": 4829592,
+    "adj_factor": 4884992,
+    "income": 123894
+  },
+  "forecast_partitions": "Every calendar announcement date 20200101 through 20260930, including weekends",
+  "report_api_limit_observed": "抱歉，您访问接口(report_rc)频率超限(10次/天)，具体频次详情：https://tushare.pro/document/1?doc_id=108。"
+}

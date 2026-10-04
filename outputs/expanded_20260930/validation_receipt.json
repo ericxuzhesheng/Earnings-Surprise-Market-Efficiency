@@ -1,0 +1,26 @@
+{
+  "source_checks": {
+    "forecast": {
+      "calendar_partitions": 2465,
+      "rows": 42148
+    },
+    "express": {
+      "calendar_partitions": 2465,
+      "rows": 11667
+    }
+  },
+  "market_sessions": 1880,
+  "status": "passed",
+  "events_checked": 6665,
+  "headline_n": 6361,
+  "market_snapshots_checked": 11584,
+  "market_rows": {
+    "daily": 4847159,
+    "daily_basic": 4829592,
+    "adj_factor": 4884992,
+    "income": 123894
+  },
+  "matched_firms": 2896,
+  "missing_factor_on_traded_session": 1789,
+  "positive_minus_negative": -0.0102602616889405
+}

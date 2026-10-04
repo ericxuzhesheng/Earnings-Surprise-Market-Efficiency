@@ -505,7 +505,10 @@ def _latest_period_subset(candidates: pd.DataFrame, benchmark_field: str) -> pd.
 
 def _candidate_universe_for_tier(event: pd.Series, group: pd.DataFrame, config: ProjectConfig, tier: str) -> pd.DataFrame:
     benchmark_field = _consensus_column(config)
-    event_date = pd.to_datetime(event.get("event_trade_date"), errors="coerce")
+    # A report dated on/after the announcement can already contain the news,
+    # including weekend reports before the next trading session. Date-only
+    # sources cannot establish intraday ordering: exclude the whole release day.
+    event_date = pd.to_datetime(event.get("announcement_date", event.get("ann_date")), errors="coerce")
     event_period_end = pd.to_datetime(event.get("period_end"), errors="coerce")
     base = _base_candidates_for_event(group=group, event_date=event_date, freshness_days=config.report_freshness_days)
     if base.empty:
@@ -538,7 +541,8 @@ def _candidate_rows_for_event(
     out["event_id"] = event.get("event_id")
     out["event_type"] = event.get("event_type")
     out["event_trade_date"] = pd.to_datetime(event.get("event_trade_date"))
-    out["period_end"] = pd.to_datetime(event.get("period_end"))
+    out["matched_period_end"] = out["period_end"]
+    out["event_period_end"] = pd.to_datetime(event.get("period_end"))
     normalized_tier = _normalize_match_tier(match_tier)
     tier_group = _tier_group(match_tier)
     out["benchmark_method"] = benchmark_method

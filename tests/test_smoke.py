@@ -29,18 +29,17 @@ def test_config_creation():
     config = ProjectConfig()
     assert config is not None
 
-def test_run_full_validation_no_token(monkeypatch):
+def test_run_full_validation_is_offline_by_default(monkeypatch):
     from scripts.run_full_validation import run_full_validation
-    import pytest
     monkeypatch.setenv("TUSHARE_TOKEN", "")
-    with pytest.raises(SystemExit) as e:
-        run_full_validation()
-    assert e.value.code == 1
+    calls = []
+    monkeypatch.setattr("scripts.run_full_validation.subprocess.run", lambda *args, **kwargs: calls.append(args))
+    monkeypatch.setattr("scripts.run_full_validation.Path.exists", lambda path: True)
+    run_full_validation()
+    assert len(calls) == 1
 
-def test_update_readme_no_files(tmp_path, monkeypatch):
+def test_update_readme_preserves_current_audit(monkeypatch, capsys):
     from scripts.update_readme_results import update_readme_results
-    # Mock project root to a temp directory
-    monkeypatch.setattr("scripts.update_readme_results.Path.parent", tmp_path)
-    # Should exit silently if files missing
+    monkeypatch.setattr("scripts.update_readme_results.Path.exists", lambda path: True)
     update_readme_results()
-    assert True
+    assert "refusing to restore" in capsys.readouterr().out

@@ -1,0 +1,22 @@
+{
+  "validation_date": "2026-10-04",
+  "price_start": "2020-01-02",
+  "price_end": "2026-04-21",
+  "universe": "First 300 codes in frozen current-listed stock_basic cache; not survivorship-free",
+  "forecast_unit": "CNY 10,000",
+  "expected_np_unit": "CNY 10,000",
+  "freshness_days": 365,
+  "day_zero": "first exchange session strictly after date-only announcement",
+  "primary_test": "positive minus negative CAR[1,10], no other earnings event in [-10,+10]",
+  "inference": "OLS two-way firm/month cluster covariance; t df=min(clusters)-1; minimum 10 clusters",
+  "report_months_possibly_capped": 75,
+  "complete_report_refresh": false,
+  "market_data_refresh_complete": true,
+  "unresolved": [
+    "Monthly report_rc caches remain capped; repair hit provider limit 1/min",
+    "No historical delisted universe",
+    "No intraday release timestamps or original vintage snapshots",
+    "Market benchmark is a price index; adjustment factors reflect corporate actions",
+    "No trading or transaction-cost claim"
+  ]
+}

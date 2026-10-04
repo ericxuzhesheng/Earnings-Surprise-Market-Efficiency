@@ -5,15 +5,7 @@ from pathlib import Path
 
 
 def run_full_validation() -> None:
-    print("Checking TUSHARE_TOKEN...")
-    token = os.getenv("TUSHARE_TOKEN")
-
-    if not token or token == "your_tushare_token_here":
-        print("ERROR: TUSHARE_TOKEN is missing or not set correctly.")
-        print("Please set it via 'export TUSHARE_TOKEN=...' or in a .env file.")
-        sys.exit(1)
-
-    print(f"OK: TUSHARE_TOKEN found (length: {len(token)}).")
+    print("Running expanded-source validation; no API token is required for saved licensed snapshots.")
 
     main_path = Path(__file__).parent.parent / "main.py"
     if not main_path.exists():
@@ -29,12 +21,12 @@ def run_full_validation() -> None:
 
     print("\nOK: Pipeline completed successfully.")
     print("\nVerifying expected outputs...")
-    output_dir = Path(__file__).parent.parent / "outputs" / "tables"
+    output_dir = Path(__file__).parent.parent / "outputs" / "expanded_20260930"
     expected_files = [
-        "sample_construction.csv",
-        "headline_signal_comparison.csv",
-        "event_window_car_summary.csv",
-        "matching_quality_diagnostics.csv",
+        "sample_funnel.csv",
+        "events.csv",
+        "inference.csv",
+        "matching_audit.csv",
     ]
 
     missing = []

@@ -1,0 +1,11 @@
+stage,count
+raw_forecast_rows_300_names,4994
+conflicting_same_date_rows_excluded,9
+unique_forecast_rows,3069
+initial_forecasts_in_price_span,2992
+legacy_next_session_cutoff_matched,344
+legacy_latest_report_on_after_announcement,67
+strict_announcement_cutoff_matched,344
+prior_liquidity_and_listing_eligible,159
+complete_adjusted_CAR_1_10,159
+complete_adjusted_CAR_1_10_no_overlap,157

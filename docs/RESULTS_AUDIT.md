@@ -1,5 +1,7 @@
 # Results Audit (2026-05-03)
 
+> **Superseded on 2026-10-04.** The 326-row headline below is withdrawn because of forecast timing, truncated analyst coverage and return-window defects. This file is historical evidence, not current validation. See [the expanded audit](../outputs/expanded_20260930/report.md), [current results](../outputs/expanded_20260930/inference.csv) and [preserved 300-stock baseline](../outputs/event_validation/report.md). Old PDF/presentation materials are also historical and have not been regenerated.
+
 ## Validation Status: Completed (Diagnostic Run)
 - **Sample Size**: 300 stocks, 11,413 initial events.
 - **Tushare Inputs**: Cached Tushare inputs were used for recovery.
